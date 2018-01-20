@@ -1,0 +1,131 @@
+fileFormatVersion: 2
+guid: 8faed10aa7b24dc44a5828e30ffc7b0b
+timeCreated: 1499321585
+licenseType: Pro
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: Bip01
+    100002: Bip01 Head
+    100004: Bip01 L Clavicle
+    100006: Bip01 L Finger0
+    100008: Bip01 L Finger1
+    100010: Bip01 L Forearm
+    100012: Bip01 L Hand
+    100014: Bip01 L UpperArm
+    100016: Bip01 Neck
+    100018: Bip01 Pelvis
+    100020: Bip01 R Clavicle
+    100022: Bip01 R Finger0
+    100024: Bip01 R Finger1
+    100026: Bip01 R Forearm
+    100028: Bip01 R Hand
+    100030: Bip01 R UpperArm
+    100032: Bip01 Spine
+    100034: Bip01 Spine1
+    100036: Bone005
+    100038: Bone006
+    100040: Bone007
+    100042: Bone008
+    100044: Bone03
+    100046: Bone04
+    100048: Object07
+    100050: //RootNode
+    400000: Bip01
+    400002: Bip01 Head
+    400004: Bip01 L Clavicle
+    400006: Bip01 L Finger0
+    400008: Bip01 L Finger1
+    400010: Bip01 L Forearm
+    400012: Bip01 L Hand
+    400014: Bip01 L UpperArm
+    400016: Bip01 Neck
+    400018: Bip01 Pelvis
+    400020: Bip01 R Clavicle
+    400022: Bip01 R Finger0
+    400024: Bip01 R Finger1
+    400026: Bip01 R Forearm
+    400028: Bip01 R Hand
+    400030: Bip01 R UpperArm
+    400032: Bip01 Spine
+    400034: Bip01 Spine1
+    400036: Bone005
+    400038: Bone006
+    400040: Bone007
+    400042: Bone008
+    400044: Bone03
+    400046: Bone04
+    400048: Object07
+    400050: //RootNode
+    4300000: Object07
+    7400000: Take 001
+    9500000: //RootNode
+    13700000: Object07
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 1
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 2
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 0
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
