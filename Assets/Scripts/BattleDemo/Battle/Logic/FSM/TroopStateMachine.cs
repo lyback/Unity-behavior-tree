@@ -9,6 +9,17 @@ namespace Battle.Logic
 
         }
 
+        public override void Init(BattleDataManager dataMgr)
+        {
+            base.Init(dataMgr);
+            InitState();
+            SetStartState(TroopFSMState.Start);
+            foreach (var kv in mStateDic)
+            {
+                kv.Value.Init(dataMgr);
+            }
+        }
+
         public override void InitState()
         {
             base.InitState();
@@ -16,16 +27,6 @@ namespace Battle.Logic
             AddState(new FindTargetState(TroopFSMState.FindTarget));
             AddState(new MoveState(TroopFSMState.Move));
             AddState(new MoveState(TroopFSMState.Attack));
-        }
-
-        public override void Init(BattleDataManager dataMgr)
-        {
-            base.Init(dataMgr);
-            this.SetStartState(TroopFSMState.Start);
-            foreach (var kv in mStateDic)
-            {
-                kv.Value.Init(dataMgr);
-            }
         }
 
         public override void DoLogic(TroopData data)

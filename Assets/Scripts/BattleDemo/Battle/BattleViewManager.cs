@@ -12,7 +12,7 @@ public class BattleViewManager : MonoBehaviour {
     {
         m_BattleData = _battleData;
         m_BattleLogic = new BattleLogicManager();
-        m_BattleLogic.Init(m_BattleData);
+        m_BattleLogic.Init(m_BattleData, m_BattleData.mSeed);
     }
 
     public void UpdateView()

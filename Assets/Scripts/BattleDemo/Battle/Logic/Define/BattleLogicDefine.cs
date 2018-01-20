@@ -9,6 +9,9 @@ namespace Battle.Logic
     }
     public class BattleLogicDefine
     {
+        public static bool isServer = false; //是否是服务端逻辑
+
         public static int logicSecFrame = 10; //每秒x个逻辑帧
+
     }
 }
