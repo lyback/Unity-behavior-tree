@@ -3,12 +3,12 @@ using FSM;
 
 namespace Battle.Logic
 {
-    class AttackState : FSMStateBase<TroopData, BattleDataManager>
+    class AttackState : FSMStateBase<TroopData, BattleData>
     {
         public AttackState(Enum name) : base(name)
         {
         }
-        public override void Init(BattleDataManager dataMgr)
+        public override void Init(BattleData dataMgr)
         {
             base.Init(dataMgr);
         }

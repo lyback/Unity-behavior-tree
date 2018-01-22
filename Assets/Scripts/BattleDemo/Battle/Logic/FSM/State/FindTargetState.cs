@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using FSM;
 namespace Battle.Logic
 {
-    class FindTargetState : FSMStateBase<TroopData, BattleDataManager>
+    class FindTargetState : FSMStateBase<TroopData, BattleData>
     {
         public FindTargetState(Enum name) : base(name)
         {
         }
-        public override void Init(BattleDataManager dataMgr)
+        public override void Init(BattleData dataMgr)
         {
             base.Init(dataMgr);
         }

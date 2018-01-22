@@ -2,14 +2,14 @@
 using System;
 namespace Battle.Logic
 {
-    public class TroopStateMachine : FSMStateMachineBase<TroopData,BattleDataManager>
+    public class TroopStateMachine : FSMStateMachineBase<TroopData,BattleData>
     {
         public TroopStateMachine() : base()
         {
 
         }
 
-        public override void Init(BattleDataManager dataMgr)
+        public override void Init(BattleData dataMgr)
         {
             base.Init(dataMgr);
             InitState();

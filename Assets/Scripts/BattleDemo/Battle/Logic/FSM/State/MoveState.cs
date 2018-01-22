@@ -3,14 +3,14 @@ using FSM;
 
 namespace Battle.Logic
 {
-    class MoveState : FSMStateBase<TroopData, BattleDataManager>
+    class MoveState : FSMStateBase<TroopData, BattleData>
     {
         private int mTar_X;
         private int mTar_Y;
         public MoveState(Enum name) : base(name)
         {
         }
-        public override void Init(BattleDataManager dataMgr)
+        public override void Init(BattleData dataMgr)
         {
             base.Init(dataMgr);
         }

@@ -25,6 +25,8 @@ namespace Battle.Logic
         public bool inPrepose;
         //前置动作时间
         public uint preTime;
+        //死亡停留时间
+        public uint ghostTime;
         //是否处于战斗状态
         public bool inWar;
         //目标部队id

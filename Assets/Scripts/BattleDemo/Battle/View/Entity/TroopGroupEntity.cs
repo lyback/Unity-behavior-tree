@@ -37,7 +37,7 @@ public class TroopGroupEntity : UnitEntityBase<TroopData> {
 
     protected void DoMove()
     {
-        float radio = m_DeltaTime / MainBattleManager.Instance.LogicTime;
+        float radio = m_DeltaTime / MainBattleManager.Instance.m_LogicTime;
         if (m_Move)
         {
             m_CurPosX = Mathf.Lerp(m_LastPosX, m_TarPosX, radio);

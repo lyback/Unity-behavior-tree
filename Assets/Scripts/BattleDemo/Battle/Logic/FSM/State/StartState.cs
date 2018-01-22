@@ -2,12 +2,12 @@
 using FSM;
 namespace Battle.Logic
 {
-    class StartState : FSMStateBase<TroopData, BattleDataManager>
+    class StartState : FSMStateBase<TroopData, BattleData>
     {
         public StartState(Enum name) : base(name)
         {
         }
-        public override void Init(BattleDataManager dataMgr)
+        public override void Init(BattleData dataMgr)
         {
             base.Init(dataMgr);
         }
