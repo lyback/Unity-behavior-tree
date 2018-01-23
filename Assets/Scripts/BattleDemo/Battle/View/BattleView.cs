@@ -4,8 +4,8 @@ public class BattleView
 
     private BattleData m_BattleData;
     private BattleLogicCtrl m_BattleLogic;
-    
 
+    private object m_TimeObj;
 
     public void Dispose()
     {
@@ -16,7 +16,7 @@ public class BattleView
     {
         m_BattleData = _battleData;
         m_BattleLogic = new BattleLogicCtrl(m_BattleData, m_BattleData.mSeed);
-        //NeatlyTimer.AddFrame(this, OnUpdate);
+        m_TimeObj = TimerHelper.AddFrame(m_BattleData.mBattleKey, OnUpdate);
     }
 
     public void SyncFrame(BattleData data)
@@ -62,7 +62,7 @@ public class BattleView
     //退出战场
     private void Exit()
     {
-        //NeatlyTimer.Remove(this);
+        TimerHelper.Remove(m_TimeObj);
         if (BattleLogicDefine.isServer)
         {
 
