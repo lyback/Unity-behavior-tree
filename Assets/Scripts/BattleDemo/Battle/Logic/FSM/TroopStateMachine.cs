@@ -26,7 +26,7 @@ namespace Battle.Logic
             AddState(new StartState(TroopFSMState.Start));
             AddState(new FindTargetState(TroopFSMState.FindTarget));
             AddState(new MoveState(TroopFSMState.Move));
-            AddState(new MoveState(TroopFSMState.Attack));
+            AddState(new AttackState(TroopFSMState.Attack));
         }
 
         public override void DoLogic(TroopData data)

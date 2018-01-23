@@ -1,9 +1,10 @@
 ﻿using Battle.Logic;
 public class BattleView
 {
-
     private BattleData m_BattleData;
     private BattleLogicCtrl m_BattleLogic;
+
+    private BattleScene m_BattleScene;
 
     private object m_TimeObj;
 
@@ -16,6 +17,9 @@ public class BattleView
     {
         m_BattleData = _battleData;
         m_BattleLogic = new BattleLogicCtrl(m_BattleData, m_BattleData.mSeed);
+
+        m_BattleScene = new BattleScene(m_BattleLogic);
+
         m_TimeObj = TimerHelper.AddFrame(m_BattleData.mBattleKey, OnUpdate);
     }
 
@@ -43,9 +47,10 @@ public class BattleView
     private void OnUpdate(float dt)
     {
         LogicState result = m_BattleLogic.Update(dt);
+        Debugger.Log(result);
         if (result == LogicState.Playing)
         {
-
+            m_BattleScene.Update();
         }
         else if (result == LogicState.End)
         {

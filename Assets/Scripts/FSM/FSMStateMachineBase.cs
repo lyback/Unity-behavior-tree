@@ -13,7 +13,7 @@ namespace FSM
 
         public FSMStateMachineBase()
         {
-            this.InitState();
+
         }
 
         public virtual void InitState()

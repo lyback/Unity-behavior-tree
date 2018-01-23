@@ -1,5 +1,5 @@
 ﻿
-public enum TroopType
+public enum SoldierType
 {
     NONE = 0,
     Infantry = 1,       //步兵

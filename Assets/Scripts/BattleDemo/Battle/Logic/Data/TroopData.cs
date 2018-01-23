@@ -4,7 +4,7 @@ namespace Battle.Logic
 {
     public class TroopData : FSMDataBase
     {
-        //ID
+        //ID(不能等于0)
         public uint key;
         //行列
         public uint line;
@@ -36,7 +36,8 @@ namespace Battle.Logic
         //部队状态
         public TroopAnimState state;
         //兵种类型
-        public TroopType type;
-
+        public SoldierType type;
+        //是否有加入的部队
+        public bool addTroop;
     }
 }

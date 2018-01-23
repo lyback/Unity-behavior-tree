@@ -1,12 +1,11 @@
-﻿
-using Battle.Logic;
+﻿using Battle.Logic;
 using System.Collections.Generic;
 using UnityEngine;
 
-class MainBattleManager: Singleton<MainBattleManager>
+class MainBattleManager : Singleton<MainBattleManager>
 {
     private BattleResManager m_BattleResManager;
-    private Dictionary<string, BattleView>  m_BattleViewDic;
+    private Dictionary<string, BattleView> m_BattleViewDic;
 
     public Transform m_BattleViewRoot;
 
@@ -15,11 +14,14 @@ class MainBattleManager: Singleton<MainBattleManager>
     public override void Init()
     {
         Debugger.Log("战斗管理器初始化");
+
         if (m_BattleResManager == null)
         {
-            GameObject battleRes = new GameObject();
+            Object battleResobj = Resources.Load("battle/BattleRes");
+            GameObject battleRes = GameObject.Instantiate(battleResobj) as GameObject;
             battleRes.name = "~Battle";
-            m_BattleResManager = battleRes.AddComponent<BattleResManager>();
+            m_BattleResManager = battleRes.GetComponent<BattleResManager>();
+            m_BattleViewRoot = battleRes.transform;
         }
         m_BattleResManager.Init();
 
@@ -37,6 +39,13 @@ class MainBattleManager: Singleton<MainBattleManager>
         }
     }
 
+    public void Start()
+    {
+        BattleData data = new BattleData();
+        data.Init();
+        CreateBattle(data);
+    }
+
     public void CreateBattle(BattleData data)
     {
         Debugger.Log("创建战场：" + data.mBattleKey);
@@ -47,6 +56,7 @@ class MainBattleManager: Singleton<MainBattleManager>
         }
         m_BattleViewDic.Add(data.mBattleKey, new BattleView());
         m_BattleViewDic[data.mBattleKey].Init(data);
+        m_BattleViewDic[data.mBattleKey].SyncFrame(data);
     }
     public void ExitBattle(string battleKey)
     {
@@ -70,17 +80,24 @@ class MainBattleManager: Singleton<MainBattleManager>
     }
 
     #region Pools Interface
-    public T GetBattlePool<T>() where T : class
+    public SoldierGroup CreateSoldierGroup(float x, float y, float dir_x, float dir_y, TroopData data)
     {
-        return m_BattleResManager.GetPool<T>();
+        SoldierGroup group = m_BattleResManager.m_SoldierGroupPool.Create(m_BattleViewRoot);
+        group.Init(x, y, dir_x, dir_y, data);
+        return group;
     }
-    public SoldierObject CreateSoldierObject(Transform transform)
+    public void RecycleSoldierGroup(SoldierGroup obj)
     {
-        return m_BattleResManager.m_SoldierPool.Create(transform);
+        m_BattleResManager.m_SoldierGroupPool.Recycle(obj);
     }
-    public void RecycleSoldierObject(SoldierObject obj)
+
+    public SoldierObject CreateSoldierObject(SoldierType type, Transform parent)
     {
-        m_BattleResManager.m_SoldierPool.Recycle(obj);
+        return m_BattleResManager.m_SoldierObjectPools[(int)type].Create(parent);
+    }
+    public void RecycleSoldierObject(SoldierType type, SoldierObject obj)
+    {
+        m_BattleResManager.m_SoldierObjectPools[(int)type].Recycle(obj);
     }
     #endregion
 

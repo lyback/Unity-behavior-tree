@@ -38,6 +38,15 @@ public class SoldierObject : UnitEntityBase<SoldierData>
 
     }
 
+    void OnPlayEnd(string name)
+    {
+        if (m_CurrentState == TroopAnimState.Attack)
+        {
+            m_CurrentState = TroopAnimState.Idle;
+        }
+        Play();
+    }
+
     public void SetState(TroopAnimState state)
     {
         if (m_CurrentState == state) return;
@@ -63,7 +72,7 @@ public class SoldierObject : UnitEntityBase<SoldierData>
     public void Dispose()
     {
         NeatlyTimer.Remove(this);
-        MainBattleManager.Instance.RecycleSoldierObject(this);
+        MainBattleManager.Instance.RecycleSoldierObject(mData.type, this);
     }
 }
 

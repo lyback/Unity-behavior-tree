@@ -2,120 +2,120 @@
 {
     public static class TroopHelper
     {
-        public static uint GetTroopSpyDis(TroopType type)
+        public static uint GetTroopSpyDis(SoldierType type)
         {
             switch (type)
             {
-                case TroopType.NONE:
+                case SoldierType.NONE:
                     break;
-                case TroopType.Infantry:
+                case SoldierType.Infantry:
                     return 10;
-                case TroopType.Cavalry:
+                case SoldierType.Cavalry:
                     return 20;
-                case TroopType.Bowman:
+                case SoldierType.Bowman:
                     return 5;
-                case TroopType.Enchanter:
+                case SoldierType.Enchanter:
                     return 5;
                 default:
                     break;
             }
             return 10;
         }
-        public static uint GetTroopAtkDis(TroopType type)
+        public static uint GetTroopAtkDis(SoldierType type)
         {
             switch (type)
             {
-                case TroopType.NONE:
+                case SoldierType.NONE:
                     break;
-                case TroopType.Infantry:
+                case SoldierType.Infantry:
                     return 1;
-                case TroopType.Cavalry:
+                case SoldierType.Cavalry:
                     return 2;
-                case TroopType.Bowman:
+                case SoldierType.Bowman:
                     return 5;
-                case TroopType.Enchanter:
+                case SoldierType.Enchanter:
                     return 10;
                 default:
                     break;
             }
             return 1;
         }
-        public static uint GetTroopRange(TroopType type)
+        public static uint GetTroopRange(SoldierType type)
         {
             switch (type)
             {
-                case TroopType.NONE:
+                case SoldierType.NONE:
                     break;
-                case TroopType.Infantry:
+                case SoldierType.Infantry:
                     return 2;
-                case TroopType.Cavalry:
+                case SoldierType.Cavalry:
                     return 2;
-                case TroopType.Bowman:
+                case SoldierType.Bowman:
                     return 2;
-                case TroopType.Enchanter:
+                case SoldierType.Enchanter:
                     return 2;
                 default:
                     break;
             }
             return 2;
         }
-        public static uint GetTroopAtkPrepareTime(TroopType type)
+        public static uint GetTroopAtkPrepareTime(SoldierType type)
         {
             switch (type)
             {
-                case TroopType.NONE:
+                case SoldierType.NONE:
                     break;
-                case TroopType.Infantry:
+                case SoldierType.Infantry:
                     return 2;
-                case TroopType.Cavalry:
+                case SoldierType.Cavalry:
                     return 2;
-                case TroopType.Bowman:
+                case SoldierType.Bowman:
                     return 2;
-                case TroopType.Enchanter:
+                case SoldierType.Enchanter:
                     return 2;
                 default:
                     break;
             }
             return 2;
         }
-        public static uint GetTroopAtkCDTime(TroopType type)
+        public static uint GetTroopAtkCDTime(SoldierType type)
         {
             switch (type)
             {
-                case TroopType.NONE:
+                case SoldierType.NONE:
                     break;
-                case TroopType.Infantry:
+                case SoldierType.Infantry:
                     return 4;
-                case TroopType.Cavalry:
+                case SoldierType.Cavalry:
                     return 2;
-                case TroopType.Bowman:
+                case SoldierType.Bowman:
                     return 6;
-                case TroopType.Enchanter:
+                case SoldierType.Enchanter:
                     return 8;
                 default:
                     break;
             }
             return 2;
         }
-        public static void GetTroopLRSpace(TroopType type, out uint lineSpace, out uint rowSpace)
+        public static void GetTroopLRSpace(SoldierType type, out uint lineSpace, out uint rowSpace)
         {
             switch (type)
             {
-                case TroopType.NONE:
+                case SoldierType.NONE:
                     break;
-                case TroopType.Infantry:
+                case SoldierType.Infantry:
                     lineSpace = 10;
                     rowSpace = 10;
                     break;
-                case TroopType.Cavalry:
+                case SoldierType.Cavalry:
                     lineSpace = 10;
                     rowSpace = 10;
                     break;
-                case TroopType.Bowman:
+                case SoldierType.Bowman:
                     lineSpace = 10;
                     rowSpace = 10;
                     break;
-                case TroopType.Enchanter:
+                case SoldierType.Enchanter:
                     lineSpace = 10;
                     rowSpace = 10;
                     break;

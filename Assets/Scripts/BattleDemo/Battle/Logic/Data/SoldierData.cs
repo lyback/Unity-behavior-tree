@@ -18,7 +18,7 @@ namespace Battle.Logic
         //部队状态
         public TroopAnimState state;
         //兵种类型
-        public TroopType type;
+        public SoldierType type;
 
         public SoldierData(TroopData troop, int _line, int _row)
         {

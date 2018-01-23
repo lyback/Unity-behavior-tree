@@ -4,12 +4,22 @@ using Neatly.Timer;
 using UnityEngine;
 
 //部队实体基类
-public class TroopGroupEntity : UnitEntityBase<TroopData> {
+public class TroopGroupEntity : UnitEntityBase<TroopData>
+{
 
     public override void Init(TroopData _data)
     {
         base.Init(_data);
     }
+    #region 显示
+    protected bool m_IsInit;
+
+    protected void Show(bool value)
+    {
+        gameObject.SetActive(value);
+    }
+
+    #endregion
 
     #region 移动
     protected float m_LastPosX;

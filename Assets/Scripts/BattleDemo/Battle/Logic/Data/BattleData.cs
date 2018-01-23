@@ -19,6 +19,36 @@ namespace Battle.Logic
 
         public void Init()
         {
+            mBattleKey = "test";
+            mCurrentFrame = 1;
+            mFinishFrame = 10000;
+            mAtcTroopList = new List<TroopData>();
+            mDefTroopList = new List<TroopData>();
+            mAllTroopDic = new Dictionary<uint, TroopData>();
+            for (int i = 0; i < 4; i++)
+            {
+                TroopData troop = new TroopData();
+                troop.count = 100;
+                troop.isAtkTroop = true;
+                troop.key = (uint)i;
+                troop.type = (SoldierType)i;
+                troop.x = i * 100;
+                troop.y = 100;
+                mAtcTroopList.Add(troop);
+                mAllTroopDic.Add(troop.key, troop);
+            }
+            for (int i = 0; i < 4; i++)
+            {
+                TroopData troop = new TroopData();
+                troop.count = 100;
+                troop.isAtkTroop = false;
+                troop.key = (uint)i+4;
+                troop.type = (SoldierType)i;
+                troop.x = i * 100;
+                troop.y = -100;
+                mDefTroopList.Add(troop);
+                mAllTroopDic.Add(troop.key, troop);
+            }
 
         }
         public void Dispose()

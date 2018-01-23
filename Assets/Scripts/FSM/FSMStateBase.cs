@@ -11,6 +11,7 @@ namespace FSM
 
         public FSMStateBase(Enum name)
         {
+            Debugger.Log(name);
             this.name = name;
         }
 
