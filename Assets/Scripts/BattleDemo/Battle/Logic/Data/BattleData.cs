@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System;
 using FSM;
 namespace Battle.Logic
 {
@@ -19,33 +18,40 @@ namespace Battle.Logic
 
         public void Init()
         {
+            RandHelper rand = new RandHelper(DateTime.Now.Second);
             mBattleKey = "test";
             mCurrentFrame = 1;
             mFinishFrame = 10000;
             mAtcTroopList = new List<TroopData>();
             mDefTroopList = new List<TroopData>();
             mAllTroopDic = new Dictionary<uint, TroopData>();
-            for (int i = 0; i < 4; i++)
+            int atkCount = 4;
+            for (int i = 0; i < atkCount; i++)
             {
                 TroopData troop = new TroopData();
                 troop.count = 100;
                 troop.isAtkTroop = true;
-                troop.key = (uint)i;
-                troop.type = (SoldierType)i;
+                troop.key = (uint)i+1;
+                troop.type = (SoldierType)rand.Random(4);
                 troop.x = i * 100;
-                troop.y = 100;
+                troop.y = 100 ;
+                troop.line = 3;
+                troop.row = 2;
                 mAtcTroopList.Add(troop);
                 mAllTroopDic.Add(troop.key, troop);
             }
-            for (int i = 0; i < 4; i++)
+            int defCount = 3;
+            for (int i = 0; i < defCount; i++)
             {
                 TroopData troop = new TroopData();
                 troop.count = 100;
                 troop.isAtkTroop = false;
-                troop.key = (uint)i+4;
-                troop.type = (SoldierType)i;
+                troop.key = (uint)i+100;
+                troop.type = (SoldierType)rand.Random(4);
                 troop.x = i * 100;
                 troop.y = -100;
+                troop.line = 3;
+                troop.row = 2;
                 mDefTroopList.Add(troop);
                 mAllTroopDic.Add(troop.key, troop);
             }

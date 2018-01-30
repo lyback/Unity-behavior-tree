@@ -46,29 +46,30 @@ public class BattleScene
         }
         for (int i = 0; i < m_DefTroopList.Count; i++)
         {
-            TroopData _defTroop = m_AtkTroopList[i];
+            TroopData _defTroop = m_DefTroopList[i];
             float x = _defTroop.x;
             float y = _defTroop.y;
             CorrectPos(ref x, ref y);
             float dir_x = _defTroop.dir_x;
             float dir_y = _defTroop.dir_y;
             CorrectPos(ref dir_x, ref dir_y);
-            if (m_AtkSoldierGroup.ContainsKey(_defTroop.key))
+            if (m_DefSoldierGroup.ContainsKey(_defTroop.key))
             {
-                m_AtkSoldierGroup[_defTroop.key].Doing(x, y, dir_x, dir_y, _defTroop);
+                m_DefSoldierGroup[_defTroop.key].Doing(x, y, dir_x, dir_y, _defTroop);
             }
             else
             {
                 SoldierGroup soldierGroup = MainBattleManager.Instance.CreateSoldierGroup(x, y, dir_x, dir_y, _defTroop);
-                m_AtkSoldierGroup[_defTroop.key] = soldierGroup;
+                m_DefSoldierGroup[_defTroop.key] = soldierGroup;
             }
+            _defTroop.addTroop = false;
         }
     }
 
     private void CorrectPos(ref float x, ref float y)
     {
-        x = x / 1;
-        y = y / 1;
+        x = x / 10;
+        y = y / 10;
         return;
     }
 }

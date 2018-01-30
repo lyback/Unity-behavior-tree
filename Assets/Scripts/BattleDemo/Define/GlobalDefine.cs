@@ -1,9 +1,9 @@
 ﻿
 public enum SoldierType
 {
-    NONE = 0,
-    Infantry = 1,       //步兵
-    Cavalry = 2,        //骑兵
-    Bowman = 3,         //弓兵
-    Enchanter = 4,      //魔法师
+    NONE = -1,
+    Infantry = 0,       //步兵
+    Cavalry = 1,        //骑兵
+    Bowman = 2,         //弓兵
+    Enchanter = 3,      //魔法师
 }

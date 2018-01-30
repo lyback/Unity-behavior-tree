@@ -29,13 +29,13 @@ namespace Battle.Logic
             AddState(new AttackState(TroopFSMState.Attack));
         }
 
-        public override void DoLogic(TroopData data)
+        public override void DoLogic(ref TroopData data)
         {
-            base.DoLogic(data);
-            Enum _nextState = mStartState.Enter(data);
+            base.DoLogic(ref data);
+            Enum _nextState = mStartState.Enter(ref data);
             while ((TroopFSMState)_nextState != TroopFSMState.End)
             {
-                _nextState = GetState(_nextState).Enter(data);
+                _nextState = GetState(_nextState).Enter(ref data);
             }
 
         }

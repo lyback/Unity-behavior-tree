@@ -46,11 +46,16 @@ namespace Battle.Logic
         {
             for (int i = 0; i < m_AtkTroopList.Count; i++)
             {
-                m_TroopFSMState.DoLogic(m_AtkTroopList[i]);
+                var _atkTroop = m_AtkTroopList[i];
+                m_TroopFSMState.DoLogic(ref _atkTroop);
+                m_AtkTroopList[i] = _atkTroop;
+
             }
             for (int i = 0; i < m_DefTroopList.Count; i++)
             {
-                m_TroopFSMState.DoLogic(m_DefTroopList[i]);
+                var _defTroop = m_DefTroopList[i];
+                m_TroopFSMState.DoLogic(ref _defTroop);
+                m_DefTroopList[i] = _defTroop;
             }
         }
         private void SetFinishState()

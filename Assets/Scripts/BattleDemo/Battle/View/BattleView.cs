@@ -47,7 +47,7 @@ public class BattleView
     private void OnUpdate(float dt)
     {
         LogicState result = m_BattleLogic.Update(dt);
-        Debugger.Log(result);
+        //Debugger.Log("curState:"+result);
         if (result == LogicState.Playing)
         {
             m_BattleScene.Update();

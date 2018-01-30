@@ -14,7 +14,7 @@ namespace Battle.Logic
         {
             base.Init(dataMgr);
         }
-        public override Enum Enter(TroopData troop)
+        public override Enum Enter(ref TroopData troop)
         {
             if (troop.targetKey != 0)
             {
@@ -24,15 +24,15 @@ namespace Battle.Logic
                     Debugger.LogError("MoveState 未找到目标");
                 }
                 troop.state = TroopAnimState.Move;
-                return MoveToTarget(troop, tarTroop);
+                return MoveToTarget(ref troop, tarTroop);
             }
             else
             {
                 troop.state = TroopAnimState.Move;
-                return MoveToCenter(troop);
+                return MoveToCenter(ref troop);
             }
         }
-        public override Enum Excute(TroopData troop)
+        public override Enum Excute(ref TroopData troop)
         {
             if (troop.x > mTar_X)
             {
@@ -42,7 +42,7 @@ namespace Battle.Logic
                     troop.x = mTar_X;
                 }
             }
-            else if (troop.x > mTar_X)
+            else if (troop.x < mTar_X)
             {
                 troop.x += 1;
                 if (troop.x > mTar_X)
@@ -58,7 +58,7 @@ namespace Battle.Logic
                     troop.y = mTar_Y;
                 }
             }
-            else if (troop.y > mTar_Y)
+            else if (troop.y < mTar_Y)
             {
                 troop.y += 1;
                 if (troop.y > mTar_Y)
@@ -68,17 +68,21 @@ namespace Battle.Logic
             }
             return TroopFSMState.End;
         }
-        private Enum MoveToTarget(TroopData troop, TroopData target)
+        private Enum MoveToTarget(ref TroopData troop, TroopData target)
         {
             mTar_X = target.x;
             mTar_Y = target.y;
-            return Excute(troop);
+            troop.dir_x = mTar_X;
+            troop.dir_y = mTar_Y;
+            return Excute(ref troop);
         }
-        private Enum MoveToCenter(TroopData troop)
+        private Enum MoveToCenter(ref TroopData troop)
         {
             mTar_X = troop.x;
             mTar_Y = 0;
-            return Excute(troop);
+            troop.dir_x = mTar_X;
+            troop.dir_y = mTar_Y;
+            return Excute(ref troop);
         }
     }
 }

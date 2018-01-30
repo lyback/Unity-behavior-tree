@@ -61,7 +61,6 @@ namespace Battle.Logic
             {
                 m_isFinish = true;
                 //Debugger.Log("输出日志...");
-
             }
             SetCurrentFrame(m_currentFrame + 1);
 

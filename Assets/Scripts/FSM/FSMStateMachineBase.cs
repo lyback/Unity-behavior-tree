@@ -26,7 +26,7 @@ namespace FSM
 
         }
 
-        public virtual void DoLogic(T data)
+        public virtual void DoLogic(ref T data)
         {
 
         }

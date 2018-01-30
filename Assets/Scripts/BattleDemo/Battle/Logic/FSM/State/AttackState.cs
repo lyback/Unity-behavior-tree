@@ -12,7 +12,7 @@ namespace Battle.Logic
         {
             base.Init(dataMgr);
         }
-        public override Enum Enter(TroopData troop)
+        public override Enum Enter(ref TroopData troop)
         {
             if (troop.targetKey != 0)
             {
@@ -31,12 +31,12 @@ namespace Battle.Logic
                 }
                 else
                 {
-                    return Excute(troop);
+                    return Excute(ref troop);
                 }
             }
             return TroopFSMState.End;
         }
-        public override Enum Excute(TroopData troop)
+        public override Enum Excute(ref TroopData troop)
         {
             TroopData tarTroop = dataMgr.mAllTroopDic[troop.targetKey];
             if (tarTroop == null)

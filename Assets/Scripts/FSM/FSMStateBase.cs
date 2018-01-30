@@ -11,7 +11,6 @@ namespace FSM
 
         public FSMStateBase(Enum name)
         {
-            Debugger.Log(name);
             this.name = name;
         }
 
@@ -20,12 +19,12 @@ namespace FSM
             this.dataMgr = dataMgr;
         }
 
-        public virtual Enum Enter(T data)
+        public virtual Enum Enter(ref T data)
         {
             return null;
         }
 
-        public virtual Enum Excute(T data)
+        public virtual Enum Excute(ref T data)
         {
             return null;
         }

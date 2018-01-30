@@ -11,7 +11,7 @@ namespace Battle.Logic
         {
             base.Init(dataMgr);
         }
-        public override Enum Enter(TroopData data)
+        public override Enum Enter(ref TroopData data)
         {
             //死亡
             if (data.count==0)
@@ -29,6 +29,7 @@ namespace Battle.Logic
                 else
                 {
                     //发射武器
+                    data.inPrepose = false;
                 }
                 data.state = TroopAnimState.Idle;
                 return TroopFSMState.End;

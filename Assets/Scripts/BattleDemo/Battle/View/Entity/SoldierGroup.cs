@@ -22,6 +22,7 @@ public class SoldierGroup : TroopGroupEntity
 
     public void Init(float x, float y, float dir_x, float dir_y, TroopData data)
     {
+        Debugger.Log("初始化士兵");
         base.Init(data);
         m_Type = data.type;
         m_IsAttacker = data.isAtkTroop;
@@ -119,6 +120,7 @@ public class SoldierGroup : TroopGroupEntity
             //如果状态是移动则播放
             SetTweenPosition(x, y);
         }
+        SetSoldierLocalRotation(deg);
         if (data.count == 0)
         {
             m_BaseCount = 0;
@@ -143,10 +145,25 @@ public class SoldierGroup : TroopGroupEntity
         soldierIndexList.RemoveAt(randIndex);
     }
 
+    private void SetSoldierLocalRotation(float y)
+    {
+        for (int i = 0; i < soldierArray.GetLength(0); i++)
+        {
+            for (int j = 0; j < soldierArray.GetLength(1); j++)
+            {
+                if (soldierArray[i, j] != null)
+                {
+                    soldierArray[i, j].SetLocalRotation(y);
+                }
+            }
+        }
+    }
+
     private SoldierObject GetSoldierByIndex(int index)
     {
         int i = index >> 4;
         int j = index & 0xf;
+        Debugger.Log(i + "  " + j);
         var soldier = soldierArray[i, j];
         soldierArray[i, j] = null;
         return soldier;
@@ -158,6 +175,7 @@ public class SoldierGroup : TroopGroupEntity
         r += j;
         return r;
     }
+
     private float CalcRad(float x, float y)
     {
         var disX = x - m_CurPosX;

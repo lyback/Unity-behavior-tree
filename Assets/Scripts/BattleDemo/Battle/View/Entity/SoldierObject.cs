@@ -29,7 +29,7 @@ public class SoldierObject : UnitEntityBase<SoldierData>
     public override void Init(SoldierData _data)
     {
         base.Init(_data);
-
+        transform.localPosition = new Vector3(_data.x, 0, _data.y);
     }
     public override void CreateInit()
     {
