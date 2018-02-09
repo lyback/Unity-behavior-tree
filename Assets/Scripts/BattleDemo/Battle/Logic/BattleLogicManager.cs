@@ -1,13 +1,13 @@
 ﻿
 namespace Battle.Logic
 {
-    public class BattleLogicCtrl
+    public class BattleLogicManager
     {
 
-        private static float m_logicTime = 1 / BattleLogicDefine.logicSecFrame;
+        private static float m_logicTime = 1f / BattleLogicDefine.logicSecFrame;
 
         public BattleData m_BattleData { get; private set; }
-        private TroopLogicManager m_TroopLogic;
+        private TroopLogicCtrl m_TroopLogicCtrl;
         public RandHelper m_Rand { get; private set; }
 
         private bool m_isReport = false;
@@ -18,10 +18,10 @@ namespace Battle.Logic
         public int m_currentFrame = 0; //当前帧
         public int m_finishFrame = 0; //目标帧
 
-        public BattleLogicCtrl(BattleData battleData, int _seed)
+        public BattleLogicManager(BattleData battleData, int _seed)
         {
             m_BattleData = battleData;
-            m_TroopLogic = new TroopLogicManager(this);
+            m_TroopLogicCtrl = new TroopLogicCtrl(this);
             m_Rand = new RandHelper(_seed);
             m_BattleData.mSeed = m_Rand.GetSeed();
             SetCurrentFrame(1);
@@ -57,7 +57,7 @@ namespace Battle.Logic
             }
 
             string frameKey = m_currentFrame.ToString();
-            if (m_TroopLogic.UpdateLogic(m_currentFrame))
+            if (m_TroopLogicCtrl.UpdateLogic(m_currentFrame))
             {
                 m_isFinish = true;
                 //Debugger.Log("输出日志...");
@@ -75,6 +75,10 @@ namespace Battle.Logic
         public void SetFinishFrame(int finishFrame)
         {
             m_finishFrame = finishFrame;
+        }
+        public void SetSpeed(int speed)
+        {
+            m_logicTime = 1f / BattleLogicDefine.logicSecFrame / speed;
         }
     }
 }

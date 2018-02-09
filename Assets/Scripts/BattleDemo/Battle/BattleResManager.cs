@@ -19,8 +19,6 @@ public sealed class BattleResManager : NeatlyBehaviour
     [SerializeField]
     private GameObject[] m_HitEffectPrefabs;
 
-    [SerializeField]
-    private int m_PlaySpeed = 1;
     #endregion
 
     #region Pools

@@ -35,7 +35,6 @@ public class SoldierObject : UnitEntityBase<SoldierData>
     {
         base.CreateInit();
         m_Animator = GetComponent<Animator>();
-
     }
 
     void OnPlayEnd(string name)
@@ -63,7 +62,10 @@ public class SoldierObject : UnitEntityBase<SoldierData>
         m_CurrentState = state;
         Play();
     }
-
+    public void SetSpeed(int speed)
+    {
+        m_Animator.speed = speed;
+    }
     public void Play()
     {
         m_Animator.Play(HashStateName[(int)m_CurrentState]);

@@ -18,7 +18,7 @@ namespace Battle.Logic
 
         public void Init()
         {
-            RandHelper rand = new RandHelper(DateTime.Now.Second);
+            RandHelper rand = new RandHelper(1);
             mBattleKey = "test";
             mCurrentFrame = 1;
             mFinishFrame = 10000;

@@ -3,21 +3,21 @@ using System.Collections.Generic;
 
 namespace Battle.Logic
 {
-    public class TroopLogicManager
+    public class TroopLogicCtrl
     {
         private TroopStateMachine m_TroopFSMState;
-        private BattleLogicCtrl m_BattleLogic;
-        private Dictionary<uint, TroopData> m_AllTroopDic { get { return m_BattleLogic.m_BattleData.mAllTroopDic; } }
-        private List<TroopData> m_AtkTroopList { get { return m_BattleLogic.m_BattleData.mAtcTroopList; } }
-        private List<TroopData> m_DefTroopList { get { return m_BattleLogic.m_BattleData.mDefTroopList; } }
+        private BattleLogicManager m_BattleLogicMgr;
+        private Dictionary<uint, TroopData> m_AllTroopDic { get { return m_BattleLogicMgr.m_BattleData.mAllTroopDic; } }
+        private List<TroopData> m_AtkTroopList { get { return m_BattleLogicMgr.m_BattleData.mAtcTroopList; } }
+        private List<TroopData> m_DefTroopList { get { return m_BattleLogicMgr.m_BattleData.mDefTroopList; } }
         private bool isFinish = false;
 
-        public TroopLogicManager(BattleLogicCtrl battleLogic)
+        public TroopLogicCtrl(BattleLogicManager battleLogicMgr)
         {
-            m_BattleLogic = battleLogic;
+            m_BattleLogicMgr = battleLogicMgr;
 
             m_TroopFSMState = new TroopStateMachine();
-            m_TroopFSMState.Init(battleLogic.m_BattleData);
+            m_TroopFSMState.Init(battleLogicMgr.m_BattleData);
         }
 
         public bool UpdateLogic(int currentFrame)

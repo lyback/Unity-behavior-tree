@@ -2,10 +2,11 @@
 public class BattleView
 {
     private BattleData m_BattleData;
-    private BattleLogicCtrl m_BattleLogic;
+    private BattleLogicManager m_BattleLogicMgr;
 
     private BattleScene m_BattleScene;
 
+    private int m_Speed;
     private object m_TimeObj;
 
     public void Dispose()
@@ -16,9 +17,9 @@ public class BattleView
     public void Init(BattleData _battleData)
     {
         m_BattleData = _battleData;
-        m_BattleLogic = new BattleLogicCtrl(m_BattleData, m_BattleData.mSeed);
+        m_BattleLogicMgr = new BattleLogicManager(m_BattleData, m_BattleData.mSeed);
 
-        m_BattleScene = new BattleScene(m_BattleLogic);
+        m_BattleScene = new BattleScene(m_BattleLogicMgr);
 
         m_TimeObj = TimerHelper.AddFrame(m_BattleData.mBattleKey, OnUpdate);
     }
@@ -26,16 +27,16 @@ public class BattleView
     public void SyncFrame(BattleData data)
     {
         Debugger.Log("完成帧：" + data.mFinishFrame);
-        m_BattleLogic.SetFinishFrame(data.mFinishFrame);
+        m_BattleLogicMgr.SetFinishFrame(data.mFinishFrame);
         AddCommand(data.mOperators);
         int currentFrame = data.mCurrentFrame;
         while (true)
         {
-            if (m_BattleLogic.m_currentFrame >= currentFrame - 1)
+            if (m_BattleLogicMgr.m_currentFrame >= currentFrame - 1)
             {
                 return;
             }
-            LogicState state = m_BattleLogic.Update();
+            LogicState state = m_BattleLogicMgr.Update();
             if (state == LogicState.End)
             {
                 Exit();
@@ -43,10 +44,15 @@ public class BattleView
             }
         }
     }
-
+    public void SetSpeed(int speed)
+    {
+        m_Speed = speed;
+        m_BattleLogicMgr.SetSpeed(speed);
+        m_BattleScene.SetSpeed(speed);
+    }
     private void OnUpdate(float dt)
     {
-        LogicState result = m_BattleLogic.Update(dt);
+        LogicState result = m_BattleLogicMgr.Update(dt);
         //Debugger.Log("curState:"+result);
         if (result == LogicState.Playing)
         {

@@ -22,7 +22,6 @@ public class SoldierGroup : TroopGroupEntity
 
     public void Init(float x, float y, float dir_x, float dir_y, TroopData data)
     {
-        Debugger.Log("初始化士兵");
         base.Init(data);
         m_Type = data.type;
         m_IsAttacker = data.isAtkTroop;
@@ -216,5 +215,18 @@ public class SoldierGroup : TroopGroupEntity
         soldierIndexList = null;
 
         MainBattleManager.Instance.RecycleSoldierGroup(this);
+    }
+    public void SetSpeed(int speed)
+    {
+        for (int i = 0; i < soldierArray.GetLength(0); i++)
+        {
+            for (int j = 0; j < soldierArray.GetLength(1); j++)
+            {
+                if (soldierArray[i, j] != null)
+                {
+                    soldierArray[i, j].SetSpeed(speed);
+                }
+            }
+        }
     }
 }

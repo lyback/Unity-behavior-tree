@@ -3,18 +3,18 @@ using System.Collections.Generic;
 
 public class BattleScene
 {
-    private BattleLogicCtrl m_BattleLogic;
+    private BattleLogicManager m_BattleLogicMgr;
 
-    private Dictionary<uint, TroopData> m_AllTroopDic { get { return m_BattleLogic.m_BattleData.mAllTroopDic; } }
-    private List<TroopData> m_AtkTroopList { get { return m_BattleLogic.m_BattleData.mAtcTroopList; } }
-    private List<TroopData> m_DefTroopList { get { return m_BattleLogic.m_BattleData.mDefTroopList; } }
+    private Dictionary<uint, TroopData> m_AllTroopDic { get { return m_BattleLogicMgr.m_BattleData.mAllTroopDic; } }
+    private List<TroopData> m_AtkTroopList { get { return m_BattleLogicMgr.m_BattleData.mAtcTroopList; } }
+    private List<TroopData> m_DefTroopList { get { return m_BattleLogicMgr.m_BattleData.mDefTroopList; } }
 
     private Dictionary<uint, SoldierGroup> m_AtkSoldierGroup = new Dictionary<uint, SoldierGroup>();
     private Dictionary<uint, SoldierGroup> m_DefSoldierGroup = new Dictionary<uint, SoldierGroup>();
 
-    public BattleScene(BattleLogicCtrl battleLogic)
+    public BattleScene(BattleLogicManager battleLogicMgr)
     {
-        m_BattleLogic = battleLogic;
+        m_BattleLogicMgr = battleLogicMgr;
     }
 
     public void Update()
@@ -71,6 +71,18 @@ public class BattleScene
         x = x / 10;
         y = y / 10;
         return;
+    }
+
+    public void SetSpeed(int speed)
+    {
+        foreach (var kv in m_AtkSoldierGroup)
+        {
+            kv.Value.SetSpeed(speed);
+        }
+        foreach (var kv in m_DefSoldierGroup)
+        {
+            kv.Value.SetSpeed(speed);
+        }
     }
 }
 

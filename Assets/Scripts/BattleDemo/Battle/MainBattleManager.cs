@@ -9,7 +9,22 @@ class MainBattleManager : Singleton<MainBattleManager>
 
     public Transform m_BattleViewRoot;
 
-    public float m_LogicTime { get; private set; }
+    private float _LogicTime;
+    public float m_LogicTime
+    {
+        get
+        {
+            return _LogicTime / _Speed;
+        }
+    }
+    private int _Speed;
+    public int m_Speed
+    {
+        get
+        {
+            return _Speed;
+        }
+    }
 
     public override void Init()
     {
@@ -103,6 +118,14 @@ class MainBattleManager : Singleton<MainBattleManager>
 
     public void InitLogicTime(float logicTime)
     {
-        m_LogicTime = logicTime;
+        _LogicTime = logicTime;
+    }
+    public void SetSpeed(int speed)
+    {
+        _Speed = speed;
+        foreach (var kv in m_BattleViewDic)
+        {
+            kv.Value.SetSpeed(speed);
+        }
     }
 }
