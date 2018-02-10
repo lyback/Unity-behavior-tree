@@ -10,7 +10,7 @@ namespace Battle.Logic.AI.BTree
         //子节点
         protected List<BTreeNode> m_ChildNodes = new List<BTreeNode>();
         //子节点数
-        protected uint m_ChildCount = 0;
+        protected int m_ChildCount = 0;
         //父节点
         protected BTreeNode m_ParentNode { get; set; }
         //上一个激活的节点
@@ -20,7 +20,14 @@ namespace Battle.Logic.AI.BTree
         //前提条件
         protected BTreeNodePrecondition m_NodePrecondition;
 
-        private const uint MaxChildNodeCount = 16;
+        protected const int MAX_CHILD_NODE_COUNT = 16;
+        protected const int INVALID_CHILD_NODE_INDEX = -1;
+
+        public BTreeNode(BTreeNode _parentNode, BTreeNodePrecondition _precondition)
+        {
+            m_ParentNode = _parentNode;
+            m_NodePrecondition = _precondition;
+        }
 
         public bool Evaluate(BTreeInputData _input)
         {
@@ -39,16 +46,14 @@ namespace Battle.Logic.AI.BTree
             return _DoTick(_input, out _output);
         }
 
-        public BTreeNode AddChildNode(BTreeNode _childNode)
+        public void AddChildNode(BTreeNode _childNode)
         {
-            if (m_ChildCount>= MaxChildNodeCount)
+            if (m_ChildCount>= MAX_CHILD_NODE_COUNT)
             {
                 Debugger.LogError("添加行为树节点失败：超过最大数量16");
-                return this;
             }
             m_ChildNodes.Add(_childNode);
             m_ChildCount++;
-            return this;
         }
 
         public BTreeNode SetNodePrecondition(BTreeNodePrecondition _NodePrecondition)
@@ -82,5 +87,9 @@ namespace Battle.Logic.AI.BTree
             return BTreeRunningStatus.Finish;
         }
 
-    }
+        protected bool _CheckIndex(int _index)
+		{
+			return _index >= 0 && _index < m_ChildCount;
+		}
+}
 }
