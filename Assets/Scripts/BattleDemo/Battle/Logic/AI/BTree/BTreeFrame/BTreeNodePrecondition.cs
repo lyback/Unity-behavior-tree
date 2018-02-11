@@ -2,29 +2,29 @@
 
 namespace BTreeFrame
 {
-    public abstract class BTreeNodePrecondition
+    public abstract class BTreeNodePrecondition<T> where T : BTreeTemplateData
     {
-        public abstract bool ExternalCondition(BTreeInputData _input);
+        public abstract bool ExternalCondition(T _input);
     }
 
-    public class BTreeNodePreconditionTRUE : BTreeNodePrecondition
+    public class BTreeNodePreconditionTRUE<T> : BTreeNodePrecondition<T> where T : BTreeTemplateData
     {
-        public override bool ExternalCondition(BTreeInputData _input)
+        public override bool ExternalCondition(T _input)
         {
             return true;
         }
     }
-    public class BTreeNodePreconditionFALSE : BTreeNodePrecondition
+    public class BTreeNodePreconditionFALSE<T> : BTreeNodePrecondition<T> where T : BTreeTemplateData
     {
-        public override bool ExternalCondition(BTreeInputData _input)
+        public override bool ExternalCondition(T _input)
         {
             return false;
         }
     }
-    public class BTreeNodePreconditionNOT : BTreeNodePrecondition
+    public class BTreeNodePreconditionNOT<T> : BTreeNodePrecondition<T> where T : BTreeTemplateData
     {
-        private BTreeNodePrecondition m_Precondition;
-        public BTreeNodePreconditionNOT(BTreeNodePrecondition _precondition)
+        private BTreeNodePrecondition<T> m_Precondition;
+        public BTreeNodePreconditionNOT(BTreeNodePrecondition<T> _precondition)
         {
             if (_precondition == null)
             {
@@ -32,16 +32,16 @@ namespace BTreeFrame
             }
             m_Precondition = _precondition;
         }
-        public override bool ExternalCondition(BTreeInputData _input)
+        public override bool ExternalCondition(T _input)
         {
             return m_Precondition.ExternalCondition(_input);
         }
     }
-    public class BTreeNodePreconditionAND : BTreeNodePrecondition
+    public class BTreeNodePreconditionAND<T> : BTreeNodePrecondition<T> where T : BTreeTemplateData
     {
-        private BTreeNodePrecondition m_Precondition1;
-        private BTreeNodePrecondition m_Precondition2;
-        public BTreeNodePreconditionAND(BTreeNodePrecondition _precondition1, BTreeNodePrecondition _precondition2)
+        private BTreeNodePrecondition<T> m_Precondition1;
+        private BTreeNodePrecondition<T> m_Precondition2;
+        public BTreeNodePreconditionAND(BTreeNodePrecondition<T> _precondition1, BTreeNodePrecondition<T> _precondition2)
         {
             if (_precondition1 == null || _precondition2 == null)
             {
@@ -50,16 +50,16 @@ namespace BTreeFrame
             m_Precondition1 = _precondition1;
             m_Precondition2 = _precondition2;
         }
-        public override bool ExternalCondition(BTreeInputData _input)
+        public override bool ExternalCondition(T _input)
         {
             return m_Precondition1.ExternalCondition(_input) && m_Precondition2.ExternalCondition(_input);
         }
     }
-    public class BTreeNodePreconditionOR : BTreeNodePrecondition
+    public class BTreeNodePreconditionOR<T> : BTreeNodePrecondition<T> where T : BTreeTemplateData
     {
-        private BTreeNodePrecondition m_Precondition1;
-        private BTreeNodePrecondition m_Precondition2;
-        public BTreeNodePreconditionOR(BTreeNodePrecondition _precondition1, BTreeNodePrecondition _precondition2)
+        private BTreeNodePrecondition<T> m_Precondition1;
+        private BTreeNodePrecondition<T> m_Precondition2;
+        public BTreeNodePreconditionOR(BTreeNodePrecondition<T> _precondition1, BTreeNodePrecondition<T> _precondition2)
         {
             if (_precondition1 == null || _precondition2 == null)
             {
@@ -68,7 +68,7 @@ namespace BTreeFrame
             m_Precondition1 = _precondition1;
             m_Precondition2 = _precondition2;
         }
-        public override bool ExternalCondition(BTreeInputData _input)
+        public override bool ExternalCondition(T _input)
         {
             return m_Precondition1.ExternalCondition(_input) || m_Precondition2.ExternalCondition(_input);
         }

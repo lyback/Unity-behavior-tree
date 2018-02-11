@@ -3,50 +3,52 @@ using System.Collections.Generic;
 
 namespace BTreeFrame
 {
-    public class BTreeNode
-    {
+    public class BTreeNode<T, P> 
+        where T : BTreeTemplateData
+        where P : BTreeTemplateData
+    {   
         //节点名称
         protected string m_Name = "UNNAMED";
         //子节点
-        protected List<BTreeNode> m_ChildNodes = new List<BTreeNode>();
+        protected List<BTreeNode<T, P>> m_ChildNodes = new List<BTreeNode<T, P>>();
         //子节点数
         protected int m_ChildCount = 0;
         //父节点
-        protected BTreeNode m_ParentNode { get; set; }
+        protected BTreeNode<T, P> m_ParentNode { get; set; }
         //上一个激活的节点
-        public BTreeNode m_LastActiveNode { get; private set; }
+        public BTreeNode<T, P> m_LastActiveNode { get; private set; }
         //当前激活的节点
-        public BTreeNode m_ActiveNode { get; private set; }
+        public BTreeNode<T, P> m_ActiveNode { get; private set; }
         //前提条件
-        protected BTreeNodePrecondition m_NodePrecondition;
+        protected BTreeNodePrecondition<T> m_NodePrecondition;
 
         protected const int MAX_CHILD_NODE_COUNT = 16;
         protected const int INVALID_CHILD_NODE_INDEX = -1;
 
-        public BTreeNode(BTreeNode _parentNode, BTreeNodePrecondition _precondition)
+        public BTreeNode(BTreeNode<T, P> _parentNode, BTreeNodePrecondition<T> _precondition)
         {
             m_ParentNode = _parentNode;
             m_NodePrecondition = _precondition;
         }
 
-        public bool Evaluate(BTreeInputData _input)
+        public bool Evaluate(T _input)
         {
             return (m_NodePrecondition == null 
                 || m_NodePrecondition.ExternalCondition(_input)) 
                 && _DoEvaluate(_input);
         }
 
-        public void Transition(BTreeInputData _input)
+        public void Transition(T _input)
         {
             _DoTransition(_input);
         }
 
-        public BTreeRunningStatus Tick(BTreeInputData _input, out BTreeOutputData _output)
+        public BTreeRunningStatus Tick(T _input, out P _output)
         {
             return _DoTick(_input, out _output);
         }
 
-        public void AddChildNode(BTreeNode _childNode)
+        public void AddChildNode(BTreeNode<T, P> _childNode)
         {
             if (m_ChildCount>= MAX_CHILD_NODE_COUNT)
             {
@@ -56,7 +58,7 @@ namespace BTreeFrame
             m_ChildCount++;
         }
 
-        public BTreeNode SetNodePrecondition(BTreeNodePrecondition _NodePrecondition)
+        public BTreeNode<T, P> SetNodePrecondition(BTreeNodePrecondition<T> _NodePrecondition)
         {
             if (m_NodePrecondition != _NodePrecondition)
             {
@@ -65,7 +67,7 @@ namespace BTreeFrame
             return this;
         }
 
-        public void SetActiveNode(BTreeNode _node)
+        public void SetActiveNode(BTreeNode<T, P> _node)
         {
             m_LastActiveNode = m_ActiveNode;
             m_ActiveNode = _node;
@@ -73,15 +75,15 @@ namespace BTreeFrame
                 m_ParentNode.SetActiveNode(_node);
         }
 
-        protected virtual bool _DoEvaluate(BTreeInputData _input)
+        protected virtual bool _DoEvaluate(T _input)
         {
             return true;
         }
-        protected virtual void _DoTransition(BTreeInputData _input)
+        protected virtual void _DoTransition(T _input)
         {
             return;
         }
-        protected virtual BTreeRunningStatus _DoTick(BTreeInputData _input, out BTreeOutputData _output)
+        protected virtual BTreeRunningStatus _DoTick(T _input, out P _output)
         {
             _output = null;
             return BTreeRunningStatus.Finish;
