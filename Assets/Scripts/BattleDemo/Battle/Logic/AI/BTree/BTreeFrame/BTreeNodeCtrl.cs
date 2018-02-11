@@ -15,7 +15,7 @@ namespace BTreeFrame
     {
         protected int m_CurrentSelectIndex = INVALID_CHILD_NODE_INDEX;
         protected int m_LastSelectIndex = INVALID_CHILD_NODE_INDEX;
-        public BTreeNodePrioritySelector(BTreeNode<T, P> _parentNode, BTreeNodePrecondition<T> _precondition)
+        public BTreeNodePrioritySelector(BTreeNode<T, P> _parentNode, BTreeNodePrecondition<T> _precondition = null)
             : base(_parentNode, _precondition)
         {
 
@@ -81,7 +81,7 @@ namespace BTreeFrame
         where T : BTreeTemplateData
         where P : BTreeTemplateData
     {
-        public BTreeNodeNonePrioritySelector(BTreeNode<T, P> _parentNode, BTreeNodePrecondition<T> _precondition)
+        public BTreeNodeNonePrioritySelector(BTreeNode<T, P> _parentNode, BTreeNodePrecondition<T> _precondition = null)
             : base(_parentNode, _precondition)
         {
         }
@@ -111,7 +111,7 @@ namespace BTreeFrame
     {
         private int m_CurrentNodeIndex = INVALID_CHILD_NODE_INDEX;
 
-        public BTreeNodeSequence(BTreeNode<T, P> _parentNode, BTreeNodePrecondition<T> _precondition)
+        public BTreeNodeSequence(BTreeNode<T, P> _parentNode, BTreeNodePrecondition<T> _precondition = null)
             : base(_parentNode, _precondition)
         {
         }
@@ -191,7 +191,7 @@ namespace BTreeFrame
         private BTreeParallelFinishCondition m_FinishCondition;
         private List<BTreeRunningStatus> m_ChildNodeSatuses = new List<BTreeRunningStatus>();
 
-        public BTreeNodeParallel(BTreeNode<T, P> _parentNode, BTreeNodePrecondition<T> _precondition)
+        public BTreeNodeParallel(BTreeNode<T, P> _parentNode, BTreeNodePrecondition<T> _precondition = null)
             : base(_parentNode, _precondition)
         {
         }
@@ -296,7 +296,7 @@ namespace BTreeFrame
         private int m_LoopCount;
         private int m_CurrentCount;
 
-        public BTreeNodeLoop(BTreeNode<T, P> _parentNode, BTreeNodePrecondition<T> _precondition, int _loopCount = INFINITELOOP)
+        public BTreeNodeLoop(BTreeNode<T, P> _parentNode, BTreeNodePrecondition<T> _precondition = null, int _loopCount = INFINITELOOP)
             : base(_parentNode, _precondition)
         {
             m_LoopCount = _loopCount;

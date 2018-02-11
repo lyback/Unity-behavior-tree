@@ -8,7 +8,7 @@ namespace BTreeFrame
         where P : BTreeTemplateData
     {   
         //节点名称
-        protected string m_Name = "UNNAMED";
+        public string m_Name = "UNNAMED";
         //子节点
         protected List<BTreeNode<T, P>> m_ChildNodes = new List<BTreeNode<T, P>>();
         //子节点数
