@@ -1,7 +1,7 @@
 ﻿using System;
 using FSM;
 
-namespace Battle.Logic
+namespace Battle.Logic.AI.FSM
 {
     class AttackState : FSMStateBase<TroopData, BattleData>
     {
@@ -45,7 +45,7 @@ namespace Battle.Logic
             }
             if (troop.norAtkCD == 0)
             {
-                troop.state = TroopAnimState.Attack;
+                troop.state = (int)TroopAnimState.Attack;
                 troop.dir_x = tarTroop.x;
                 troop.dir_y = tarTroop.y;
                 troop.inPrepose = true;

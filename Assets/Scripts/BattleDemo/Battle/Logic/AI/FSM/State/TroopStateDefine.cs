@@ -1,17 +1,19 @@
-﻿using System;
-
-public enum TroopFSMState
+﻿namespace Battle.Logic.AI.FSM
 {
-    End = 0,
-    Start,
-    FindTarget,
-    Move,
-    Attack,
-}
-public enum TroopAnimState
-{
-    Idle,
-    Move,
-    Attack,
-    Die,
+    public enum TroopFSMState
+    {
+        End = 0,
+        Start,
+        FindTarget,
+        Move,
+        Attack,
+    }
+    //需要和BattleViewDefine中的TroopAnimState一一对应
+    public enum TroopAnimState
+    {
+        Idle = 1,
+        Move = 2,
+        Attack = 3,
+        Die = 4,
+    }
 }

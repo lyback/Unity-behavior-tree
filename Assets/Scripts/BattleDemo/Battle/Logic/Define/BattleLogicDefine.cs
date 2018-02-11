@@ -7,6 +7,7 @@ namespace Battle.Logic
         Playing = 1,
         End = 2,
     }
+    
     public class BattleLogicDefine
     {
 #if ISSERVER

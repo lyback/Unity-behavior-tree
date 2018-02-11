@@ -1,6 +1,6 @@
 ﻿using System;
 using FSM;
-namespace Battle.Logic
+namespace Battle.Logic.AI.FSM
 {
     class StartState : FSMStateBase<TroopData, BattleData>
     {
@@ -16,7 +16,7 @@ namespace Battle.Logic
             //死亡
             if (data.count==0)
             {
-                data.state = TroopAnimState.Die;
+                data.state = (int)TroopAnimState.Die;
                 return TroopFSMState.End;
             }
             //前置动作
@@ -31,14 +31,14 @@ namespace Battle.Logic
                     //发射武器
                     data.inPrepose = false;
                 }
-                data.state = TroopAnimState.Idle;
+                data.state = (int)TroopAnimState.Idle;
                 return TroopFSMState.End;
             }
             //普攻CD
             if (data.norAtkCD > 0)
             {
                 data.norAtkCD -= 1;
-                data.state = TroopAnimState.Idle;
+                data.state = (int)TroopAnimState.Idle;
                 return TroopFSMState.End;
             }
             //寻找目标

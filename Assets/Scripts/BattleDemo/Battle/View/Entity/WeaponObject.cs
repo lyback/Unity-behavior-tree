@@ -1,16 +1,20 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-using Battle.Logic;
+﻿using Battle.Logic;
 
-public class WeaponObject : UnitEntityBase<WeaponData> {
-
-    public override void Init(WeaponData _data)
+namespace Battle.View
+{
+    public class WeaponObject : UnitEntityBase<WeaponData>
     {
-        base.Init(_data);
-    }
-    public override void CreateInit()
-    {
-        base.CreateInit();
 
+        public override void Init(WeaponData _data)
+        {
+            base.Init(_data);
+        }
+        public override void CreateInit()
+        {
+            base.CreateInit();
+
+        }
     }
 }
+
+

@@ -1,19 +1,19 @@
 ﻿
 //执行节点基类
-namespace Battle.Logic.AI.BTree
+namespace BTree
 {
     public class BTreeNodeAction : BTreeNode
     {
         private BTreeNodeStatus m_Status;
         private bool m_NeedExit = false;
 
-        public BTreeNodeAction(BTreeNode _parentNode, BTreeNodePrecondition _precondition) 
+        public BTreeNodeAction(BTreeNode _parentNode, BTreeNodePrecondition _precondition = null) 
             : base(_parentNode, _precondition)
         {
         }
 
         protected virtual void _DoEnter(BTreeInputData _input) { }
-        protected virtual BTreeRunningStatus _DoExecute(BTreeInputData _input, out BTreeOutputData _output) { return BTreeRunningStatus.Finish; }
+        protected virtual BTreeRunningStatus _DoExecute(BTreeInputData _input, out BTreeOutputData _output) { _output = null; return BTreeRunningStatus.Finish; }
         protected virtual void _DoExit(BTreeInputData _input, BTreeRunningStatus _status) { }
 
 
@@ -30,6 +30,7 @@ namespace Battle.Logic.AI.BTree
 
         protected override BTreeRunningStatus _DoTick(BTreeInputData _input, out BTreeOutputData _output)
         {
+            _output = null;
             BTreeRunningStatus runningStatus = BTreeRunningStatus.Finish;
             if (m_Status == BTreeNodeStatus.Ready)
             {

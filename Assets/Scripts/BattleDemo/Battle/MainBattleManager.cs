@@ -1,7 +1,7 @@
 ﻿using Battle.Logic;
+using Battle.View;
 using System.Collections.Generic;
 using UnityEngine;
-
 class MainBattleManager : Singleton<MainBattleManager>
 {
     private BattleResManager m_BattleResManager;

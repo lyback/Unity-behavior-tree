@@ -1,7 +1,7 @@
 ﻿
 using System.Collections.Generic;
 
-namespace Battle.Logic.AI.BTree
+namespace BTree
 {
     public class BTreeNode
     {
@@ -83,7 +83,7 @@ namespace Battle.Logic.AI.BTree
         }
         protected virtual BTreeRunningStatus _DoTick(BTreeInputData _input, out BTreeOutputData _output)
         {
-            _output = new BTreeOutputData();
+            _output = null;
             return BTreeRunningStatus.Finish;
         }
 

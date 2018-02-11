@@ -1,5 +1,5 @@
 ﻿
-namespace Battle.Logic.AI.BTree
+namespace BTree
 {
     public class BTreeRoot {
 

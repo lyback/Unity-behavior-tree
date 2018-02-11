@@ -2,7 +2,7 @@
 //控制节点
 using System.Collections.Generic;
 
-namespace Battle.Logic.AI.BTree
+namespace BTree
 {
     /// <summary>
     /// class:      带优先级的选择节点
@@ -43,6 +43,7 @@ namespace Battle.Logic.AI.BTree
         }
         protected override BTreeRunningStatus _DoTick(BTreeInputData _input, out BTreeOutputData _output)
         {
+            _output = null;
             BTreeRunningStatus RunningStatus = BTreeRunningStatus.Finish;
             if (_CheckIndex(m_CurrentSelectIndex))
             {
@@ -144,7 +145,6 @@ namespace Battle.Logic.AI.BTree
         protected override BTreeRunningStatus _DoTick(BTreeInputData _input, out BTreeOutputData _output)
         {
             BTreeRunningStatus runningStatus = BTreeRunningStatus.Finish;
-
             //First Time
             if (m_CurrentNodeIndex == INVALID_CHILD_NODE_INDEX)
             {
@@ -216,6 +216,7 @@ namespace Battle.Logic.AI.BTree
 
         protected override BTreeRunningStatus _DoTick(BTreeInputData _input, out BTreeOutputData _output)
         {
+            _output = new BTreeOutputData();
             int finishedChildCount = 0;
             for (int i = 0; i < m_ChildCount; i++)
             {
@@ -320,6 +321,7 @@ namespace Battle.Logic.AI.BTree
         }
         protected override BTreeRunningStatus _DoTick(BTreeInputData _input, out BTreeOutputData _output)
         {
+            _output = null;
             BTreeRunningStatus runningStatus = BTreeRunningStatus.Finish;
             if (_CheckIndex(0))
             {

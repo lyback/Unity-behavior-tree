@@ -1,7 +1,7 @@
 ﻿using System;
 using FSM;
 
-namespace Battle.Logic
+namespace Battle.Logic.AI.FSM
 {
     class MoveState : FSMStateBase<TroopData, BattleData>
     {
@@ -23,12 +23,12 @@ namespace Battle.Logic
                 {
                     Debugger.LogError("MoveState 未找到目标");
                 }
-                troop.state = TroopAnimState.Move;
+                troop.state = (int)TroopAnimState.Move;
                 return MoveToTarget(ref troop, tarTroop);
             }
             else
             {
-                troop.state = TroopAnimState.Move;
+                troop.state = (int)TroopAnimState.Move;
                 return MoveToCenter(ref troop);
             }
         }

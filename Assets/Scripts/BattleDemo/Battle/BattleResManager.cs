@@ -1,8 +1,8 @@
 ﻿
 using Neatly;
 using UnityEngine;
-using System.Collections.Generic;
 using Battle.Logic;
+using Battle.View;
 
 public sealed class BattleResManager : NeatlyBehaviour
 {

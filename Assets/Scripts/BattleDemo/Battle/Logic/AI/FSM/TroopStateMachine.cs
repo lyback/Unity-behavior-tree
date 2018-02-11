@@ -1,6 +1,6 @@
 ﻿using FSM;
 using System;
-namespace Battle.Logic
+namespace Battle.Logic.AI.FSM
 {
     public class TroopStateMachine : FSMStateMachineBase<TroopData,BattleData>
     {

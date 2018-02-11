@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using Battle.Logic.AI.FSM;
 namespace Battle.Logic
 {
     public class TroopLogicCtrl
@@ -62,7 +62,7 @@ namespace Battle.Logic
         {
             foreach (var kv in m_AllTroopDic)
             {
-                kv.Value.state = TroopAnimState.Idle;
+                kv.Value.state = (int)TroopAnimState.Idle;
             }
         }
         private bool CheckTroopCount(List<TroopData> _TroopList)

@@ -1,5 +1,4 @@
 ﻿using FSM;
-
 namespace Battle.Logic
 {
     public class TroopData : FSMDataBase
@@ -34,7 +33,7 @@ namespace Battle.Logic
         //是否是进攻方
         public bool isAtkTroop;
         //部队状态
-        public TroopAnimState state;
+        public int state;
         //兵种类型
         public SoldierType type;
         //是否有加入的部队
