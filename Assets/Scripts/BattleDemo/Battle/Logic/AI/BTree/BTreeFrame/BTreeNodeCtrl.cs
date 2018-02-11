@@ -2,7 +2,7 @@
 //控制节点
 using System.Collections.Generic;
 
-namespace BTree
+namespace BTreeFrame
 {
     /// <summary>
     /// class:      带优先级的选择节点

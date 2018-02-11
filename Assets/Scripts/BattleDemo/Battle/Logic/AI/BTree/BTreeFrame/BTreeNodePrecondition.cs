@@ -1,6 +1,6 @@
 ﻿
 
-namespace BTree
+namespace BTreeFrame
 {
     public abstract class BTreeNodePrecondition
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using FSM;
+using FSMFrame;
 namespace Battle.Logic.AI.FSM
 {
     class FindTargetState : FSMStateBase<TroopData, BattleData>

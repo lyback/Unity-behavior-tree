@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FSM
+namespace FSMFrame
 {
     public class FSMStateBase<T,P>
         where T : FSMDataBase

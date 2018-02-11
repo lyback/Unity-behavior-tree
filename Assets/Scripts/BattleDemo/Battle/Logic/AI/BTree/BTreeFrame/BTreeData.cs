@@ -1,5 +1,5 @@
 ﻿
-namespace BTree
+namespace BTreeFrame
 {
     public class BTreeInputData
     {

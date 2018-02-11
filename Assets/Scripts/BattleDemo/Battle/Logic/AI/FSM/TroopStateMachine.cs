@@ -1,4 +1,4 @@
-﻿using FSM;
+﻿using FSMFrame;
 using System;
 namespace Battle.Logic.AI.FSM
 {

@@ -1,6 +1,6 @@
 ﻿using Neatly;
-
-namespace FSM
+using FSMFrame;
+namespace Battle.View
 {
     public class FSMEntityBase<T> : NeatlyBehaviour where T: FSMDataBase
     {

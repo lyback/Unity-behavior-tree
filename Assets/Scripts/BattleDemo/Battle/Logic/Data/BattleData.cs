@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using FSM;
+using FSMFrame;
 namespace Battle.Logic
 {
     public class BattleData : FSMDataMgrBase

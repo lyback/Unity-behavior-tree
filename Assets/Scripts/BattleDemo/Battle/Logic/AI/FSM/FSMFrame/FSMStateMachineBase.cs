@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace FSM
+namespace FSMFrame
 {
     public class FSMStateMachineBase<T, P>
         where T : FSMDataBase

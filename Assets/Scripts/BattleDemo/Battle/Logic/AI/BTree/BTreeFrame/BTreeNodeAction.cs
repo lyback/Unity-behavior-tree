@@ -1,6 +1,6 @@
 ﻿
 //执行节点基类
-namespace BTree
+namespace BTreeFrame
 {
     public class BTreeNodeAction : BTreeNode
     {

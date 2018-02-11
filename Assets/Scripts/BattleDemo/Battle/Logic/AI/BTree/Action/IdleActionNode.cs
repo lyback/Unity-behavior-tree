@@ -1,4 +1,4 @@
-﻿using BTree;
+﻿using BTreeFrame;
 
 namespace Battle.Logic.AI.BTree
 {

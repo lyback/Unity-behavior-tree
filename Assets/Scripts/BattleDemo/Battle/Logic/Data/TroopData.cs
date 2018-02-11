@@ -1,4 +1,4 @@
-﻿using FSM;
+﻿using FSMFrame;
 namespace Battle.Logic
 {
     public class TroopData : FSMDataBase

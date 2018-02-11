@@ -1,6 +1,5 @@
-﻿using System;
-
-namespace FSM
+﻿
+namespace FSMFrame
 {
     public class FSMDataBase
     {

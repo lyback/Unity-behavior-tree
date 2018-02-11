@@ -1,4 +1,4 @@
-﻿namespace FSM
+﻿namespace FSMFrame
 {
     public class FSMDataMgrBase
     {

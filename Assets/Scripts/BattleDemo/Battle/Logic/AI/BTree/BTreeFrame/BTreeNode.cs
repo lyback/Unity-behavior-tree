@@ -1,7 +1,7 @@
 ﻿
 using System.Collections.Generic;
 
-namespace BTree
+namespace BTreeFrame
 {
     public class BTreeNode
     {
