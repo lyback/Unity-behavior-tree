@@ -28,6 +28,10 @@ namespace Battle.Logic.AI.BTree
             var y = troop.y;
             var tar_x = target.x;
             var tar_y = target.y;
+
+            outTroop.dir_x = tar_x;
+            outTroop.dir_y = tar_y;
+
             if (x > tar_x)
             {
                 outTroop.x = x - 1;

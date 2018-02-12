@@ -11,7 +11,14 @@ namespace Battle.Logic.AI.BTree
 
         protected override BTreeRunningStatus _DoExecute(MyInputData _input, ref MyOutputData _output)
         {
+            var troop = _input.troop;
             var outTroop = _output.troop;
+            var target = _input.battleData.mAllTroopDic[troop.targetKey];
+            var tar_x = target.x;
+            var tar_y = target.y;
+
+            outTroop.dir_x = tar_x;
+            outTroop.dir_y = tar_y;
 
             outTroop.state = (int)TroopAnimState.Attack;
             outTroop.inPrepose = true;

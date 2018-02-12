@@ -4,7 +4,7 @@ using Battle.Logic;
 public class GameMain : MonoBehaviour
 {
 
-    public int speed = 4;
+    public int speed = 10;
     // Use this for initialization
     void Awake()
     {
@@ -15,7 +15,7 @@ public class GameMain : MonoBehaviour
     }
     void Start()
     {
-        MainBattleManager.Instance.SetSpeed(4);
+        MainBattleManager.Instance.SetSpeed(speed);
     }
     void Update()
     {
