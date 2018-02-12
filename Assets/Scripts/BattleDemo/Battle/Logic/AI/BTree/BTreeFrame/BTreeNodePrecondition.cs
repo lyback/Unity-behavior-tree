@@ -34,7 +34,7 @@ namespace BTreeFrame
         }
         public override bool ExternalCondition(T _input)
         {
-            return m_Precondition.ExternalCondition(_input);
+            return !m_Precondition.ExternalCondition(_input);
         }
     }
     public class BTreeNodePreconditionAND<T> : BTreeNodePrecondition<T> where T : BTreeTemplateData

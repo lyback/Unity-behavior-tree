@@ -29,7 +29,7 @@ namespace Battle.Logic
         //是否处于战斗状态
         public bool inWar;
         //目标部队id
-        public uint targetKey;
+        public uint targetKey = 0;
         //是否是进攻方
         public bool isAtkTroop;
         //部队状态

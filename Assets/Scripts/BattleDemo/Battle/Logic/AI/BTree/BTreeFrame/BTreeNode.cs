@@ -25,7 +25,7 @@ namespace BTreeFrame
         protected const int MAX_CHILD_NODE_COUNT = 16;
         protected const int INVALID_CHILD_NODE_INDEX = -1;
 
-        public BTreeNode(BTreeNode<T, P> _parentNode, BTreeNodePrecondition<T> _precondition)
+        public BTreeNode(BTreeNode<T, P> _parentNode, BTreeNodePrecondition<T> _precondition = null)
         {
             m_ParentNode = _parentNode;
             m_NodePrecondition = _precondition;
@@ -43,16 +43,17 @@ namespace BTreeFrame
             _DoTransition(_input);
         }
 
-        public BTreeRunningStatus Tick(T _input, out P _output)
+        public BTreeRunningStatus Tick(T _input, ref P _output)
         {
-            return _DoTick(_input, out _output);
+            return _DoTick(_input, ref _output);
         }
 
-        public void AddChildNode(BTreeNode<T, P> _childNode)
+        public virtual void AddChildNode(BTreeNode<T, P> _childNode)
         {
             if (m_ChildCount>= MAX_CHILD_NODE_COUNT)
             {
                 Debugger.LogError("添加行为树节点失败：超过最大数量16");
+                return;
             }
             m_ChildNodes.Add(_childNode);
             m_ChildCount++;
@@ -83,9 +84,8 @@ namespace BTreeFrame
         {
             return;
         }
-        protected virtual BTreeRunningStatus _DoTick(T _input, out P _output)
+        protected virtual BTreeRunningStatus _DoTick(T _input, ref P _output)
         {
-            _output = null;
             return BTreeRunningStatus.Finish;
         }
 

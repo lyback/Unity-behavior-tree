@@ -6,7 +6,7 @@ namespace BTreeFrame
         where T : BTreeTemplateData
         where P : BTreeTemplateData
     {
-        private BTreeNodeStatus m_Status;
+        private BTreeNodeStatus m_Status = BTreeNodeStatus.Ready;
         private bool m_NeedExit = false;
 
         public BTreeNodeAction(BTreeNode<T, P> _parentNode, BTreeNodePrecondition<T> _precondition = null) 
@@ -15,7 +15,7 @@ namespace BTreeFrame
         }
 
         protected virtual void _DoEnter(T _input) { }
-        protected virtual BTreeRunningStatus _DoExecute(T _input, out P _output) { _output = null; return BTreeRunningStatus.Finish; }
+        protected virtual BTreeRunningStatus _DoExecute(T _input, ref P _output) { return BTreeRunningStatus.Finish; }
         protected virtual void _DoExit(T _input, BTreeRunningStatus _status) { }
 
 
@@ -30,9 +30,8 @@ namespace BTreeFrame
             m_NeedExit = false;
         }
 
-        protected override BTreeRunningStatus _DoTick(T _input, out P _output)
+        protected override BTreeRunningStatus _DoTick(T _input, ref P _output)
         {
-            _output = null;
             BTreeRunningStatus runningStatus = BTreeRunningStatus.Finish;
             if (m_Status == BTreeNodeStatus.Ready)
             {
@@ -43,7 +42,7 @@ namespace BTreeFrame
             }
             if (m_Status == BTreeNodeStatus.Running)
             {
-                runningStatus = _DoExecute(_input, out _output);
+                runningStatus = _DoExecute(_input, ref _output);
                 SetActiveNode(this);
                 if (runningStatus == BTreeRunningStatus.Finish || runningStatus == BTreeRunningStatus.Error)
                 {

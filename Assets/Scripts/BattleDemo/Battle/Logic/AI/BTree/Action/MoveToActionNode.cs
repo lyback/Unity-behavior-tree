@@ -9,63 +9,55 @@ namespace Battle.Logic.AI.BTree
         {
         }
 
-        protected override BTreeRunningStatus _DoExecute(MyInputData _input, out MyOutputData _output)
+        protected override BTreeRunningStatus _DoExecute(MyInputData _input, ref MyOutputData _output)
         {
-            _output = null;
-
-            int dis = MathHelper.DistanceV2(_input.x, _input.y, _input.tar_x, _input.tar_y);
-            if (dis<=0)
+            if (_input.troop.targetKey!=0)
             {
-                _output = new MyOutputData();
-                _output.x = _input.tar_x;
-                _output.y = _input.tar_y;
-                return BTreeRunningStatus.Finish;
+                _output.troop.state = (int)TroopAnimState.Move;
+                MoveToTarget(_input, ref _output);
             }
-            else
-            {
-                MoveToTarget(_input, out _output);
-            }
-            return BTreeRunningStatus.Executing;
+            return BTreeRunningStatus.Finish;
         }
 
-        private void MoveToTarget(MyInputData _input, out MyOutputData _output)
+        private void MoveToTarget(MyInputData _input, ref MyOutputData _output)
         {
-            _output = new MyOutputData();
-            var x = _input.x;
-            var y = _input.y;
-            var tar_x = _input.tar_x;
-            var tar_y = _input.tar_y;
-
+            var troop = _input.troop;
+            var outTroop = _output.troop;
+            var target = _input.battleData.mAllTroopDic[troop.targetKey];
+            var x = troop.x;
+            var y = troop.y;
+            var tar_x = target.x;
+            var tar_y = target.y;
             if (x > tar_x)
             {
-                _output.x = x - 1;
-                if (_output.x < tar_x)
+                outTroop.x = x - 1;
+                if (outTroop.x < tar_x)
                 {
-                    _output.x = tar_x;
+                    outTroop.x = tar_x;
                 }
             }
             else if (x < tar_x)
             {
-                _output.x = x + 1;
-                if (_output.x > tar_x)
+                outTroop.x = x + 1;
+                if (outTroop.x > tar_x)
                 {
-                    _output.x = tar_x;
+                    outTroop.x = tar_x;
                 }
             }
             if (y > tar_y)
             {
-                _output.y = y - 1;
-                if (_output.y < tar_y)
+                outTroop.y = y - 1;
+                if (outTroop.y < tar_y)
                 {
-                    _output.y = tar_y;
+                    outTroop.y = tar_y;
                 }
             }
             else if (y < tar_y)
             {
-                _output.y = y + 1;
-                if (_output.y > tar_y)
+                outTroop.y = y + 1;
+                if (outTroop.y > tar_y)
                 {
-                    _output.y = tar_y;
+                    outTroop.y = tar_y;
                 }
             }
         }

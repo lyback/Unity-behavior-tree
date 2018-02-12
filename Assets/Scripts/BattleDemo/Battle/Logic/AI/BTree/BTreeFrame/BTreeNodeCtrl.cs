@@ -43,9 +43,8 @@ namespace BTreeFrame
             }
             m_LastSelectIndex = INVALID_CHILD_NODE_INDEX;
         }
-        protected override BTreeRunningStatus _DoTick(T _input, out P _output)
+        protected override BTreeRunningStatus _DoTick(T _input, ref P _output)
         {
-            _output = null;
             BTreeRunningStatus RunningStatus = BTreeRunningStatus.Finish;
             if (_CheckIndex(m_CurrentSelectIndex))
             {
@@ -62,7 +61,7 @@ namespace BTreeFrame
             if (_CheckIndex(m_LastSelectIndex))
             {
                 BTreeNode<T, P> bn = m_ChildNodes[m_LastSelectIndex];
-                RunningStatus = bn.Tick(_input, out _output);
+                RunningStatus = bn.Tick(_input, ref _output);
                 if (RunningStatus == BTreeRunningStatus.Finish)
                 {
                     m_LastSelectIndex = INVALID_CHILD_NODE_INDEX;
@@ -148,7 +147,7 @@ namespace BTreeFrame
             m_CurrentNodeIndex = INVALID_CHILD_NODE_INDEX;
         }
 
-        protected override BTreeRunningStatus _DoTick(T _input, out P _output)
+        protected override BTreeRunningStatus _DoTick(T _input, ref P _output)
         {
             BTreeRunningStatus runningStatus = BTreeRunningStatus.Finish;
             //First Time
@@ -157,7 +156,7 @@ namespace BTreeFrame
                 m_CurrentNodeIndex = 0;
             }
             BTreeNode<T, P> bn = m_ChildNodes[m_CurrentNodeIndex];
-            runningStatus = bn.Tick(_input, out _output);
+            runningStatus = bn.Tick(_input, ref _output);
             if (runningStatus == BTreeRunningStatus.Finish)
             {
                 m_CurrentNodeIndex++;
@@ -203,7 +202,7 @@ namespace BTreeFrame
                 BTreeNode<T, P> bn = m_ChildNodes[i];
                 if (m_ChildNodeSatuses[i] == BTreeRunningStatus.Executing)
                 {
-                    if (bn.Evaluate(_input))
+                    if (!bn.Evaluate(_input))
                     {
                         return false;
                     }
@@ -222,9 +221,8 @@ namespace BTreeFrame
             }
         }
 
-        protected override BTreeRunningStatus _DoTick(T _input, out P _output)
+        protected override BTreeRunningStatus _DoTick(T _input, ref P _output)
         {
-            _output = null;
             int finishedChildCount = 0;
             for (int i = 0; i < m_ChildCount; i++)
             {
@@ -233,7 +231,7 @@ namespace BTreeFrame
                 {
                     if (m_ChildNodeSatuses[i] == BTreeRunningStatus.Executing)
                     {
-                        m_ChildNodeSatuses[i] = bn.Tick(_input, out _output);
+                        m_ChildNodeSatuses[i] = bn.Tick(_input, ref _output);
                     }
                     if (m_ChildNodeSatuses[i] != BTreeRunningStatus.Executing)
                     {
@@ -245,7 +243,7 @@ namespace BTreeFrame
                 {
                     if (m_ChildNodeSatuses[i] == BTreeRunningStatus.Executing)
                     {
-                        m_ChildNodeSatuses[i] = bn.Tick(_input, out _output);
+                        m_ChildNodeSatuses[i] = bn.Tick(_input, ref _output);
                     }
                     if (m_ChildNodeSatuses[i] != BTreeRunningStatus.Executing)
                     {
@@ -265,7 +263,7 @@ namespace BTreeFrame
             return BTreeRunningStatus.Executing;
         }
 
-        public new void AddChildNode(BTreeNode<T, P> _childNode)
+        public override void AddChildNode(BTreeNode<T, P> _childNode)
         {
             base.AddChildNode(_childNode);
             m_ChildNodeSatuses.Add(BTreeRunningStatus.Executing);
@@ -329,14 +327,13 @@ namespace BTreeFrame
             }
             m_CurrentCount = 0;
         }
-        protected override BTreeRunningStatus _DoTick(T _input, out P _output)
+        protected override BTreeRunningStatus _DoTick(T _input, ref P _output)
         {
-            _output = null;
             BTreeRunningStatus runningStatus = BTreeRunningStatus.Finish;
             if (_CheckIndex(0))
             {
                 BTreeNode<T, P> bn = m_ChildNodes[0];
-                runningStatus = bn.Tick(_input, out _output);
+                runningStatus = bn.Tick(_input, ref _output);
 
                 if (runningStatus == BTreeRunningStatus.Finish)
                 {

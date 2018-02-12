@@ -14,9 +14,8 @@ namespace Battle.Logic.AI.BTree
 
         }
 
-        protected override BTreeRunningStatus _DoExecute(MyInputData _input, out MyOutputData _output)
+        protected override BTreeRunningStatus _DoExecute(MyInputData _input, ref MyOutputData _output)
         {
-            _output = null;
             return BTreeRunningStatus.Executing;
         }
     }
