@@ -4,6 +4,7 @@ namespace BTreeFrame
 {
     public abstract class BTreeNodePrecondition<T> where T : BTreeTemplateData
     {
+        public BTreeNodePrecondition(){}
         public abstract bool ExternalCondition(T _input);
     }
 
@@ -39,38 +40,60 @@ namespace BTreeFrame
     }
     public class BTreeNodePreconditionAND<T> : BTreeNodePrecondition<T> where T : BTreeTemplateData
     {
-        private BTreeNodePrecondition<T> m_Precondition1;
-        private BTreeNodePrecondition<T> m_Precondition2;
-        public BTreeNodePreconditionAND(BTreeNodePrecondition<T> _precondition1, BTreeNodePrecondition<T> _precondition2)
+        private BTreeNodePrecondition<T>[] m_Preconditions;
+        public BTreeNodePreconditionAND(params BTreeNodePrecondition<T>[] param)
         {
-            if (_precondition1 == null || _precondition2 == null)
+            if (param == null)
             {
                 Debugger.Log("BTreeNodePreconditionAND is null");
+                return;
             }
-            m_Precondition1 = _precondition1;
-            m_Precondition2 = _precondition2;
+            if (param.Length == 0)
+            {
+                Debugger.Log("BTreeNodePreconditionAND's length is 0");
+                return;
+            }
+            m_Preconditions = param;
         }
         public override bool ExternalCondition(T _input)
         {
-            return m_Precondition1.ExternalCondition(_input) && m_Precondition2.ExternalCondition(_input);
+            for (int i = 0; i < m_Preconditions.Length; i++)
+            {
+                if (!m_Preconditions[i].ExternalCondition(_input))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
     public class BTreeNodePreconditionOR<T> : BTreeNodePrecondition<T> where T : BTreeTemplateData
     {
-        private BTreeNodePrecondition<T> m_Precondition1;
-        private BTreeNodePrecondition<T> m_Precondition2;
-        public BTreeNodePreconditionOR(BTreeNodePrecondition<T> _precondition1, BTreeNodePrecondition<T> _precondition2)
+        private BTreeNodePrecondition<T>[] m_Preconditions;
+        public BTreeNodePreconditionOR(params BTreeNodePrecondition<T>[] param)
         {
-            if (_precondition1 == null || _precondition2 == null)
+            if (param == null)
             {
-                Debugger.Log("BTreeNodePreconditionAND is null");
+                Debugger.Log("BTreeNodePreconditionOR is null");
+                return;
             }
-            m_Precondition1 = _precondition1;
-            m_Precondition2 = _precondition2;
+            if (param.Length == 0)
+            {
+                Debugger.Log("BTreeNodePreconditionOR's length is 0");
+                return;
+            }
+            m_Preconditions = param;
         }
         public override bool ExternalCondition(T _input)
         {
-            return m_Precondition1.ExternalCondition(_input) || m_Precondition2.ExternalCondition(_input);
+            for (int i = 0; i < m_Preconditions.Length; i++)
+            {
+                if (m_Preconditions[i].ExternalCondition(_input))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

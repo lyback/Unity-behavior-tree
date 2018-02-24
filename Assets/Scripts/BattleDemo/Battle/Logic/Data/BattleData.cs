@@ -24,7 +24,7 @@ namespace Battle.Logic
             mAtcTroopList = new List<TroopData>();
             mDefTroopList = new List<TroopData>();
             mAllTroopDic = new Dictionary<uint, TroopData>();
-            int atkCount = 4;
+            int atkCount = 30;
             for (int i = 0; i < atkCount; i++)
             {
                 TroopData troop = new TroopData();
@@ -39,7 +39,7 @@ namespace Battle.Logic
                 mAtcTroopList.Add(troop);
                 mAllTroopDic.Add(troop.key, troop);
             }
-            int defCount = 3;
+            int defCount = 30;
             for (int i = 0; i < defCount; i++)
             {
                 TroopData troop = new TroopData();
