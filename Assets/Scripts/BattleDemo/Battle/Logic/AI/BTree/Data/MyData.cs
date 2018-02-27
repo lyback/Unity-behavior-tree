@@ -6,7 +6,10 @@ namespace Battle.Logic.AI.BTree
     {
         public TroopData troop;
         public BattleData battleData;
-        public MyInputData(TroopData _troop, BattleData _battleData)
+        public MyInputData()
+        {
+        }
+        public void SetData(TroopData _troop, BattleData _battleData)
         {
             troop = _troop;
             battleData = _battleData;
@@ -15,9 +18,12 @@ namespace Battle.Logic.AI.BTree
     public class MyOutputData : BTreeTemplateData
     {
         public TroopData troop;
-        public MyOutputData(MyInputData _data)
+        public MyOutputData()
         {
-            troop = _data.troop;
+        }
+        public void SetData(MyInputData _input)
+        {
+            troop = _input.troop;
         }
     }
 }

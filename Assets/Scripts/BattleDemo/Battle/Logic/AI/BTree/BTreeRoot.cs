@@ -113,6 +113,10 @@ namespace Battle.Logic.AI.BTree
             {
                 m_TreeRoot.Tick(_input, ref _output);
             }
+            else
+            {
+                m_TreeRoot.Transition(_input);
+            }
         }
     }
     

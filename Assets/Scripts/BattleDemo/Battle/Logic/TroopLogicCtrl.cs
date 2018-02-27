@@ -1,4 +1,4 @@
-﻿#define BTREE
+﻿#define FSM
 using System.Collections.Generic;
 #if FSM
 using Battle.Logic.AI.FSM;
@@ -75,34 +75,36 @@ namespace Battle.Logic
         }
 #endif
 #if BTREE
+        MyOutputData m_Output = new MyOutputData();
+        MyInputData m_Input = new MyInputData();
         private void DoSoldierLogic()
         {
             for (int i = 0; i < m_AtkTroopList.Count; i++)
             {
                 var _atkTroop = m_AtkTroopList[i];
-                MyInputData input = new MyInputData(_atkTroop, m_BattleLogicMgr.m_BattleData);
-                MyOutputData output = new MyOutputData(input);
+                m_Input.SetData(_atkTroop, m_BattleLogicMgr.m_BattleData);
+                m_Output.SetData(m_Input);
                 if (!m_TroopBTreeDic.ContainsKey(_atkTroop.key))
                 {
                     m_TroopBTreeDic.Add(_atkTroop.key, new BTreeRoot());
                     m_TroopBTreeDic[_atkTroop.key].CreateBevTree();
                 }
-                m_TroopBTreeDic[_atkTroop.key].Tick(input, ref output);
-                m_AtkTroopList[i] = output.troop;
+                m_TroopBTreeDic[_atkTroop.key].Tick(m_Input, ref m_Output);
+                m_AtkTroopList[i] = m_Output.troop;
 
             }
             for (int i = 0; i < m_DefTroopList.Count; i++)
             {
                 var _defTroop = m_DefTroopList[i];
-                MyInputData input = new MyInputData(_defTroop, m_BattleLogicMgr.m_BattleData);
-                MyOutputData output = new MyOutputData(input);
+                m_Input.SetData(_defTroop, m_BattleLogicMgr.m_BattleData);
+                m_Output.SetData(m_Input);
                 if (!m_TroopBTreeDic.ContainsKey(_defTroop.key))
                 {
                     m_TroopBTreeDic.Add(_defTroop.key, new BTreeRoot());
                     m_TroopBTreeDic[_defTroop.key].CreateBevTree();
                 }
-                m_TroopBTreeDic[_defTroop.key].Tick(input, ref output);
-                m_DefTroopList[i] = output.troop;
+                m_TroopBTreeDic[_defTroop.key].Tick(m_Input, ref m_Output);
+                m_DefTroopList[i] = m_Output.troop;
             }
         }
 #endif

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Battle.View
 {
-    public class UnitEntityBase<T> : FSMEntityBase<T> where T : FSMDataBase
+    public class UnitEntityBase<T> : AIEntityBase<T> where T : FSMDataBase
     {
         public void SetParent(Transform parent)
         {
