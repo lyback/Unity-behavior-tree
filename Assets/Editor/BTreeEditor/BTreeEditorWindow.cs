@@ -34,6 +34,8 @@ namespace BTree.Editor
 
         //是否显示设置界面
         private bool mShowPrefPanel;
+        //是否显示右键菜单
+        private bool mShowRightClickMenu;
 
         private GenericMenu mRightClickMenu = new GenericMenu();
         private GenericMenu mBreadcrumbGameObjectBehaviorMenu = new GenericMenu();
@@ -48,10 +50,13 @@ namespace BTree.Editor
         {
             this.mCurrentMousePosition = Event.current.mousePosition;
             setupSizes();
-            Draw();
+            if (Draw())
+            {
+                base.Repaint();
+            }
         }
 
-        public void Draw()
+        public bool Draw()
         {
             Color color = GUI.color;
             Color backgroundColor = GUI.backgroundColor;
@@ -59,11 +64,12 @@ namespace BTree.Editor
             GUI.backgroundColor = (Color.white);
             drawFileToolbar();
             drawGraphArea();
+            return true;
         }
         private void setupSizes()
         {
             //if (BehaviorDesignerPreferences.GetBool(BDPreferneces.PropertiesPanelOnLeft))
-            if(true)
+            if (true)
             {
                 mFileToolBarRect = new Rect((float)BTreeEditorUtility.PropertyBoxWidth, 0f, (float)(Screen.width - BTreeEditorUtility.PropertyBoxWidth), (float)BTreeEditorUtility.ToolBarHeight);
                 mPropertyToolbarRect = new Rect(0f, 0f, (float)BTreeEditorUtility.PropertyBoxWidth, (float)BTreeEditorUtility.ToolBarHeight);
@@ -127,7 +133,7 @@ namespace BTree.Editor
                 this.mBreadcrumbGameObjectBehaviorMenu.ShowAsContext();
             }
             //string text = (this.mActiveObject as GameObject != null || this.mActiveObject as ExternalBehavior != null) ? this.mActiveObject.name : "(None Selected)";
-            string text = (this.mActiveObject as GameObject != null ) ? this.mActiveObject.name : "(None Selected)";
+            string text = (this.mActiveObject as GameObject != null) ? this.mActiveObject.name : "(None Selected)";
             if (GUILayout.Button(text, EditorStyles.toolbarPopup, new GUILayoutOption[]
             {
                 GUILayout.Width(140f)
@@ -237,6 +243,145 @@ namespace BTree.Editor
             }
             mousePosition -= new Vector2(this.mGraphRect.xMin, this.mGraphRect.yMin);
             mousePosition /= this.mGraphZoom;
+            return true;
+        }
+        //处理操作消息
+        private void handleEvents()
+        {
+            if (EditorApplication.isCompiling) return;
+            Event e = Event.current;
+            switch (e.type)
+            {
+                case EventType.MouseDown:
+                    if (e.button == 0)
+                    {
+                        if (leftMouseDown(e.clickCount))
+                        {
+                            e.Use();
+                            return;
+                        }
+                    }
+                    else if (e.button == 1)
+                    {
+                        if (rightMouseDown())
+                        {
+                            e.Use();
+                            return;
+                        }
+                    }
+                    break;
+                case EventType.MouseUp:
+                    if (e.button == 0)
+                    {
+                        if (leftMouseRelease())
+                        {
+                            e.Use();
+                            return;
+                        }
+                    }
+                    else if (e.button == 1)
+                    {
+                        if (mShowRightClickMenu)
+                        {
+                            mShowRightClickMenu = false;
+                            mRightClickMenu.ShowAsContext();
+                            e.Use();
+                            return;
+                        }
+                    }
+                    break;
+                case EventType.MouseMove:
+                    if (mouseMove())
+                    {
+                        e.Use();
+                        return;
+                    }
+                    break;
+                case EventType.MouseDrag:
+                    if (e.button == 0)
+                    {
+                        if (leftMouseDragged())
+                        {
+                            e.Use();
+                            return;
+                        }
+                        if (e.modifiers == EventModifiers.Alt && mousePan())
+                        {
+                            e.Use();
+                            return;
+                        }
+                    }
+                    else if (e.button == 2 && mousePan())
+                    {
+                        e.Use();
+                        return;
+                    }
+                    break;
+                case EventType.KeyDown:
+                    break;
+                case EventType.KeyUp:
+                    break;
+                case EventType.ScrollWheel:
+                    if (mouseZoom())
+                    {
+                        e.Use();
+                        return;
+                    }
+                    break;
+                case EventType.Repaint:
+                    break;
+                case EventType.Layout:
+                    break;
+                case EventType.DragUpdated:
+                    break;
+                case EventType.DragPerform:
+                    break;
+                case EventType.DragExited:
+                    break;
+                case EventType.Ignore:
+                    break;
+                case EventType.Used:
+                    break;
+                case EventType.ValidateCommand:
+                    break;
+                case EventType.ExecuteCommand:
+                    break;
+                case EventType.ContextClick:
+                    break;
+                default:
+                    break;
+            }
+        }
+        //鼠标移动
+        private bool mouseMove()
+        {
+            return true;
+        }
+        //鼠标左键down
+        private bool leftMouseDown(int clickCount)
+        {
+            return true;
+        }
+        private bool leftMouseDragged()
+        {
+            return true;
+        }
+        //鼠标左键Release
+        private bool leftMouseRelease()
+        {
+            return true;
+        }
+        //鼠标右键down
+        private bool rightMouseDown()
+        {
+            return true;
+        }
+        private bool mouseZoom()
+        {
+            return true;
+        }
+        private bool mousePan()
+        {
             return true;
         }
     }
