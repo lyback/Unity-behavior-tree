@@ -2,14 +2,14 @@
 using System;
 namespace Battle.Logic.AI.FSM
 {
-    public class TroopStateMachine : FSMStateMachineBase<TroopData,BattleData>
+    public class TroopStateMachine : FSMStateMachineBase<FSMInputData,FSMMgrData>
     {
         public TroopStateMachine() : base()
         {
 
         }
 
-        public override void Init(BattleData dataMgr)
+        public override void Init(FSMMgrData dataMgr)
         {
             base.Init(dataMgr);
             InitState();
@@ -29,13 +29,13 @@ namespace Battle.Logic.AI.FSM
             AddState(new AttackState(TroopFSMState.Attack));
         }
 
-        public override void DoLogic(ref TroopData data)
+        public override void DoLogic(ref FSMInputData _input)
         {
-            base.DoLogic(ref data);
-            Enum _nextState = mStartState.Enter(ref data);
+            base.DoLogic(ref _input);
+            Enum _nextState = mStartState.Enter(ref _input);
             while ((TroopFSMState)_nextState != TroopFSMState.End)
             {
-                _nextState = GetState(_nextState).Enter(ref data);
+                _nextState = GetState(_nextState).Enter(ref _input);
             }
 
         }

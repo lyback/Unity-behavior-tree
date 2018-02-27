@@ -2,7 +2,7 @@
 using FSMFrame;
 namespace Battle.Logic
 {
-    public class BattleData : FSMDataMgrBase
+    public class BattleData
     {
         public string mBattleKey;
         public Dictionary<uint, TroopData> mAllTroopDic;

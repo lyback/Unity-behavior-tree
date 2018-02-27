@@ -1,7 +1,7 @@
 ﻿using FSMFrame;
 namespace Battle.Logic
 {
-    public class TroopData : FSMDataBase
+    public class TroopData
     {
         //ID(不能等于0)
         public uint key;

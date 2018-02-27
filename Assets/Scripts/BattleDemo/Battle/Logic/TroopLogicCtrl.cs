@@ -27,7 +27,9 @@ namespace Battle.Logic
             m_BattleLogicMgr = battleLogicMgr;
 #if FSM
             m_TroopFSMState = new TroopStateMachine();
-            m_TroopFSMState.Init(battleLogicMgr.m_BattleData);
+            FSMMgrData _fsmMgrData = new FSMMgrData();
+            _fsmMgrData.SetBattleData(battleLogicMgr.m_BattleData);
+            m_TroopFSMState.Init(_fsmMgrData);
 #endif
 #if BTREE
             m_TroopBTreeDic = new Dictionary<uint, BTreeRoot>();
@@ -57,26 +59,29 @@ namespace Battle.Logic
         }
 
 #if FSM
+        FSMInputData m_Input = new FSMInputData();
         private void DoSoldierLogic()
         {
             for (int i = 0; i < m_AtkTroopList.Count; i++)
             {
                 var _atkTroop = m_AtkTroopList[i];
-                m_TroopFSMState.DoLogic(ref _atkTroop);
+                m_Input.SetTroop(_atkTroop);
+                m_TroopFSMState.DoLogic(ref m_Input);
                 m_AtkTroopList[i] = _atkTroop;
 
             }
             for (int i = 0; i < m_DefTroopList.Count; i++)
             {
                 var _defTroop = m_DefTroopList[i];
-                m_TroopFSMState.DoLogic(ref _defTroop);
+                m_Input.SetTroop(_defTroop);
+                m_TroopFSMState.DoLogic(ref m_Input);
                 m_DefTroopList[i] = _defTroop;
             }
         }
 #endif
 #if BTREE
-        MyOutputData m_Output = new MyOutputData();
-        MyInputData m_Input = new MyInputData();
+        BTreeOutputData m_Output = new BTreeOutputData();
+        BTreeInputData m_Input = new BTreeInputData();
         private void DoSoldierLogic()
         {
             for (int i = 0; i < m_AtkTroopList.Count; i++)

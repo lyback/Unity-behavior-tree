@@ -2,15 +2,15 @@
 
 namespace Battle.Logic.AI.BTree
 {
-    public class StartActionNode : BTreeNodeAction<MyInputData, MyOutputData>
+    public class StartActionNode : BTreeNodeAction<BTreeInputData, BTreeOutputData>
     {
-        public StartActionNode(BTreeNode<MyInputData, MyOutputData> _parentNode)
+        public StartActionNode(BTreeNode<BTreeInputData, BTreeOutputData> _parentNode)
             : base(_parentNode)
         {
 
         }
 
-        protected override BTreeRunningStatus _DoExecute(MyInputData _input, ref MyOutputData _output)
+        protected override BTreeRunningStatus _DoExecute(BTreeInputData _input, ref BTreeOutputData _output)
         {
             var troop = _input.troop;
             var outTroop = _output.troop;

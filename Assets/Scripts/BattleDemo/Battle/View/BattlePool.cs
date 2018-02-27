@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Battle.View
 {
-    public sealed class BattlePool<T, P> where T : UnitEntityBase<P> where P : FSMDataBase
+    public sealed class BattlePool<T, P> where T : UnitEntityBase<P>
     {
         private GameObject m_SoldierPrefab;
         private bool m_IsUI;

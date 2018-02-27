@@ -1,7 +1,7 @@
 ﻿using FSMFrame;
 namespace Battle.Logic
 {
-    public class SoldierData : FSMDataBase
+    public class SoldierData
     {
         //索引
         public int line;

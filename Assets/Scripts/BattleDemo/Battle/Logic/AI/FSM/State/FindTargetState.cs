@@ -3,21 +3,22 @@ using System.Collections.Generic;
 using FSMFrame;
 namespace Battle.Logic.AI.FSM
 {
-    class FindTargetState : FSMStateBase<TroopData, BattleData>
+    class FindTargetState : FSMStateBase<FSMInputData, FSMMgrData>
     {
         public FindTargetState(Enum name) : base(name)
         {
         }
-        public override void Init(BattleData dataMgr)
+        public override void Init(FSMMgrData dataMgr)
         {
             base.Init(dataMgr);
         }
-        public override Enum Enter(ref TroopData troop)
+        public override Enum Enter(ref FSMInputData _input)
         {
+            var troop = _input.m_Troop;
             //已有目标
             if (troop.targetKey != 0)
             {
-                var target = dataMgr.mAllTroopDic[troop.targetKey];
+                var target = dataMgr.m_BattleData.mAllTroopDic[troop.targetKey];
                 if (target == null)
                 {
                     Debugger.LogError("FindTargetState 未找到目标");
@@ -29,18 +30,19 @@ namespace Battle.Logic.AI.FSM
             }
             //寻找新目标
             troop.targetKey = 0;
-            return Excute(ref troop);
+            return Excute(ref _input);
         }
-        public override Enum Excute(ref TroopData troop)
+        public override Enum Excute(ref FSMInputData _input)
         {
+            var troop = _input.m_Troop;
             List<TroopData> enemys;
             if (troop.isAtkTroop)
             {
-                enemys = dataMgr.mDefTroopList;
+                enemys = dataMgr.m_BattleData.mDefTroopList;
             }
             else
             {
-                enemys = dataMgr.mAtcTroopList;
+                enemys = dataMgr.m_BattleData.mAtcTroopList;
             }
             //找最近的目标
             int minDis = -1;

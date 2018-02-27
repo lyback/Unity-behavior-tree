@@ -2,43 +2,44 @@
 using FSMFrame;
 namespace Battle.Logic.AI.FSM
 {
-    class StartState : FSMStateBase<TroopData, BattleData>
+    class StartState : FSMStateBase<FSMInputData, FSMMgrData>
     {
         public StartState(Enum name) : base(name)
         {
         }
-        public override void Init(BattleData dataMgr)
+        public override void Init(FSMMgrData dataMgr)
         {
             base.Init(dataMgr);
         }
-        public override Enum Enter(ref TroopData data)
+        public override Enum Enter(ref FSMInputData _input)
         {
+            var troop = _input.m_Troop;
             //死亡
-            if (data.count==0)
+            if (troop.count==0)
             {
-                data.state = (int)TroopAnimState.Die;
+                troop.state = (int)TroopAnimState.Die;
                 return TroopFSMState.End;
             }
             //前置动作
-            if (data.inPrepose)
+            if (troop.inPrepose)
             {
-                if (data.preTime>0)
+                if (troop.preTime>0)
                 {
-                    data.preTime -= 1;
+                    troop.preTime -= 1;
                 }
                 else
                 {
                     //发射武器
-                    data.inPrepose = false;
+                    troop.inPrepose = false;
                 }
-                data.state = (int)TroopAnimState.Idle;
+                troop.state = (int)TroopAnimState.Idle;
                 return TroopFSMState.End;
             }
             //普攻CD
-            if (data.norAtkCD > 0)
+            if (troop.norAtkCD > 0)
             {
-                data.norAtkCD -= 1;
-                data.state = (int)TroopAnimState.Idle;
+                troop.norAtkCD -= 1;
+                troop.state = (int)TroopAnimState.Idle;
                 return TroopFSMState.End;
             }
             //寻找目标

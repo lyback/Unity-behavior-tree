@@ -2,19 +2,19 @@
 
 namespace Battle.Logic.AI.BTree
 {
-    public class IdleActionNode : BTreeNodeAction<MyInputData,MyOutputData>
+    public class IdleActionNode : BTreeNodeAction<BTreeInputData,BTreeOutputData>
     {
-        public IdleActionNode(BTreeNode<MyInputData, MyOutputData> _parentNode) 
+        public IdleActionNode(BTreeNode<BTreeInputData, BTreeOutputData> _parentNode) 
             : base(_parentNode)
         {
         }
 
-        protected override void _DoEnter(MyInputData _input)
+        protected override void _DoEnter(BTreeInputData _input)
         {
 
         }
 
-        protected override BTreeRunningStatus _DoExecute(MyInputData _input, ref MyOutputData _output)
+        protected override BTreeRunningStatus _DoExecute(BTreeInputData _input, ref BTreeOutputData _output)
         {
             return BTreeRunningStatus.Executing;
         }

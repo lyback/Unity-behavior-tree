@@ -3,20 +3,21 @@ using FSMFrame;
 
 namespace Battle.Logic.AI.FSM
 {
-    class AttackState : FSMStateBase<TroopData, BattleData>
+    class AttackState : FSMStateBase<FSMInputData, FSMMgrData>
     {
         public AttackState(Enum name) : base(name)
         {
         }
-        public override void Init(BattleData dataMgr)
+        public override void Init(FSMMgrData dataMgr)
         {
             base.Init(dataMgr);
         }
-        public override Enum Enter(ref TroopData troop)
+        public override Enum Enter(ref FSMInputData _input)
         {
+            var troop = _input.m_Troop;
             if (troop.targetKey != 0)
             {
-                TroopData tarTroop = dataMgr.mAllTroopDic[troop.targetKey];
+                TroopData tarTroop = dataMgr.m_BattleData.mAllTroopDic[troop.targetKey];
                 if (tarTroop == null)
                 {
                     Debugger.LogError("AttackState 未找到目标");
@@ -31,14 +32,15 @@ namespace Battle.Logic.AI.FSM
                 }
                 else
                 {
-                    return Excute(ref troop);
+                    return Excute(ref _input);
                 }
             }
             return TroopFSMState.End;
         }
-        public override Enum Excute(ref TroopData troop)
+        public override Enum Excute(ref FSMInputData _input)
         {
-            TroopData tarTroop = dataMgr.mAllTroopDic[troop.targetKey];
+            var troop = _input.m_Troop;
+            TroopData tarTroop = dataMgr.m_BattleData.mAllTroopDic[troop.targetKey];
             if (tarTroop == null)
             {
                 Debugger.LogError("AttackState 未找到目标");

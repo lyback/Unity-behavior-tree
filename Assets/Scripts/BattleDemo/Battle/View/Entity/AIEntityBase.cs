@@ -2,7 +2,7 @@
 using FSMFrame;
 namespace Battle.View
 {
-    public class AIEntityBase<T> : NeatlyBehaviour where T: FSMDataBase
+    public class AIEntityBase<T> : NeatlyBehaviour
     {
         public T mData;
         public virtual void Init(T _data)

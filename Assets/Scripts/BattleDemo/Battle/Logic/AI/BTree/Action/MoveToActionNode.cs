@@ -2,14 +2,14 @@
 
 namespace Battle.Logic.AI.BTree
 {
-    public class MoveToActionNode : BTreeNodeAction<MyInputData, MyOutputData>
+    public class MoveToActionNode : BTreeNodeAction<BTreeInputData, BTreeOutputData>
     {
-        public MoveToActionNode(BTreeNode<MyInputData, MyOutputData> _parentNode)
+        public MoveToActionNode(BTreeNode<BTreeInputData, BTreeOutputData> _parentNode)
             : base(_parentNode)
         {
         }
 
-        protected override BTreeRunningStatus _DoExecute(MyInputData _input, ref MyOutputData _output)
+        protected override BTreeRunningStatus _DoExecute(BTreeInputData _input, ref BTreeOutputData _output)
         {
             if (_input.troop.targetKey!=0)
             {
@@ -19,7 +19,7 @@ namespace Battle.Logic.AI.BTree
             return BTreeRunningStatus.Finish;
         }
 
-        private void MoveToTarget(MyInputData _input, ref MyOutputData _output)
+        private void MoveToTarget(BTreeInputData _input, ref BTreeOutputData _output)
         {
             var troop = _input.troop;
             var outTroop = _output.troop;

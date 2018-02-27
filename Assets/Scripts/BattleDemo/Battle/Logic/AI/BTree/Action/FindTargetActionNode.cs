@@ -3,14 +3,14 @@ using System.Collections.Generic;
 
 namespace Battle.Logic.AI.BTree
 {
-    public class FindTargetActionNode : BTreeNodeAction<MyInputData, MyOutputData>
+    public class FindTargetActionNode : BTreeNodeAction<BTreeInputData, BTreeOutputData>
     {
-        public FindTargetActionNode(BTreeNode<MyInputData, MyOutputData> _parentNode) 
+        public FindTargetActionNode(BTreeNode<BTreeInputData, BTreeOutputData> _parentNode) 
             : base(_parentNode)
         {
         }
         
-        protected override BTreeRunningStatus _DoExecute(MyInputData _input, ref MyOutputData _output)
+        protected override BTreeRunningStatus _DoExecute(BTreeInputData _input, ref BTreeOutputData _output)
         {
             var troop = _input.troop;
             var outTroop = _output.troop;

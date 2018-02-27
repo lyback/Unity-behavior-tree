@@ -1,7 +1,7 @@
 ﻿using FSMFrame;
 namespace Battle.Logic
 {
-    public class WeaponData : FSMDataBase
+    public class WeaponData
     {
         public uint weaponId;
 

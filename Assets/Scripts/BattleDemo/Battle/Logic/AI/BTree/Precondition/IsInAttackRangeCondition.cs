@@ -2,9 +2,9 @@
 
 namespace Battle.Logic.AI.BTree
 {
-    public class IsInAttackRangeCondition : BTreeNodePrecondition<MyInputData>
+    public class IsInAttackRangeCondition : BTreeNodePrecondition<BTreeInputData>
     {
-        public override bool ExternalCondition(MyInputData _input)
+        public override bool ExternalCondition(BTreeInputData _input)
         {
             var troop = _input.troop;
             var battleData = _input.battleData;
