@@ -899,7 +899,8 @@ namespace BTree.Editor
             }
             if (texture2D == null)
             {
-                texture2D = (AssetDatabase.LoadAssetAtPath(iconName.Replace("{SkinColor}", EditorGUIUtility.isProSkin ? "Dark" : "Light"), typeof(Texture2D)) as Texture2D);
+                string path = "Assets/Editor/BTreeEditor/Res/";
+                texture2D = (AssetDatabase.LoadAssetAtPath(path + iconName.Replace("{SkinColor}", EditorGUIUtility.isProSkin ? "Dark" : "Light"), typeof(Texture2D)) as Texture2D);
             }
             if (texture2D != null)
             {

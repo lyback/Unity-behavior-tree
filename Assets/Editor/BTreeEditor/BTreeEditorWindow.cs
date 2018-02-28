@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using BTreeFrame;
 using UnityEditor;
 using UnityEngine;
 
@@ -18,6 +19,8 @@ namespace BTree.Editor
             bTreeEditorWindow.minSize = new Vector2(600f, 500f);
             Object.DontDestroyOnLoad(bTreeEditorWindow);
         }
+
+        private BTreeGraphDesigner<BTreeTemplateData, BTreeTemplateData> mGraphDesigner = new BTreeGraphDesigner<BTreeTemplateData, BTreeTemplateData>();
 
         private Rect mGraphRect;
         private Rect mFileToolBarRect;
@@ -109,10 +112,10 @@ namespace BTree.Editor
                 mousePosition = new Vector2(-1f, -1f);
             }
             bool result = false;
-            //if (this.mGraphDesigner != null && this.mGraphDesigner.drawNodes(mousePosition, this.mGraphOffset, this.mGraphZoom))
-            //{
-            //    result = true;
-            //}
+            if (this.mGraphDesigner != null && this.mGraphDesigner.drawNodes(mousePosition, this.mGraphOffset, this.mGraphZoom))
+            {
+                result = true;
+            }
             //if (this.mIsSelecting)
             //{
             //    GUI.Box(this.getSelectionArea(), "", BehaviorDesignerUtility.SelectionGUIStyle);

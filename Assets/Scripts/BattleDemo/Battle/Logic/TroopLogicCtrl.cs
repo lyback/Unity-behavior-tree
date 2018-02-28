@@ -1,4 +1,4 @@
-﻿#define FSM
+﻿#define BTREE
 using System.Collections.Generic;
 #if FSM
 using Battle.Logic.AI.FSM;

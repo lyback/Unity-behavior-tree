@@ -11,8 +11,16 @@ namespace BTreeFrame
         public string m_Name = "UNNAMED";
         //子节点
         protected List<BTreeNode<T, P>> m_ChildNodes = new List<BTreeNode<T, P>>();
+        public List<BTreeNode<T, P>> m_ChildNodeList
+        {
+            get
+            {
+                List<BTreeNode<T, P>> _ChildNodes = new List<BTreeNode<T, P>>(m_ChildNodes);
+                return _ChildNodes;
+            }
+        }
         //子节点数
-        protected int m_ChildCount = 0;
+        public int m_ChildCount{ get; protected set; }
         //父节点
         protected BTreeNode<T, P> m_ParentNode { get; set; }
         //上一个激活的节点
@@ -27,6 +35,7 @@ namespace BTreeFrame
 
         public BTreeNode(BTreeNode<T, P> _parentNode, BTreeNodePrecondition<T> _precondition = null)
         {
+            m_ChildCount = 0;
             m_ParentNode = _parentNode;
             m_NodePrecondition = _precondition;
         }
