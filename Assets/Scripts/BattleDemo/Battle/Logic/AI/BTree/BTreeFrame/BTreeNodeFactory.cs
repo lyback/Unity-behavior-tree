@@ -89,19 +89,19 @@ namespace BTreeFrame
             BTreeNode<T, P> _node = null;
             switch (_subType)
             {
-                case SelectorNodeType.Parallel:
+                case SelectorNodeType.BTreeNodeParallel:
                     _node = CreateParallelNode(_parent, _nodeName, (BTreeParallelFinishCondition)_param[0]);
                     break;
-                case SelectorNodeType.PrioritySelector:
+                case SelectorNodeType.BTreeNodePrioritySelector:
                     _node = CreatePrioritySelectorNode(_parent, _nodeName);
                     break;
-                case SelectorNodeType.NonePrioritySelector:
+                case SelectorNodeType.BTreeNodeNonePrioritySelector:
                     _node = CreateNonePrioritySelectorNode(_parent, _nodeName);
                     break;
-                case SelectorNodeType.Sequence:
+                case SelectorNodeType.BTreeNodeSequence:
                     _node = CreateSequenceNode(_parent, _nodeName);
                     break;
-                case SelectorNodeType.Loop:
+                case SelectorNodeType.BTreeNodeLoop:
                     _node = CreateLoopNode(_parent, _nodeName, _param[0]);
                     break;
                 default:
@@ -184,6 +184,80 @@ namespace BTreeFrame
             return _precondition;
         }
         #endregion
+        #region 从行为树生成配置方法
+        public static TreeConfig CreateConfigFromBTreeRoot(BTreeNode<T, P> _root)
+        {
+            TreeConfig _tree = new TreeConfig();
+            _tree.m_Name = _root.m_Name;
+            int _nodeCount = GetBTreeChildNodeNum(_root) + 1;
+            _tree.m_Nodes = new TreeNodeConfig[_nodeCount];
+            GetTreeNodeConfigFromBTreeRoot(_root, ref _tree.m_Nodes, 0, -1);
+            return _tree;
+        }
+        private static void GetTreeNodeConfigFromBTreeRoot(BTreeNode<T, P> _root, ref TreeNodeConfig[] _treeNodeList, int _index, int _parentIndex)
+        {
+            _treeNodeList[_index] = new TreeNodeConfig();
+            _treeNodeList[_index].m_NodeName = _root.m_Name;
+            _treeNodeList[_index].m_ParentIndex = _parentIndex;
+            bool _isAction = _root.GetType().IsAssignableFrom(typeof(BTreeNodeAction<T, P>));
+            if (_isAction)
+            {
+                _treeNodeList[_index].m_NodeType = (int)NodeType.ActionNode;
+            }
+            else
+            {
+                _treeNodeList[_index].m_NodeType = (int)NodeType.SelectorNode;
+            }
+            _treeNodeList[_index].m_ActionNodeName = _isAction ? _root.GetType().Name : null;
+            _treeNodeList[_index].m_NodeSubType = _isAction ? (int)(Enum.Parse(typeof(SelectorNodeType), _root.GetType().Name)) : 0;
+            _treeNodeList[_index].m_OtherParams = GetOtherParamsFromBTreeNode(_root, (NodeType)_treeNodeList[_index].m_NodeType, (SelectorNodeType)_treeNodeList[_index].m_NodeSubType);
+
+        }
+        private static void GetPreconditionConfigFromBtreeNode(BTreeNode<T, P> _node, ref PreconditionConfig[] _preconditionList, int _parentIndex = -1)
+        {
+
+        }
+        private static int[] GetOtherParamsFromBTreeNode(BTreeNode<T, P> _node, NodeType _nodeType, SelectorNodeType _subType)
+        {
+            int[] _otherParams = null;
+            switch (_nodeType)
+            {
+                case NodeType.SelectorNode:
+                    switch (_subType)
+                    {
+                        case SelectorNodeType.BTreeNodeParallel:
+                            _otherParams = new int[1];
+                            _otherParams[0] = (int)((BTreeNodeParallel<T, P>)_node).GetFinishCondition();
+                            break;
+                        case SelectorNodeType.BTreeNodeLoop:
+                            _otherParams = new int[1];
+                            _otherParams[0] = ((BTreeNodeLoop<T, P>)_node).GetLoopCount();
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case NodeType.ActionNode:
+                    _otherParams = null;
+                    break;
+                default:
+                    break;
+            }
+            return _otherParams;
+        }
+        private static int GetBTreeChildNodeNum(BTreeNode<T, P> _root)
+        {
+            int _count = _root.m_ChildCount;
+            for (int i = 0; i < _root.m_ChildNodeList.Count; i++)
+            {
+                if (_root.m_ChildNodeList[i].m_ChildCount != 0)
+                {
+                    _count += GetBTreeChildNodeNum(_root.m_ChildNodeList[i]);
+                }
+            }
+            return _count;
+        }
+        #endregion
 
         public static BTreeNode<T, P> CreateParallelNode(BTreeNode<T,P> _parent, string _nodeName, BTreeParallelFinishCondition _conditionType)
         {
@@ -236,49 +310,6 @@ namespace BTreeFrame
             _node.m_Name = _nodeName;
         }
     }
-    [System.Serializable]
-    public class TreeConfig
-    {
-        public string m_Name;
-        public TreeNodeConfig[] m_Nodes;
-    }
-    [System.Serializable]
-    public class TreeNodeConfig
-    {
-        public int m_ParentIndex = -1;
-        public int m_NodeType;
-        public int m_NodeSubType;
-        public int[] m_OtherParams;
-        public string m_ActionNodeName;
-        public string m_NodeName;
-        public PreconditionConfig[] m_Preconditions;
-    }
-    [System.Serializable]
-    public class PreconditionConfig
-    {
-        public int m_ParentIndex = -1;
-        public int m_Type;
-        public string m_PreconditionName;
-        public int[] m_ChildIndexs;
-    }
-
-    public enum NodeType
-    {
-        SelectorNode = 1,
-        ActionNode = 2,
-    }
-    public enum SelectorNodeType
-    {
-        Parallel = 1,
-        PrioritySelector = 2,
-        NonePrioritySelector = 3,
-        Sequence = 4,
-        Loop = 5
-    }
-    public enum PreconditionType
-    {
-        And = 1,
-        Or = 2,
-        Not = 3,
-    }
+    
+    
 }

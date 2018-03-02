@@ -10,7 +10,7 @@ namespace BTree.Editor
     {
         public BTreeNodeDesigner<T, P> m_EntryNode { get; private set; }
         public BTreeNodeDesigner<T, P> m_RootNode { get; private set; }
-        public List<BTreeNodeDesigner<T, P>> m_DeTachedNodes = new List<BTreeNodeDesigner<T, P>>();
+        public List<BTreeNodeDesigner<T, P>> m_DetachedNodes = new List<BTreeNodeDesigner<T, P>>();
         public List<BTreeNodeDesigner<T, P>> m_SelectedNodes = new List<BTreeNodeDesigner<T, P>>();
         public BTreeNodeDesigner<T, P> m_HoverNode { get; private set; }
         public BTreeNodeConnection<T, P> m_ActiveNodeConnection { get; set; }
@@ -29,9 +29,9 @@ namespace BTree.Editor
                 drawNodeConnectionChildren(m_RootNode, offset, graphZoom, m_RootNode.m_Node.m_Disable);
             }
             //绘制未连接的节点
-            for (int i = 0; i < m_DeTachedNodes.Count; i++)
+            for (int i = 0; i < m_DetachedNodes.Count; i++)
             {
-                drawNodeConnectionChildren(m_DeTachedNodes[i], offset, graphZoom, m_DeTachedNodes[i].m_Node.m_Disable);
+                drawNodeConnectionChildren(m_DetachedNodes[i], offset, graphZoom, m_DetachedNodes[i].m_Node.m_Disable);
             }
             //绘制选中的连线
             for (int i = 0; i < m_SelectedNodeConnections.Count; i++)
@@ -54,9 +54,9 @@ namespace BTree.Editor
                 result = true;
             }
             //绘制未连接的节点
-            for (int i = 0; i < m_DeTachedNodes.Count; i++)
+            for (int i = 0; i < m_DetachedNodes.Count; i++)
             {
-                if (drawNodeChildren(m_DeTachedNodes[i], offset, m_DeTachedNodes[i].m_Node.m_Disable))
+                if (drawNodeChildren(m_DetachedNodes[i], offset, m_DetachedNodes[i].m_Node.m_Disable))
                 {
                     result = true;
                 }
@@ -75,9 +75,9 @@ namespace BTree.Editor
                 drawNodeCommentChildren(m_RootNode, offset);
             }
             //绘制分离节点说明
-            for (int i = 0; i < m_DeTachedNodes.Count; i++)
+            for (int i = 0; i < m_DetachedNodes.Count; i++)
             {
-                drawNodeCommentChildren(m_DeTachedNodes[i], offset);
+                drawNodeCommentChildren(m_DetachedNodes[i], offset);
             }
             return result;
         }

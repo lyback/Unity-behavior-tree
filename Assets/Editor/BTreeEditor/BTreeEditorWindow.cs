@@ -10,7 +10,18 @@ namespace BTree.Editor
     {
         [SerializeField]
         public static BTreeEditorWindow instance;
-
+        [MenuItem("ly/TestSave")]
+        public static void TestSave()
+        {
+            BTreeEditorConfig data = new BTreeEditorConfig();
+            BTreeEditorSerialization.WriteBinary(data, "test");
+        }
+        [MenuItem("ly/TestLoad")]
+        public static void TestLoad()
+        {
+            var data = BTreeEditorSerialization.ReadBinary("test");
+            Debugger.Log(data);
+        }
         [MenuItem("Window/BTree Editor")]
         public static void ShowWindow()
         {

@@ -272,6 +272,10 @@ namespace BTreeFrame
         {
             m_FinishCondition = _condition;
         }
+        public BTreeParallelFinishCondition GetFinishCondition()
+        {
+            return m_FinishCondition;
+        }
         protected void _RestChildNodeStatus()
         {
             for (int i = 0; i < m_ChildCount; i++)
@@ -356,6 +360,10 @@ namespace BTreeFrame
                 m_CurrentCount = 0;
             }
             return runningStatus;
+        }
+        public int GetLoopCount()
+        {
+            return m_LoopCount;
         }
     }
 }
