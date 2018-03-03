@@ -37,6 +37,10 @@ namespace BTreeFrame
         {
             return !m_Precondition.ExternalCondition(_input);
         }
+        public BTreeNodePrecondition<T> GetChildPrecondition()
+        {
+            return m_Precondition;
+        }
     }
     public class BTreeNodePreconditionAND<T> : BTreeNodePrecondition<T> where T : BTreeTemplateData
     {
@@ -66,6 +70,18 @@ namespace BTreeFrame
             }
             return true;
         }
+        public BTreeNodePrecondition<T>[] GetChildPrecondition()
+        {
+            return m_Preconditions;
+        }
+        public int GetChildPreconditionCount()
+        {
+            if (m_Preconditions != null)
+            {
+                return m_Preconditions.Length;
+            }
+            return 0;
+        }
     }
     public class BTreeNodePreconditionOR<T> : BTreeNodePrecondition<T> where T : BTreeTemplateData
     {
@@ -94,6 +110,18 @@ namespace BTreeFrame
                 }
             }
             return false;
+        }
+        public BTreeNodePrecondition<T>[] GetChildPrecondition()
+        {
+            return m_Preconditions;
+        }
+        public int GetChildPreconditionCount()
+        {
+            if (m_Preconditions != null)
+            {
+                return m_Preconditions.Length;
+            }
+            return 0;
         }
     }
 }

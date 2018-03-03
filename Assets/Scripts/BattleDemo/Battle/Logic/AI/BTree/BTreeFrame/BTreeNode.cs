@@ -29,6 +29,8 @@ namespace BTreeFrame
         public BTreeNode<T, P> m_ActiveNode { get; private set; }
         //前提条件
         protected BTreeNodePrecondition<T> m_NodePrecondition;
+        //是否是Action节点
+        public bool m_IsAcitonNode { get; protected set; }
 
         protected const int MAX_CHILD_NODE_COUNT = 16;
         protected const int INVALID_CHILD_NODE_INDEX = -1;
@@ -38,6 +40,7 @@ namespace BTreeFrame
             m_ChildCount = 0;
             m_ParentNode = _parentNode;
             m_NodePrecondition = _precondition;
+            m_IsAcitonNode = false;
         }
 
         public bool Evaluate(T _input)
@@ -76,7 +79,10 @@ namespace BTreeFrame
             }
             return this;
         }
-
+        public BTreeNodePrecondition<T> GetNodePrecondition()
+        {
+            return m_NodePrecondition;
+        }
         public void SetActiveNode(BTreeNode<T, P> _node)
         {
             m_LastActiveNode = m_ActiveNode;

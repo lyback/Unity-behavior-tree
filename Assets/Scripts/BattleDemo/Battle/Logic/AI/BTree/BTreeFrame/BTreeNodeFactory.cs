@@ -199,7 +199,7 @@ namespace BTreeFrame
             _treeNodeList[_index] = new TreeNodeConfig();
             _treeNodeList[_index].m_NodeName = _root.m_Name;
             _treeNodeList[_index].m_ParentIndex = _parentIndex;
-            bool _isAction = _root.GetType().IsAssignableFrom(typeof(BTreeNodeAction<T, P>));
+            bool _isAction = _root.m_IsAcitonNode;
             if (_isAction)
             {
                 _treeNodeList[_index].m_NodeType = (int)NodeType.ActionNode;
@@ -209,13 +209,98 @@ namespace BTreeFrame
                 _treeNodeList[_index].m_NodeType = (int)NodeType.SelectorNode;
             }
             _treeNodeList[_index].m_ActionNodeName = _isAction ? _root.GetType().Name : null;
-            _treeNodeList[_index].m_NodeSubType = _isAction ? (int)(Enum.Parse(typeof(SelectorNodeType), _root.GetType().Name)) : 0;
+            _treeNodeList[_index].m_NodeSubType = !_isAction ? (int)(Enum.Parse(typeof(SelectorNodeType), _root.GetType().Name.Split('`')[0])) : 0;
             _treeNodeList[_index].m_OtherParams = GetOtherParamsFromBTreeNode(_root, (NodeType)_treeNodeList[_index].m_NodeType, (SelectorNodeType)_treeNodeList[_index].m_NodeSubType);
-
+            if (_root.GetNodePrecondition() != null)
+            {
+                int _preconditionCount = GetBTreeChildPreconditionNum(_root.GetNodePrecondition()) + 1;
+                _treeNodeList[_index].m_Preconditions = new PreconditionConfig[_preconditionCount];
+                GetPreconditionConfigFromBtreeNode(_root.GetNodePrecondition(), ref _treeNodeList[_index].m_Preconditions, 0, -1);
+            }
+            for (int i = 0; i < _root.m_ChildCount; i++)
+            {
+                int _childIndex = _index + i + 1;
+                GetTreeNodeConfigFromBTreeRoot(_root.m_ChildNodeList[i], ref _treeNodeList, _childIndex, _index);
+            }
         }
-        private static void GetPreconditionConfigFromBtreeNode(BTreeNode<T, P> _node, ref PreconditionConfig[] _preconditionList, int _parentIndex = -1)
+        private static void GetPreconditionConfigFromBtreeNode(BTreeNodePrecondition<T> _precondition, ref PreconditionConfig[] _preconditionList, int _index, int _parentIndex = -1)
         {
-
+            _preconditionList[_index] = new PreconditionConfig();
+            _preconditionList[_index].m_ParentIndex = _parentIndex;
+            Type type = _precondition.GetType();
+            _preconditionList[_index].m_PreconditionName = type.Name.Split('`')[0];
+            if (type.Equals(typeof(BTreeNodePreconditionAND<T>)))
+            {
+                _preconditionList[_index].m_Type = (int)PreconditionType.And;
+                BTreeNodePrecondition<T>[] _childPreconditon = ((BTreeNodePreconditionAND<T>)_precondition).GetChildPrecondition();
+                _preconditionList[_index].m_ChildIndexs = new int[_childPreconditon.Length];
+                for (int i = 0; i < _childPreconditon.Length; i++)
+                {
+                    int _childIndex = _index + i + 1;
+                    _preconditionList[_index].m_ChildIndexs[i] = _childIndex;
+                    GetPreconditionConfigFromBtreeNode(_childPreconditon[i], ref _preconditionList, _childIndex, _index);
+                }
+            }
+            else if (type.Equals(typeof(BTreeNodePreconditionOR<T>)))
+            {
+                _preconditionList[_index].m_Type = (int)PreconditionType.Or;
+                BTreeNodePrecondition<T>[] _childPreconditon = ((BTreeNodePreconditionOR<T>)_precondition).GetChildPrecondition();
+                _preconditionList[_index].m_ChildIndexs = new int[_childPreconditon.Length];
+                for (int i = 0; i < _childPreconditon.Length; i++)
+                {
+                    int _childIndex = _index + i + 1;
+                    _preconditionList[_index].m_ChildIndexs[i] = _childIndex;
+                    GetPreconditionConfigFromBtreeNode(_childPreconditon[i], ref _preconditionList, _childIndex, _index);
+                }
+            }
+            else if (type.Equals(typeof(BTreeNodePreconditionNOT<T>)))
+            {
+                _preconditionList[_index].m_Type = (int)PreconditionType.Not;
+                BTreeNodePrecondition<T> _childPreconditon = ((BTreeNodePreconditionNOT<T>)_precondition).GetChildPrecondition();
+                _preconditionList[_index].m_ChildIndexs = new int[1];
+                int _childIndex = _index + 1;
+                _preconditionList[_index].m_ChildIndexs[0] = _childIndex;
+                GetPreconditionConfigFromBtreeNode(_childPreconditon, ref _preconditionList, _childIndex, _index);
+            }
+        }
+        private static int GetBTreeChildPreconditionNum(BTreeNodePrecondition<T> _precondition)
+        {
+            if (_precondition == null)
+            {
+                return 0;
+            }
+            int _count = 0;
+            Type type = _precondition.GetType();
+            if (type.Equals(typeof(BTreeNodePreconditionAND<T>)))
+            {
+                _count += ((BTreeNodePreconditionAND<T>)_precondition).GetChildPreconditionCount();
+                BTreeNodePrecondition<T>[] _chlidList = ((BTreeNodePreconditionAND<T>)_precondition).GetChildPrecondition();
+                if (_chlidList != null)
+                {
+                    for (int i = 0; i < _chlidList.Length; i++)
+                    {
+                        _count += GetBTreeChildPreconditionNum(_chlidList[i]);
+                    }
+                }
+            }
+            else if (type.Equals(typeof(BTreeNodePreconditionOR<T>)))
+            {
+                _count += ((BTreeNodePreconditionOR<T>)_precondition).GetChildPreconditionCount();
+                BTreeNodePrecondition<T>[] _chlidList = ((BTreeNodePreconditionOR<T>)_precondition).GetChildPrecondition();
+                if (_chlidList != null)
+                {
+                    for (int i = 0; i < _chlidList.Length; i++)
+                    {
+                        _count += GetBTreeChildPreconditionNum(_chlidList[i]);
+                    }
+                }
+            }
+            else if (type.Equals(typeof(BTreeNodePreconditionNOT<T>)))
+            {
+                _count += 1;
+                _count += GetBTreeChildPreconditionNum(((BTreeNodePreconditionNOT<T>)_precondition).GetChildPrecondition());
+            }
+            return _count;
         }
         private static int[] GetOtherParamsFromBTreeNode(BTreeNode<T, P> _node, NodeType _nodeType, SelectorNodeType _subType)
         {

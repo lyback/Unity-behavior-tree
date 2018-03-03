@@ -12,6 +12,7 @@ namespace BTreeFrame
         public BTreeNodeAction(BTreeNode<T, P> _parentNode, BTreeNodePrecondition<T> _precondition = null) 
             : base(_parentNode, _precondition)
         {
+            m_IsAcitonNode = true;
         }
 
         protected virtual void _DoEnter(T _input) { }
