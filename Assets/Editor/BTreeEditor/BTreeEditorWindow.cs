@@ -1,15 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using BTreeFrame;
 using UnityEditor;
 using UnityEngine;
+using Battle.Logic.AI.BTree;
 
 namespace BTree.Editor
 {
     public class BTreeEditorWindow : EditorWindow
     {
-        [SerializeField]
-        public static BTreeEditorWindow instance;
+        public static BTreeEditorWindow Instance;
         [MenuItem("ly/TestSave")]
         public static void TestSave()
         {
@@ -22,16 +21,17 @@ namespace BTree.Editor
             var data = BTreeEditorSerialization.ReadBinary("test");
             Debugger.Log(data);
         }
-        [MenuItem("Window/BTree Editor")]
+        [MenuItem("Window/BTree Editor %#_t")]
         public static void ShowWindow()
         {
-            BTreeEditorWindow bTreeEditorWindow = EditorWindow.GetWindow(typeof(BTreeEditorWindow)) as BTreeEditorWindow;
+            BTreeEditorWindow bTreeEditorWindow = GetWindow(typeof(BTreeEditorWindow)) as BTreeEditorWindow;
+            bTreeEditorWindow.mIsFirst = true;
             bTreeEditorWindow.wantsMouseMove = true;
             bTreeEditorWindow.minSize = new Vector2(600f, 500f);
             Object.DontDestroyOnLoad(bTreeEditorWindow);
         }
 
-        private BTreeGraphDesigner<BTreeTemplateData, BTreeTemplateData> mGraphDesigner = new BTreeGraphDesigner<BTreeTemplateData, BTreeTemplateData>();
+        private BTreeGraphDesigner<BTreeInputData, BTreeOutputData> mGraphDesigner = new BTreeGraphDesigner<BTreeInputData, BTreeOutputData>();
 
         private Rect mGraphRect;
         private Rect mFileToolBarRect;
@@ -56,13 +56,17 @@ namespace BTree.Editor
         private GenericMenu mBreadcrumbGameObjectMenu = new GenericMenu();
         private GenericMenu mBreadcrumbBehaviorMenu = new GenericMenu();
 
-        [SerializeField]
-        private Object mActiveObject;
-        private Object mActiveBehaviorSource;
+
+        private bool mIsFirst;
 
         public void OnGUI()
         {
-            this.mCurrentMousePosition = Event.current.mousePosition;
+            if (mIsFirst)
+            {
+                mIsFirst = false;
+                loadBTree();
+            }
+            mCurrentMousePosition = Event.current.mousePosition;
             setupSizes();
             if (Draw())
             {
@@ -72,13 +76,20 @@ namespace BTree.Editor
 
         public bool Draw()
         {
+            bool result = false;
             Color color = GUI.color;
             Color backgroundColor = GUI.backgroundColor;
             GUI.color = (Color.white);
             GUI.backgroundColor = (Color.white);
             drawFileToolbar();
-            drawGraphArea();
-            return true;
+            drawPropertiesBox();
+            if (drawGraphArea())
+            {
+                result = true;
+            }
+            GUI.color = color;
+            GUI.backgroundColor = backgroundColor;
+            return result;
         }
         private void setupSizes()
         {
@@ -116,6 +127,7 @@ namespace BTree.Editor
             }
             GUI.EndScrollView();
             GUI.Box(this.mGraphRect, "", BTreeEditorUtility.GraphBackgroundGUIStyle);
+
             BTreeEditorZoomArea.Begin(this.mGraphRect, this.mGraphZoom);
             Vector2 mousePosition;
             if (!this.getMousePositionInGraph(out mousePosition))
@@ -146,92 +158,6 @@ namespace BTree.Editor
             {
                 this.mBreadcrumbGameObjectBehaviorMenu.ShowAsContext();
             }
-            //string text = (this.mActiveObject as GameObject != null || this.mActiveObject as ExternalBehavior != null) ? this.mActiveObject.name : "(None Selected)";
-            string text = (this.mActiveObject as GameObject != null) ? this.mActiveObject.name : "(None Selected)";
-            if (GUILayout.Button(text, EditorStyles.toolbarPopup, new GUILayoutOption[]
-            {
-                GUILayout.Width(140f)
-            }))
-            {
-                this.mBreadcrumbGameObjectMenu.ShowAsContext();
-            }
-            string text2 = (this.mActiveBehaviorSource != null) ? this.mActiveBehaviorSource.name : "(None Selected)";
-            if (GUILayout.Button(text2, EditorStyles.toolbarPopup, new GUILayoutOption[]
-            {
-                GUILayout.Width(140f)
-            }) && this.mActiveBehaviorSource != null)
-            {
-                this.mBreadcrumbBehaviorMenu.ShowAsContext();
-            }
-            if (GUILayout.Button("-", EditorStyles.toolbarButton, new GUILayoutOption[]
-            {
-                GUILayout.Width(22f)
-            }))
-            {
-                if (this.mActiveBehaviorSource != null)
-                {
-                    //this.removeBehavior();
-                }
-                else
-                {
-                    EditorUtility.DisplayDialog("Unable to Remove Behavior Tree", "No behavior tree selected.", "OK");
-                }
-            }
-            if (GUILayout.Button("+", EditorStyles.toolbarButton, new GUILayoutOption[]
-            {
-                GUILayout.Width(22f)
-            }))
-            {
-                if (this.mActiveObject != null)
-                {
-                    //this.addBehavior();
-                }
-                else
-                {
-                    EditorUtility.DisplayDialog("Unable to Add Behavior Tree", "No Game Object is selected.", "OK");
-                }
-            }
-            //锁定
-            //if (GUILayout.Button("Lock", this.mLockActiveGameObject ? BehaviorDesignerUtility.ToolbarButtonSelectionGUIStyle : EditorStyles.toolbarButton, new GUILayoutOption[]
-            //{
-            //    GUILayout.Width(42f)
-            //}))
-            //{
-            //    if (this.mActiveObject != null)
-            //    {
-            //        this.mLockActiveGameObject = !this.mLockActiveGameObject;
-            //        if (!this.mLockActiveGameObject)
-            //        {
-            //            this.updateTree(false);
-            //        }
-            //    }
-            //    else
-            //    {
-            //        EditorUtility.DisplayDialog("Unable to Lock Game Object", "No Game Object is selected.", "OK");
-            //    }
-            //}
-            //保存
-            //if (GUILayout.Button("Save", EditorStyles.toolbarButton, new GUILayoutOption[]
-            //{
-            //    GUILayout.Width(42f)
-            //}))
-            //{
-            //    if (this.mActiveBehaviorSource != null)
-            //    {
-            //        if (this.mActiveBehaviorSource.get_Owner().GetObject() as Behavior)
-            //        {
-            //            this.saveAsAsset();
-            //        }
-            //        else
-            //        {
-            //            this.saveAsPrefab();
-            //        }
-            //    }
-            //    else
-            //    {
-            //        EditorUtility.DisplayDialog("Unable to Save Behavior Tree", "Select a behavior tree from within the scene.", "OK");
-            //    }
-            //}
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("Preferences", this.mShowPrefPanel ? BTreeEditorUtility.ToolbarButtonSelectionGUIStyle : EditorStyles.toolbarButton, new GUILayoutOption[]
             {
@@ -243,6 +169,16 @@ namespace BTree.Editor
             GUILayout.EndVertical();
             GUILayout.EndArea();
         }
+        //绘制属性栏
+        private void drawPropertiesBox()
+        {
+            GUILayout.BeginArea(this.mPropertyToolbarRect, EditorStyles.toolbar);
+            GUILayout.EndArea();
+            GUILayout.BeginArea(this.mPropertyBoxRect, BTreeEditorUtility.PropertyBoxGUIStyle);
+
+            GUILayout.EndArea();
+        }
+        #region 操作消息处理相关
         //获取鼠标位置
         private bool getMousePositionInGraph(out Vector2 mousePosition)
         {
@@ -398,5 +334,14 @@ namespace BTree.Editor
         {
             return true;
         }
+        #endregion
+        public void loadBTree()
+        {
+            BTreeEditorConfig _config = new BTreeEditorConfig();
+            mGraphDesigner = new BTreeGraphDesigner<BTreeInputData, BTreeOutputData>();
+            mGraphDesigner.load(_config);
+        }
+
+
     }
 }

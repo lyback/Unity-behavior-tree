@@ -880,6 +880,11 @@ namespace BTree.Editor
                 texture2D.LoadImage(BTreeEditorUtility.ReadToEnd(manifestResourceStream));
                 manifestResourceStream.Close();
             }
+            if (texture2D == null)
+            {
+                string path = "Assets/Editor/BTreeEditor/Res/{SkinColor}";
+                texture2D = (AssetDatabase.LoadAssetAtPath(path.Replace("{SkinColor}", EditorGUIUtility.isProSkin ? "Dark" : "Light") + imageName, typeof(Texture2D)) as Texture2D);
+            }
             if (texture2D != null)
             {
                 texture2D.hideFlags = HideFlags.HideInHierarchy | HideFlags.DontSaveInEditor | HideFlags.NotEditable;

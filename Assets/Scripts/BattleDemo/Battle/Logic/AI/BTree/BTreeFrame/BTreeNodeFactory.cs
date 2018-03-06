@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Battle.Logic.AI.BTree;
+using System;
 using System.Collections.Generic;
 namespace BTreeFrame
 {
@@ -32,9 +33,26 @@ namespace BTreeFrame
                 PreconditionTypeDic.Add(type.Name, type);
             }
         }
+        public static void Init()
+        {
+            AddActionType(typeof(AttackActionNode));
+            AddActionType(typeof(FindTargetActionNode));
+            AddActionType(typeof(IdleActionNode));
+            AddActionType(typeof(MoveToActionNode));
+            AddActionType(typeof(StartActionNode));
+
+            AddPreconditionType(typeof(HasTargetCondition));
+            AddPreconditionType(typeof(HasReachedTargetCondition));
+            AddPreconditionType(typeof(IsInAttackRangeCondition));
+        }
 
         #region 从配置生成行为树相关方法
-        public static BTreeNode<T, P> CreateBTreeFromConfig(TreeConfig _config)
+        public static BTreeNode<T, P> CreateBTreeRootFromConfig(TreeConfig _config)
+        {
+            BTreeNode<T, P>[] _nodes = CreateBTreeFromConfig(_config);
+            return _nodes[0];
+        }
+        public static BTreeNode<T, P>[] CreateBTreeFromConfig(TreeConfig _config)
         {
             BTreeNode<T, P>[] _nodes = new BTreeNode<T, P>[_config.m_Nodes.Length];
             for (int i = 0; i < _nodes.Length; i++)
@@ -45,7 +63,7 @@ namespace BTreeFrame
             {
                 if (_nodes[i] == null)
                 {
-                    _nodes[i] = CreateTreeNode(ref _nodes, _config.m_Nodes, i);    
+                    _nodes[i] = CreateTreeNode(ref _nodes, _config.m_Nodes, i);
                 }
                 if (_config.m_Nodes[i].m_Preconditions != null)
                 {
@@ -54,7 +72,7 @@ namespace BTreeFrame
                     _nodes[i].SetNodePrecondition(precondition);
                 }
             }
-            return _nodes[0];    
+            return _nodes;
         }
         private static BTreeNode<T, P> CreateTreeNode(ref BTreeNode<T, P>[] _nodes, TreeNodeConfig[] _nodeConfigs, int index)
         {
@@ -82,6 +100,7 @@ namespace BTreeFrame
                 default:
                     break;
             }
+            _node.m_Index = index;
             return _node;
         }
         private static BTreeNode<T, P> CreateSelectorNode(SelectorNodeType _subType, BTreeNode<T, P> _parent, string _nodeName, params int[] _param)

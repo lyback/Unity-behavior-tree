@@ -8,7 +8,7 @@ namespace BTree.Editor
         where T : BTreeTemplateData
         where P : BTreeTemplateData
     {
-        public BTreeNodeDesigner<T, P> m_EntryNode { get; private set; }
+        //public BTreeNodeDesigner<T, P> m_EntryNode { get; private set; }
         public BTreeNodeDesigner<T, P> m_RootNode { get; private set; }
         public List<BTreeNodeDesigner<T, P>> m_DetachedNodes = new List<BTreeNodeDesigner<T, P>>();
         public List<BTreeNodeDesigner<T, P>> m_SelectedNodes = new List<BTreeNodeDesigner<T, P>>();
@@ -16,47 +16,50 @@ namespace BTree.Editor
         public BTreeNodeConnection<T, P> m_ActiveNodeConnection { get; set; }
         public List<BTreeNodeConnection<T, P>> m_SelectedNodeConnections = new List<BTreeNodeConnection<T, P>>();
 
+        #region 绘制相关
         public bool drawNodes(Vector2 mousePosition, Vector2 offset, float graphZoom)
         {
-            if (this.m_EntryNode == null)
-            {
-                return false;
-            }
-            m_EntryNode.drawNodeConnection(offset, graphZoom, false);
+            //if (this.m_EntryNode == null)
+            //{
+            //    return false;
+            //}
+            //m_EntryNode.drawNodeConnection(offset, graphZoom, false);
             //从根节点开始递归绘制
+            /*
             if (m_RootNode != null)
             {
-                drawNodeConnectionChildren(m_RootNode, offset, graphZoom, m_RootNode.m_Node.m_Disable);
+                drawNodeConnectionChildren(m_RootNode, offset, graphZoom, m_RootNode.m_EditorNode.m_Disable);
             }
             //绘制未连接的节点
             for (int i = 0; i < m_DetachedNodes.Count; i++)
             {
-                drawNodeConnectionChildren(m_DetachedNodes[i], offset, graphZoom, m_DetachedNodes[i].m_Node.m_Disable);
+                drawNodeConnectionChildren(m_DetachedNodes[i], offset, graphZoom, m_DetachedNodes[i].m_EditorNode.m_Disable);
             }
             //绘制选中的连线
             for (int i = 0; i < m_SelectedNodeConnections.Count; i++)
             {
-                m_SelectedNodeConnections[i].drawConnection(offset, graphZoom, m_SelectedNodeConnections[i].m_OriginatingNodeDesigner.m_Node.m_Disable);
+                m_SelectedNodeConnections[i].drawConnection(offset, graphZoom, m_SelectedNodeConnections[i].m_OriginatingNodeDesigner.m_EditorNode.m_Disable);
             }
             //
             if (mousePosition != new Vector2(-1f, -1f) && m_ActiveNodeConnection != null)
             {
                 m_ActiveNodeConnection.m_HorizontalHeight = (m_ActiveNodeConnection.m_OriginatingNodeDesigner.getConnectionPosition(offset, m_ActiveNodeConnection.m_NodeConnectionType).y + mousePosition.y) / 2;
                 var _offset = m_ActiveNodeConnection.m_OriginatingNodeDesigner.getConnectionPosition(offset, m_ActiveNodeConnection.m_NodeConnectionType);
-                var _disable = m_ActiveNodeConnection.m_OriginatingNodeDesigner.m_Node.m_Disable && m_ActiveNodeConnection.m_NodeConnectionType == NodeConnectionType.Outgoing;
+                var _disable = m_ActiveNodeConnection.m_OriginatingNodeDesigner.m_EditorNode.m_Disable && m_ActiveNodeConnection.m_NodeConnectionType == NodeConnectionType.Outgoing;
                 m_ActiveNodeConnection.drawConnection(_offset, mousePosition, graphZoom, _disable);
             }
-            m_EntryNode.drawNode(offset, false, false);
+            */
+            //m_EntryNode.drawNode(offset, false, false);
             bool result = false;
             //绘制跟节点
-            if (m_RootNode != null && drawNodeChildren(m_RootNode, offset, m_RootNode.m_Node.m_Disable))
+            if (m_RootNode != null && drawNodeChildren(m_RootNode, offset, m_RootNode.m_EditorNode.m_Disable))
             {
                 result = true;
             }
             //绘制未连接的节点
             for (int i = 0; i < m_DetachedNodes.Count; i++)
             {
-                if (drawNodeChildren(m_DetachedNodes[i], offset, m_DetachedNodes[i].m_Node.m_Disable))
+                if (drawNodeChildren(m_DetachedNodes[i], offset, m_DetachedNodes[i].m_EditorNode.m_Disable))
                 {
                     result = true;
                 }
@@ -64,7 +67,7 @@ namespace BTree.Editor
             //绘制选中的节点
             for (int i = 0; i < m_SelectedNodes.Count; i++)
             {
-                if (drawNodeChildren(m_SelectedNodes[i], offset, m_SelectedNodes[i].m_Node.m_Disable))
+                if (drawNodeChildren(m_SelectedNodes[i], offset, m_SelectedNodes[i].m_EditorNode.m_Disable))
                 {
                     result = true;
                 }
@@ -88,13 +91,13 @@ namespace BTree.Editor
             {
                 return;
             }
-            if (!nodeDesigner.m_Node.m_IsCollapsed)
+            if (!nodeDesigner.m_EditorNode.m_IsCollapsed)
             {
-                nodeDesigner.drawNodeConnection(offset, graphZoom, nodeDesigner.m_Node.m_Disable || disabledNode);
+                nodeDesigner.drawNodeConnection(offset, graphZoom, nodeDesigner.m_EditorNode.m_Disable || disabledNode);
                 for (int i = 0; i < nodeDesigner.m_ChildNodeList.Count; i++)
                 {
                     var _child = nodeDesigner.m_ChildNodeList[i];
-                    drawNodeConnectionChildren(_child, offset, graphZoom, _child.m_Node.m_Disable || disabledNode);
+                    drawNodeConnectionChildren(_child, offset, graphZoom, _child.m_EditorNode.m_Disable || disabledNode);
                 }
             }
         }
@@ -127,12 +130,27 @@ namespace BTree.Editor
             for (int i = 0; i < nodeDesigner.m_ChildNodeList.Count; i++)
             {
                 var _child = nodeDesigner.m_ChildNodeList[i];
-                if (drawNodeChildren(_child, offset, _child.m_Node.m_Disable))
+                if (drawNodeChildren(_child, offset, _child.m_EditorNode.m_Disable))
                 {
                     result = true;
                 }
             }
             return result;
+        }
+        #endregion
+
+        public void load(BTreeEditorConfig _config)
+        {
+            m_RootNode = BTreeEditorNodeFactory<T, P>.CreateBTreeNodeDesignerFromConfig(_config.m_RootNode)[0];
+            if (_config.m_DetachedNode != null)
+            {
+                m_DetachedNodes = new List<BTreeNodeDesigner<T, P>>();
+                for (int i = 0; i < _config.m_DetachedNode.Count; i++)
+                {
+                    BTreeNodeDesigner<T, P> _detachedNode = BTreeEditorNodeFactory<T, P>.CreateBTreeNodeDesignerFromConfig(_config.m_DetachedNode[i])[0];
+                    m_DetachedNodes.Add(_detachedNode);
+                }
+            }
         }
     }
 }

@@ -21,13 +21,14 @@ namespace BTree.Editor
 
         public NodeConnectionType m_NodeConnectionType;
         private bool m_Selected;
-
-        public void loadConnection(BTreeNodeDesigner<T, P> nodeDesigner, NodeConnectionType nodeConnectionType)
+        
+        public BTreeNodeConnection(BTreeNodeDesigner<T, P> _dest, BTreeNodeDesigner<T, P> _orig, NodeConnectionType _type)
         {
-            m_OriginatingNodeDesigner = nodeDesigner;
-            m_NodeConnectionType = nodeConnectionType;
-            m_Selected = false;
+            m_DestinationNodeDesigner = _dest;
+            m_OriginatingNodeDesigner = _orig;
+            m_NodeConnectionType = _type;
         }
+
         //绘制连线
         public void drawConnection(Vector2 offset, float graphZoom, bool disabled)
         {

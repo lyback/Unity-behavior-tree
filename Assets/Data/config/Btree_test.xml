@@ -34,7 +34,7 @@
         <PreconditionConfig>
           <m_ParentIndex>-1</m_ParentIndex>
           <m_Type>3</m_Type>
-          <m_PreconditionName>BTreeNodePreconditionNOT</m_PreconditionName>
+          <m_PreconditionName>BTreeNodePreconditionNOT`1</m_PreconditionName>
           <m_ChildIndexs>
             <int>1</int>
           </m_ChildIndexs>
@@ -56,7 +56,7 @@
         <PreconditionConfig>
           <m_ParentIndex>-1</m_ParentIndex>
           <m_Type>1</m_Type>
-          <m_PreconditionName>BTreeNodePreconditionAND</m_PreconditionName>
+          <m_PreconditionName>BTreeNodePreconditionAND`1</m_PreconditionName>
           <m_ChildIndexs>
             <int>1</int>
             <int>2</int>

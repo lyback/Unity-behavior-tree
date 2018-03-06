@@ -17,15 +17,15 @@ namespace Battle.Logic.AI.BTree
             //BTreeNodeFactory<MyInputData, MyOutputData>.CreateActionNode<MoveToActionNode>(troopAction, "MoveTo")
             //    .SetNodePrecondition(new HasTargetCondition());
 
-            BTreeNodeFactory<BTreeInputData, BTreeOutputData>.AddActionType(typeof(AttackActionNode));
-            BTreeNodeFactory<BTreeInputData, BTreeOutputData>.AddActionType(typeof(FindTargetActionNode));
-            BTreeNodeFactory<BTreeInputData, BTreeOutputData>.AddActionType(typeof(IdleActionNode));
-            BTreeNodeFactory<BTreeInputData, BTreeOutputData>.AddActionType(typeof(MoveToActionNode));
-            BTreeNodeFactory<BTreeInputData, BTreeOutputData>.AddActionType(typeof(StartActionNode));
+            //BTreeNodeFactory<BTreeInputData, BTreeOutputData>.AddActionType(typeof(AttackActionNode));
+            //BTreeNodeFactory<BTreeInputData, BTreeOutputData>.AddActionType(typeof(FindTargetActionNode));
+            //BTreeNodeFactory<BTreeInputData, BTreeOutputData>.AddActionType(typeof(IdleActionNode));
+            //BTreeNodeFactory<BTreeInputData, BTreeOutputData>.AddActionType(typeof(MoveToActionNode));
+            //BTreeNodeFactory<BTreeInputData, BTreeOutputData>.AddActionType(typeof(StartActionNode));
 
-            BTreeNodeFactory<BTreeInputData, BTreeOutputData>.AddPreconditionType(typeof(HasTargetCondition));
-            BTreeNodeFactory<BTreeInputData, BTreeOutputData>.AddPreconditionType(typeof(HasReachedTargetCondition));
-            BTreeNodeFactory<BTreeInputData, BTreeOutputData>.AddPreconditionType(typeof(IsInAttackRangeCondition));
+            //BTreeNodeFactory<BTreeInputData, BTreeOutputData>.AddPreconditionType(typeof(HasTargetCondition));
+            //BTreeNodeFactory<BTreeInputData, BTreeOutputData>.AddPreconditionType(typeof(HasReachedTargetCondition));
+            //BTreeNodeFactory<BTreeInputData, BTreeOutputData>.AddPreconditionType(typeof(IsInAttackRangeCondition));
 
             //TreeConfig config = new TreeConfig();
             //config.m_Name = "Btree";
@@ -103,9 +103,13 @@ namespace Battle.Logic.AI.BTree
             //var _config = BTreeNodeSerialization.ReadBinary(config.m_Name);
 
             //BTreeNodeSerialization.WriteXML(config, config.m_Name);
-            var _config = BTreeNodeSerialization.ReadXML("Btree");
+            //var _config = BTreeNodeSerialization.ReadXML("Btree");
+            var _config = BTreeNodeSerialization.ReadXML("Btree_test");
 
-            m_TreeRoot = BTreeNodeFactory<BTreeInputData, BTreeOutputData>.CreateBTreeFromConfig(_config);
+            BTreeNodeFactory<BTreeInputData, BTreeOutputData>.Init();
+            m_TreeRoot = BTreeNodeFactory<BTreeInputData, BTreeOutputData>.CreateBTreeRootFromConfig(_config);
+            //var _testconfig = BTreeNodeFactory<BTreeInputData, BTreeOutputData>.CreateConfigFromBTreeRoot(m_TreeRoot);
+            //BTreeNodeSerialization.WriteXML(_testconfig, "Btree_test");
         }
         public void Tick(BTreeInputData _input, ref BTreeOutputData _output)
         {

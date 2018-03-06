@@ -13,7 +13,8 @@ namespace BTree.Editor
         public static Rect Begin(Rect screenCoordsArea, float zoomScale)
         {
             GUI.EndGroup();
-            Rect rect = screenCoordsArea.ScaleSizeBy(1f / zoomScale, screenCoordsArea.TopLeft());
+            Rect rect = screenCoordsArea;
+            //Rect rect = screenCoordsArea.ScaleSizeBy(1f / zoomScale, screenCoordsArea.TopLeft());
             rect.y = (rect.y + (float)BTreeEditorUtility.EditorWindowTabHeight);
             GUI.BeginGroup(rect);
             _prevGuiMatrix = GUI.matrix;

@@ -9,6 +9,8 @@ namespace BTreeFrame
     {   
         //节点名称
         public string m_Name = "UNNAMED";
+        //节点索引
+        public int m_Index;
         //子节点
         protected List<BTreeNode<T, P>> m_ChildNodes = new List<BTreeNode<T, P>>();
         public List<BTreeNode<T, P>> m_ChildNodeList
@@ -22,18 +24,19 @@ namespace BTreeFrame
         //子节点数
         public int m_ChildCount{ get; protected set; }
         //父节点
-        protected BTreeNode<T, P> m_ParentNode { get; set; }
+        public BTreeNode<T, P> m_ParentNode { get; protected set; }
         //上一个激活的节点
         public BTreeNode<T, P> m_LastActiveNode { get; private set; }
         //当前激活的节点
         public BTreeNode<T, P> m_ActiveNode { get; private set; }
         //前提条件
-        protected BTreeNodePrecondition<T> m_NodePrecondition;
+        public BTreeNodePrecondition<T> m_NodePrecondition { get; protected set; }
         //是否是Action节点
         public bool m_IsAcitonNode { get; protected set; }
 
         protected const int MAX_CHILD_NODE_COUNT = 16;
         protected const int INVALID_CHILD_NODE_INDEX = -1;
+
 
         public BTreeNode(BTreeNode<T, P> _parentNode, BTreeNodePrecondition<T> _precondition = null)
         {
