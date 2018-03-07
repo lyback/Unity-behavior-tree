@@ -50,7 +50,11 @@ namespace BTree.Editor
         private bool mShowPrefPanel;
         //是否显示右键菜单
         private bool mShowRightClickMenu;
-
+        //是否点击节点中
+        private bool mNodeClicked;
+        //是否在拖动中
+        private bool mIsDragging;
+        
         private GenericMenu mRightClickMenu = new GenericMenu();
         private GenericMenu mBreadcrumbGameObjectBehaviorMenu = new GenericMenu();
         private GenericMenu mBreadcrumbGameObjectMenu = new GenericMenu();
@@ -68,6 +72,7 @@ namespace BTree.Editor
             }
             mCurrentMousePosition = Event.current.mousePosition;
             setupSizes();
+            handleEvents();
             if (Draw())
             {
                 base.Repaint();
@@ -130,7 +135,7 @@ namespace BTree.Editor
 
             BTreeEditorZoomArea.Begin(this.mGraphRect, this.mGraphZoom);
             Vector2 mousePosition;
-            if (!this.getMousePositionInGraph(out mousePosition))
+            if (!getMousePositionInGraph(out mousePosition))
             {
                 mousePosition = new Vector2(-1f, -1f);
             }
@@ -179,10 +184,10 @@ namespace BTree.Editor
             GUILayout.EndArea();
         }
         #region 操作消息处理相关
-        //获取鼠标位置
+        //获取鼠标位置是否在绘图区域内
         private bool getMousePositionInGraph(out Vector2 mousePosition)
         {
-            mousePosition = this.mCurrentMousePosition;
+            mousePosition = mCurrentMousePosition;
             if (!this.mGraphRect.Contains(mousePosition))
             {
                 return false;
@@ -199,6 +204,7 @@ namespace BTree.Editor
         private void handleEvents()
         {
             if (EditorApplication.isCompiling) return;
+
             Event e = Event.current;
             switch (e.type)
             {
@@ -310,15 +316,41 @@ namespace BTree.Editor
         //鼠标左键down
         private bool leftMouseDown(int clickCount)
         {
+            Vector2 point;
+            if (!getMousePositionInGraph(out point))
+            {
+                return false;
+            }
+            mGraphDesigner.clearNodeSelection();
+            var nodeDesigner = mGraphDesigner.nodeAt(point, this.mGraphOffset);
+            if (nodeDesigner != null)
+            {
+                mGraphDesigner.select(nodeDesigner);
+                mNodeClicked = true;
+            }
             return true;
         }
         private bool leftMouseDragged()
         {
+            Vector2 point;
+            if (!getMousePositionInGraph(out point))
+            {
+                return false;
+            }
+            if (mNodeClicked)
+            {
+                bool flag = mGraphDesigner.dragSelectedNodes(Event.current.delta / mGraphZoom, Event.current.modifiers != EventModifiers.Alt, mIsDragging);
+                if (flag)
+                {
+                    mIsDragging = true;
+                }
+            }
             return true;
         }
         //鼠标左键Release
         private bool leftMouseRelease()
         {
+            mNodeClicked = false;
             return true;
         }
         //鼠标右键down
@@ -338,10 +370,10 @@ namespace BTree.Editor
         public void loadBTree()
         {
             BTreeEditorConfig _config = new BTreeEditorConfig();
-            mGraphDesigner = new BTreeGraphDesigner<BTreeInputData, BTreeOutputData>();
+            mGraphDesigner = (new BTreeGraphDesigner<BTreeInputData, BTreeOutputData>());
             mGraphDesigner.load(_config);
         }
-
+       
 
     }
 }

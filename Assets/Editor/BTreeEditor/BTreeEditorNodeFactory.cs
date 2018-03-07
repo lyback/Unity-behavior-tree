@@ -21,10 +21,13 @@ namespace BTree.Editor
             }
             for (int i = 0; i < _nodeDesigners.Length; i++)
             {
-                BTreeEditorNodeConfig _configNode = _config.m_EditorNodes[i];
-                if (_configNode.m_ParentIndex > 0)
+                var _editorNode = _editorNodes[i];
+                if (_editorNode.m_Node.m_ParentNode != null)
                 {
-                    _nodeDesigners[i].m_ParentNode = _nodeDesigners[_configNode.m_ParentIndex];
+                    int _parentIndex = _editorNode.m_Node.m_ParentNode.m_Index;
+                    _nodeDesigners[i].m_ParentNode = _nodeDesigners[_parentIndex];
+                    BTreeNodeConnection<T, P> _connection = new BTreeNodeConnection<T, P>(_nodeDesigners[i], _nodeDesigners[_parentIndex], NodeConnectionType.Incoming);
+                    _nodeDesigners[i].m_ParentNodeConnection = _connection;
                 }
                 _nodeDesigners[i].init();
             }
@@ -33,11 +36,6 @@ namespace BTree.Editor
         public static BTreeNodeDesigner<T, P> CreateBTreeNodeDesigner(BTreeEditorNodeConfig[] _configNodes, BTreeEditorNode<T, P>[] _editorNodes, ref BTreeNodeDesigner<T, P>[] _nodeDesigners, int _index)
         {
             BTreeEditorNode<T, P> _editorNode = _editorNodes[_index];
-            BTreeEditorNodeConfig _configNode = _configNodes[_index];
-            //if (_configNode.m_ParentIndex >= 0 && _nodeDesigners[_configNode.m_ParentIndex] == null)
-            //{
-            //    _nodeDesigners[_configNode.m_ParentIndex] = CreateBTreeNodeDesigner(_configNodes, _editorNodes, ref _nodeDesigners, _configNode.m_ParentIndex);
-            //}
             for (int i = 0; i < _editorNode.m_Node.m_ChildCount; i++)
             {
                 int _childIndex = _editorNode.m_Node.m_ChildNodeList[i].m_Index;
@@ -51,11 +49,12 @@ namespace BTree.Editor
             _node.m_NodeName = _editorNode.m_Node.m_Name;
             _node.m_ChildNodeList = new List<BTreeNodeDesigner<T, P>>();
             _node.m_ChildNodeConnectionList = new List<BTreeNodeConnection<T, P>>();
+            
             for (int i = 0; i < _editorNode.m_Node.m_ChildCount; i++)
             {
                 int _childIndex = _editorNode.m_Node.m_ChildNodeList[i].m_Index;
                 _node.m_ChildNodeList.Add(_nodeDesigners[_childIndex]);
-                BTreeNodeConnection<T, P> _connection = new BTreeNodeConnection<T, P>(_nodeDesigners[_childIndex], _nodeDesigners[_index], NodeConnectionType.Outgoing);
+                BTreeNodeConnection<T, P> _connection = new BTreeNodeConnection<T, P>(_nodeDesigners[_childIndex], _node, NodeConnectionType.Outgoing);
                 _node.m_ChildNodeConnectionList.Add(_connection);
             }
             return _node;
@@ -71,18 +70,6 @@ namespace BTree.Editor
                 _editorNodes[i].m_Pos = _config.m_EditorNodes[i].m_Pos;
                 _editorNodes[i].m_Disable = _config.m_EditorNodes[i].m_Disable;
             }
-            //for (int i = 0; i < _editorNodes.Length; i++)
-            //{
-            //    if (_btreeNodes[i].m_ChildCount != 0)
-            //    {
-            //        _editorNodes[i].m_ChildNodeList = new BTreeEditorNode<T, P>[_btreeNodes[i].m_ChildCount];
-            //        for (int j = 0; i < _btreeNodes[i].m_ChildCount; j++)
-            //        {
-            //            int _index = _btreeNodes[i].m_ChildNodeList[j].m_Index;
-            //            _editorNodes[i].m_ChildNodeList[j] = _editorNodes[_index];
-            //        }
-            //    }
-            //}
             return _editorNodes;
         }
         #endregion

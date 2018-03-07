@@ -181,6 +181,14 @@ namespace BTree.Editor
         private static Texture2D executionSuccessTexture = null;
 
         private static Texture2D executionFailureTexture = null;
+        
+        private static Texture2D prioritySelectorIcon = null;
+
+        private static Texture2D sequenceIcon = null;
+
+        private static Texture2D parallelSelectorIcon = null;
+
+        private static Texture2D inverterIcon = null;
 
         public static GUIStyle GraphStatusGUIStyle
         {
@@ -841,6 +849,53 @@ namespace BTree.Editor
                 return BTreeEditorUtility.executionFailureTexture;
             }
         }
+        public static Texture2D PrioritySelectorIcon
+        {
+            get
+            {
+                if (BTreeEditorUtility.prioritySelectorIcon == null)
+                {
+                    BTreeEditorUtility.initPrioritySelectorIcon();
+                }
+                return BTreeEditorUtility.prioritySelectorIcon;
+            }
+        }
+
+        public static Texture2D SequenceIcon
+        {
+            get
+            {
+                if (BTreeEditorUtility.sequenceIcon == null)
+                {
+                    BTreeEditorUtility.initSequenceIcon();
+                }
+                return BTreeEditorUtility.sequenceIcon;
+            }
+        }
+
+        public static Texture2D ParallelSelectorIcon
+        {
+            get
+            {
+                if (BTreeEditorUtility.parallelSelectorIcon == null)
+                {
+                    BTreeEditorUtility.initParallelSelectorIcon();
+                }
+                return BTreeEditorUtility.parallelSelectorIcon;
+            }
+        }
+
+        public static Texture2D InverterIcon
+        {
+            get
+            {
+                if (BTreeEditorUtility.inverterIcon == null)
+                {
+                    BTreeEditorUtility.initInverterIcon();
+                }
+                return BTreeEditorUtility.inverterIcon;
+            }
+        }
 
         public static string SplitCamelCase(string s)
         {
@@ -905,7 +960,7 @@ namespace BTree.Editor
             if (texture2D == null)
             {
                 string path = "Assets/Editor/BTreeEditor/Res/";
-                texture2D = (AssetDatabase.LoadAssetAtPath(path + iconName.Replace("{SkinColor}", EditorGUIUtility.isProSkin ? "Dark" : "Light"), typeof(Texture2D)) as Texture2D);
+                texture2D = (AssetDatabase.LoadAssetAtPath(path + iconName, typeof(Texture2D)) as Texture2D);
             }
             if (texture2D != null)
             {
@@ -1337,5 +1392,26 @@ namespace BTree.Editor
         {
             BTreeEditorUtility.executionFailureTexture = BTreeEditorUtility.LoadTexture("ExecutionFailure.png", false, null);
         }
+
+        private static void initPrioritySelectorIcon()
+        {
+            BTreeEditorUtility.prioritySelectorIcon = BTreeEditorUtility.LoadTexture("PrioritySelectorIcon.png", false, null);
+        }
+
+        private static void initSequenceIcon()
+        {
+            BTreeEditorUtility.sequenceIcon = BTreeEditorUtility.LoadTexture("SequenceIcon.png", false, null);
+        }
+
+        private static void initParallelSelectorIcon()
+        {
+            BTreeEditorUtility.parallelSelectorIcon = BTreeEditorUtility.LoadTexture("ParallelSelectorIcon.png", false, null);
+        }
+
+        private static void initInverterIcon()
+        {
+            BTreeEditorUtility.inverterIcon = BTreeEditorUtility.LoadTexture("InverterIcon.png", false, null);
+        }
+        
     }
 }

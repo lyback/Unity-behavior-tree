@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using BTreeFrame;
 using UnityEngine;
+using System;
 
 namespace BTree.Editor
 {
@@ -12,6 +13,7 @@ namespace BTree.Editor
         public BTreeNodeDesigner<T, P> m_ParentNode;
         public List<BTreeNodeDesigner<T, P>> m_ChildNodeList;
         public List<BTreeNodeConnection<T, P>> m_ChildNodeConnectionList;
+        public BTreeNodeConnection<T, P> m_ParentNodeConnection;
         public string m_NodeName = "";
         private bool m_Selected;
         private bool m_IsDirty = true;
@@ -19,17 +21,25 @@ namespace BTree.Editor
         public bool m_IsParent { get; private set; }
         private bool m_IsShowHoverBar;
         private Texture m_Icon;
-        private static Texture m_BG;
+
         public void select()
         {
-            if (!m_IsEntryDisplay)
-            {
-                m_Selected = true;
-            }
+            m_Selected = true;
         }
         public void deselect()
         {
             m_Selected = false;
+        }
+        public void movePosition(Vector2 delta)
+        {
+            Vector2 vector = m_EditorNode.m_Pos;
+            vector += delta;
+            m_EditorNode.m_Pos = vector;
+            if (m_ParentNode != null)
+            {
+                m_ParentNode.markDirty();
+            }
+            markDirty();
         }
         public void markDirty()
         {
@@ -56,17 +66,20 @@ namespace BTree.Editor
             m_IsParent = m_EditorNode.m_Node.m_ChildCount != 0;
             loadTaskIcon();
         }
+        public void makeEntryDisplay(BTreeNodeDesigner<T, P> _child)
+        {
+            this.m_IsEntryDisplay = (this.m_IsParent = true);
+            this.m_NodeName = "Entry";
+            this.m_ChildNodeList = new List<BTreeNodeDesigner<T, P>>();
+            m_ChildNodeList.Add(_child);
+            m_ChildNodeConnectionList = new List<BTreeNodeConnection<T, P>>();
+            m_ChildNodeConnectionList.Add(new BTreeNodeConnection<T, P>(_child,this,NodeConnectionType.Outgoing));
+        }
         //绘制节点
         public bool drawNode(Vector2 offset, bool drawSelected, bool disabled)
         {
-            if (drawSelected != this.m_Selected)
-            {
-                return false;
-            }
-
             Rect rect = this.rectangle(offset, false);
             GUI.color = Color.white;
-
             //上部
             if (!m_IsEntryDisplay)
             {
@@ -74,24 +87,25 @@ namespace BTree.Editor
                 //GUI.DrawTexture(new Rect(rect.x + (rect.width - BTreeEditorUtility.ConnectionWidth) / 2f, rect.yMin - 3f, BTreeEditorUtility.ConnectionWidth, (BTreeEditorUtility.BottomConnectionHeight + BTreeEditorUtility.TaskBackgroundShadowSize)), BTreeEditorUtility.TaskConnectionTopTexture, ScaleMode.ScaleToFit);
             }
             //下部
-            if (!m_EditorNode.m_Node.m_IsAcitonNode)
+            if (m_IsEntryDisplay || !m_EditorNode.m_Node.m_IsAcitonNode)
             {
                 GUI.DrawTexture(new Rect(rect.x + (rect.width - BTreeEditorUtility.ConnectionWidth) / 2f, rect.yMax - 3f, BTreeEditorUtility.ConnectionWidth, (BTreeEditorUtility.BottomConnectionHeight + BTreeEditorUtility.TaskBackgroundShadowSize)), BTreeEditorUtility.TaskConnectionBottomTexture, ScaleMode.ScaleToFit);
             }
-            //task背景
-            GUI.DrawTexture(new Rect(rect.x + (rect.width - 150) / 2f, rect.y, 150, 75), m_BG, ScaleMode.ScaleToFit);
+            //背景
+            GUI.Label(rect, "", m_Selected ? BTreeEditorUtility.TaskSelectedGUIStyle : BTreeEditorUtility.TaskGUIStyle);
             //图标背景
             GUI.DrawTexture(new Rect(rect.x + (rect.width - BTreeEditorUtility.IconBorderSize) / 2f, rect.y + ((BTreeEditorUtility.IconAreaHeight - BTreeEditorUtility.IconBorderSize) / 2) + 2f, BTreeEditorUtility.IconBorderSize, BTreeEditorUtility.IconBorderSize), BTreeEditorUtility.TaskBorderTexture);
             //图标
             GUI.DrawTexture(new Rect(rect.x + (rect.width - BTreeEditorUtility.IconSize) / 2f, rect.y + ((BTreeEditorUtility.IconAreaHeight - BTreeEditorUtility.IconSize) / 2) + 2f, BTreeEditorUtility.IconSize, BTreeEditorUtility.IconSize), m_Icon);
-            if (this.m_IsShowHoverBar)
+            if (m_IsShowHoverBar)
             {
-                GUI.DrawTexture(new Rect(rect.x - 1f, rect.y - 17f, 14f, 14f), this.m_EditorNode.m_Disable ? BTreeEditorUtility.EnableTaskTexture : BTreeEditorUtility.DisableTaskTexture, ScaleMode.ScaleToFit);
-                if (this.m_IsParent)
+                GUI.DrawTexture(new Rect(rect.x - 1f, rect.y - 17f, 14f, 14f), m_EditorNode.m_Disable ? BTreeEditorUtility.EnableTaskTexture : BTreeEditorUtility.DisableTaskTexture, ScaleMode.ScaleToFit);
+                if (m_IsParent)
                 {
-                    GUI.DrawTexture(new Rect(rect.x + 15f, rect.y - 17f, 14f, 14f), this.m_EditorNode.m_IsCollapsed ? BTreeEditorUtility.ExpandTaskTexture : BTreeEditorUtility.CollapseTaskTexture, ScaleMode.ScaleToFit);
+                    GUI.DrawTexture(new Rect(rect.x + 15f, rect.y - 17f, 14f, 14f), m_EditorNode.m_IsCollapsed ? BTreeEditorUtility.ExpandTaskTexture : BTreeEditorUtility.CollapseTaskTexture, ScaleMode.ScaleToFit);
                 }
             }
+            GUI.Label(new Rect(rect.x, rect.yMax - BTreeEditorUtility.TitleHeight - 1f, rect.width, BTreeEditorUtility.TitleHeight), this.ToString(), BTreeEditorUtility.TaskTitleGUIStyle);
             return true;
         }
         //绘制连线
@@ -99,7 +113,7 @@ namespace BTree.Editor
         {
             if (m_IsDirty)
             {
-                determineConnectionHorizontalHeight(this.rectangle(offset, false), offset);
+                determineConnectionHorizontalHeight(rectangle(offset, false), offset);
                 m_IsDirty = false;
             }
             if (m_IsParent)
@@ -131,13 +145,44 @@ namespace BTree.Editor
             }
             return result;
         }
-        
+
         private void loadTaskIcon()
         {
-            string _iconName = "{SkinColor}ActionIcon.png";
-            m_Icon = BTreeEditorUtility.LoadIcon(_iconName);
-            string _bgName = "{SkinColor}Task.png";
-            m_BG = BTreeEditorUtility.LoadIcon(_bgName);
+            Texture2D _icon = null;
+            if (m_IsEntryDisplay)
+            {
+                _icon = BTreeEditorUtility.LoadTexture("EntryIcon.png");
+            }
+            else if (m_EditorNode.m_Node.m_IsAcitonNode)
+            {
+                _icon = BTreeEditorUtility.LoadTexture("ActionIcon.png");
+            }
+            else
+            {
+                Type type = m_EditorNode.m_Node.GetType();
+                if (type == typeof(BTreeNodePrioritySelector<T, P>))
+                {
+                    _icon = BTreeEditorUtility.PrioritySelectorIcon;
+                }
+                else if (type == typeof(BTreeNodeNonePrioritySelector<T, P>))
+                {
+                    _icon = BTreeEditorUtility.PrioritySelectorIcon;
+                }
+                else if (type == typeof(BTreeNodeSequence<T, P>))
+                {
+                    _icon = BTreeEditorUtility.SequenceIcon;
+
+                }
+                else if (type == typeof(BTreeNodeParallel<T, P>))
+                {
+                    _icon = BTreeEditorUtility.ParallelSelectorIcon;
+                }
+                else
+                {
+                    _icon = BTreeEditorUtility.InverterIcon;
+                }
+            }
+            m_Icon = _icon;
         }
         
         private Rect rectangle(Vector2 offset, bool includeConnections)
@@ -205,6 +250,19 @@ namespace BTree.Editor
                 }
             }
         }
-
+        //是否包含坐标
+        public bool contains(Vector2 point, Vector2 offset, bool includeConnections)
+        {
+            return rectangle(offset, includeConnections).Contains(point);
+        }
+       
+        public override string ToString()
+        {
+            if (m_NodeName == null)
+            {
+                return "";
+            }
+            return m_NodeName;
+        }
     }
 }
