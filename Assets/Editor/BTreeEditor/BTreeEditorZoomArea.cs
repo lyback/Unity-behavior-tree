@@ -15,7 +15,7 @@ namespace BTree.Editor
             GUI.EndGroup();
             Rect rect = screenCoordsArea;
             //Rect rect = screenCoordsArea.ScaleSizeBy(1f / zoomScale, screenCoordsArea.TopLeft());
-            rect.y = (rect.y + (float)BTreeEditorUtility.EditorWindowTabHeight);
+            rect.y = (rect.y + BTreeEditorUtility.EditorWindowTabHeight);
             GUI.BeginGroup(rect);
             _prevGuiMatrix = GUI.matrix;
             Matrix4x4 matrix4x = Matrix4x4.TRS(rect.TopLeft(), Quaternion.identity, Vector3.one);
@@ -28,7 +28,7 @@ namespace BTree.Editor
         {
             GUI.matrix = (_prevGuiMatrix);
             GUI.EndGroup();
-            GUI.BeginGroup(new Rect(0f, (float)BTreeEditorUtility.EditorWindowTabHeight, (float)Screen.width, (float)Screen.height));
+            GUI.BeginGroup(new Rect(0f, BTreeEditorUtility.EditorWindowTabHeight, Screen.width, Screen.height));
         }
     }
 }

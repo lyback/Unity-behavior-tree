@@ -8,7 +8,7 @@ namespace BTree.Editor
         where P : BTreeTemplateData
     {
         public BTreeNode<T, P> m_Node;
-        public BTreeEditorNode<T, P>[] m_ChildNodeList;
+        //public BTreeEditorNode<T, P>[] m_ChildNodeList;
         public Vector2 m_Pos;
         public bool m_Disable;
         public bool m_IsCollapsed;//损坏

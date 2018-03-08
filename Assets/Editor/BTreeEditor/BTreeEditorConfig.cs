@@ -18,7 +18,8 @@ namespace BTree.Editor
             for (int i = 0; i < m_RootNode.m_EditorNodes.Length; i++)
             {
                 m_RootNode.m_EditorNodes[i] = new BTreeEditorNodeConfig(m_RootNode.m_Nodes[i]);
-                m_RootNode.m_EditorNodes[i].m_Pos = new Vector2((i + 1) * 60, (i + 1) * 60);
+                m_RootNode.m_EditorNodes[i].m_PosX = (i + 1) * 60;
+                m_RootNode.m_EditorNodes[i].m_PosY = (i + 1) * 60;
                 m_RootNode.m_EditorNodes[i].m_Disable = false;
             }
         }
@@ -26,17 +27,32 @@ namespace BTree.Editor
     [Serializable]
     public class BTreeEditorTreeConfig : TreeConfig
     {
+        public BTreeEditorTreeConfig()
+        {
+
+        }
         public BTreeEditorTreeConfig(TreeConfig _config)
         {
             m_Nodes = _config.m_Nodes;
             m_Name = _config.m_Name;
+            m_EditorNodes = new BTreeEditorNodeConfig[m_Nodes.Length];
+            for (int i = 0; i < m_EditorNodes.Length; i++)
+            {
+                m_EditorNodes[i] = new BTreeEditorNodeConfig(m_Nodes[i]);
+            }
+            m_IsEnterNode = false;
         }
         public BTreeEditorNodeConfig[] m_EditorNodes;
         public bool m_IsEnterNode;
+
     }
     [Serializable]
     public class BTreeEditorNodeConfig : TreeNodeConfig
     {
+        public BTreeEditorNodeConfig()
+        {
+
+        }
         public BTreeEditorNodeConfig(TreeNodeConfig _config)
         {
             m_ActionNodeName = _config.m_ActionNodeName;
@@ -47,7 +63,8 @@ namespace BTree.Editor
             m_ParentIndex = _config.m_ParentIndex;
             m_Preconditions = _config.m_Preconditions;
         }
-        public Vector2 m_Pos;
+        public float m_PosX;
+        public float m_PosY;
         public bool m_Disable;
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using BTreeFrame;
+using UnityEngine;
+
 namespace BTree.Editor
 {
     class BTreeEditorNodeFactory<T, P>
@@ -67,10 +69,57 @@ namespace BTree.Editor
             for (int i = 0; i < _editorNodes.Length; i++)
             {
                 _editorNodes[i] = new BTreeEditorNode<T, P>(_btreeNodes[i]);
-                _editorNodes[i].m_Pos = _config.m_EditorNodes[i].m_Pos;
+                _editorNodes[i].m_Pos = new Vector2(_config.m_EditorNodes[i].m_PosX, _config.m_EditorNodes[i].m_PosY);
                 _editorNodes[i].m_Disable = _config.m_EditorNodes[i].m_Disable;
             }
             return _editorNodes;
+        }
+        #endregion
+
+        #region 从行为树编辑器类生成配置
+        public static BTreeEditorConfig CreateBtreeEditorConfigFromGraphDesigner(BTreeGraphDesigner<T, P> _graphDesigner)
+        {
+            BTreeEditorConfig _config = new BTreeEditorConfig();
+            
+            _config.m_RootNode = CreateEditorTreeConfigFromRootEditorNode(_graphDesigner.m_RootNode);
+            _config.m_RootNode.m_IsEnterNode = true;
+
+            _config.m_DetachedNode = new List<BTreeEditorTreeConfig>();
+            for (int i = 0; i < _graphDesigner.m_DetachedNodes.Count; i++)
+            {
+                _config.m_DetachedNode.Add(CreateEditorTreeConfigFromRootEditorNode(_graphDesigner.m_DetachedNodes[i]));
+            }
+            return _config;
+        }
+        public static BTreeEditorTreeConfig CreateEditorTreeConfigFromRootEditorNode(BTreeNodeDesigner<T, P> _rootEditorNode)
+        {
+            TreeConfig _treeConfig = BTreeNodeFactory<T, P>.CreateConfigFromBTreeRoot(_rootEditorNode.m_EditorNode.m_Node);
+            BTreeEditorTreeConfig _treeEditorConfig = new BTreeEditorTreeConfig(_treeConfig);
+            CreateEditorNodeConfigFromRootEditorNode(_rootEditorNode, ref _treeEditorConfig.m_EditorNodes);
+            
+            return _treeEditorConfig;
+        }
+        public static BTreeEditorNodeConfig CreateEditorNodeConfigFromRootEditorNode(BTreeNodeDesigner<T, P> _rootEditorNode, ref BTreeEditorNodeConfig[] _editorNodes)
+        {
+            int _index = _rootEditorNode.m_EditorNode.m_Node.m_Index;
+            _editorNodes[_index].m_PosX = _rootEditorNode.m_EditorNode.m_Pos.x;
+            _editorNodes[_index].m_PosY = _rootEditorNode.m_EditorNode.m_Pos.y;
+            _editorNodes[_index].m_Disable = _rootEditorNode.m_EditorNode.m_Disable;
+            if (_rootEditorNode.m_ChildNodeList != null)
+            {
+                for (int i = 0; i < _rootEditorNode.m_ChildNodeList.Count; i++)
+                {
+                    CreateEditorNodeConfigFromRootEditorNode(_rootEditorNode.m_ChildNodeList[i], ref _editorNodes);
+                }
+            }
+            return _editorNodes[_index];
+        }
+        #endregion
+        #region 从行为树编辑器类生成运行时配置
+        public static TreeConfig CreateTreeConfigFromBTreeGraphDesigner(BTreeGraphDesigner<T, P> _graphDesigner)
+        {
+            BTreeNode<T, P> _root = _graphDesigner.m_RootNode.m_EditorNode.m_Node;
+            return BTreeNodeFactory<T, P>.CreateConfigFromBTreeRoot(_root);
         }
         #endregion
     }

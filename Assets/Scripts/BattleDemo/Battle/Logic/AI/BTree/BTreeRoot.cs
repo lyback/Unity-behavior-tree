@@ -105,7 +105,8 @@ namespace Battle.Logic.AI.BTree
             //BTreeNodeSerialization.WriteXML(config, config.m_Name);
             //var _config = BTreeNodeSerialization.ReadXML("Btree");
             var _config = BTreeNodeSerialization.ReadXML("Btree_test");
-
+            //_config = BTreeNodeSerialization.ReadBinary("Root_ParallelNode");
+            
             BTreeNodeFactory<BTreeInputData, BTreeOutputData>.Init();
             m_TreeRoot = BTreeNodeFactory<BTreeInputData, BTreeOutputData>.CreateBTreeRootFromConfig(_config);
             //var _testconfig = BTreeNodeFactory<BTreeInputData, BTreeOutputData>.CreateConfigFromBTreeRoot(m_TreeRoot);

@@ -47,13 +47,13 @@ namespace BTree.Editor
         }
         public Rect IncomingConnectionRect(Vector2 offset)
         {
-            Rect rect = this.rectangle(offset, false);
-            return new Rect(rect.x + (rect.width - (float)BTreeEditorUtility.ConnectionWidth) / 2f, rect.y - (float)BTreeEditorUtility.TopConnectionHeight, (float)BTreeEditorUtility.ConnectionWidth, (float)BTreeEditorUtility.TopConnectionHeight);
+            Rect rect = rectangle(offset, false);
+            return new Rect(rect.x + (rect.width - BTreeEditorUtility.ConnectionWidth) / 2f, rect.y - BTreeEditorUtility.TopConnectionHeight, BTreeEditorUtility.ConnectionWidth, BTreeEditorUtility.TopConnectionHeight);
         }
         public Rect OutgoingConnectionRect(Vector2 offset)
         {
-            Rect rect = this.rectangle(offset, false);
-            return new Rect(rect.x + (rect.width - (float)BTreeEditorUtility.ConnectionWidth) / 2f, rect.yMax, (float)BTreeEditorUtility.ConnectionWidth, (float)BTreeEditorUtility.BottomConnectionHeight);
+            Rect rect = rectangle(offset, false);
+            return new Rect(rect.x + (rect.width - BTreeEditorUtility.ConnectionWidth) / 2f, rect.yMax, BTreeEditorUtility.ConnectionWidth, BTreeEditorUtility.BottomConnectionHeight);
         }
         public void init()
         {
@@ -68,9 +68,9 @@ namespace BTree.Editor
         }
         public void makeEntryDisplay(BTreeNodeDesigner<T, P> _child)
         {
-            this.m_IsEntryDisplay = (this.m_IsParent = true);
-            this.m_NodeName = "Entry";
-            this.m_ChildNodeList = new List<BTreeNodeDesigner<T, P>>();
+            m_IsEntryDisplay = (m_IsParent = true);
+            m_NodeName = "Entry";
+            m_ChildNodeList = new List<BTreeNodeDesigner<T, P>>();
             m_ChildNodeList.Add(_child);
             m_ChildNodeConnectionList = new List<BTreeNodeConnection<T, P>>();
             m_ChildNodeConnectionList.Add(new BTreeNodeConnection<T, P>(_child,this,NodeConnectionType.Outgoing));
@@ -78,12 +78,12 @@ namespace BTree.Editor
         //绘制节点
         public bool drawNode(Vector2 offset, bool drawSelected, bool disabled)
         {
-            Rect rect = this.rectangle(offset, false);
+            Rect rect = rectangle(offset, false);
             GUI.color = Color.white;
             //上部
             if (!m_IsEntryDisplay)
             {
-                GUI.DrawTexture(new Rect(rect.x + (rect.width - BTreeEditorUtility.ConnectionWidth) / 2f, rect.y - BTreeEditorUtility.TopConnectionHeight - BTreeEditorUtility.TaskBackgroundShadowSize + 4f, (float)BTreeEditorUtility.ConnectionWidth, (BTreeEditorUtility.TopConnectionHeight + BTreeEditorUtility.TaskBackgroundShadowSize)), BTreeEditorUtility.TaskConnectionTopTexture, ScaleMode.ScaleToFit);
+                GUI.DrawTexture(new Rect(rect.x + (rect.width - BTreeEditorUtility.ConnectionWidth) / 2f, rect.y - BTreeEditorUtility.TopConnectionHeight - BTreeEditorUtility.TaskBackgroundShadowSize + 4f, BTreeEditorUtility.ConnectionWidth, (BTreeEditorUtility.TopConnectionHeight + BTreeEditorUtility.TaskBackgroundShadowSize)), BTreeEditorUtility.TaskConnectionTopTexture, ScaleMode.ScaleToFit);
                 //GUI.DrawTexture(new Rect(rect.x + (rect.width - BTreeEditorUtility.ConnectionWidth) / 2f, rect.yMin - 3f, BTreeEditorUtility.ConnectionWidth, (BTreeEditorUtility.BottomConnectionHeight + BTreeEditorUtility.TaskBackgroundShadowSize)), BTreeEditorUtility.TaskConnectionTopTexture, ScaleMode.ScaleToFit);
             }
             //下部
@@ -105,7 +105,7 @@ namespace BTree.Editor
                     GUI.DrawTexture(new Rect(rect.x + 15f, rect.y - 17f, 14f, 14f), m_EditorNode.m_IsCollapsed ? BTreeEditorUtility.ExpandTaskTexture : BTreeEditorUtility.CollapseTaskTexture, ScaleMode.ScaleToFit);
                 }
             }
-            GUI.Label(new Rect(rect.x, rect.yMax - BTreeEditorUtility.TitleHeight - 1f, rect.width, BTreeEditorUtility.TitleHeight), this.ToString(), BTreeEditorUtility.TaskTitleGUIStyle);
+            GUI.Label(new Rect(rect.x, rect.yMax - BTreeEditorUtility.TitleHeight - 1f, rect.width, BTreeEditorUtility.TitleHeight), ToString(), BTreeEditorUtility.TaskTitleGUIStyle);
             return true;
         }
         //绘制连线
@@ -118,7 +118,7 @@ namespace BTree.Editor
             }
             if (m_IsParent)
             {
-                for (int i = 0; i < this.m_ChildNodeConnectionList.Count; i++)
+                for (int i = 0; i < m_ChildNodeConnectionList.Count; i++)
                 {
                     m_ChildNodeConnectionList[i].drawConnection(offset, graphZoom, disabled);
                 }
@@ -135,13 +135,13 @@ namespace BTree.Editor
             Vector2 result;
             if (connectionType == NodeConnectionType.Incoming)
             {
-                Rect rect = this.IncomingConnectionRect(offset);
-                result = new Vector2(rect.center.x, rect.y + (float)(BTreeEditorUtility.TopConnectionHeight / 2));
+                Rect rect = IncomingConnectionRect(offset);
+                result = new Vector2(rect.center.x, rect.y + (BTreeEditorUtility.TopConnectionHeight / 2));
             }
             else
             {
-                Rect rect2 = this.OutgoingConnectionRect(offset);
-                result = new Vector2(rect2.center.x, rect2.yMax - (float)(BTreeEditorUtility.BottomConnectionHeight / 2));
+                Rect rect2 = OutgoingConnectionRect(offset);
+                result = new Vector2(rect2.center.x, rect2.yMax - (BTreeEditorUtility.BottomConnectionHeight / 2));
             }
             return result;
         }
@@ -187,48 +187,48 @@ namespace BTree.Editor
         
         private Rect rectangle(Vector2 offset, bool includeConnections)
         {
-            Rect result = this.rectangle(offset);
+            Rect result = rectangle(offset);
             if (includeConnections)
             {
-                if (!this.m_IsEntryDisplay)
+                if (!m_IsEntryDisplay)
                 {
-                    result.yMin = (result.yMin - (float)BTreeEditorUtility.TopConnectionHeight);
+                    result.yMin = (result.yMin - BTreeEditorUtility.TopConnectionHeight);
                 }
-                if (this.m_IsParent)
+                if (m_IsParent)
                 {
-                    result.yMax = (result.yMax + (float)BTreeEditorUtility.BottomConnectionHeight);
+                    result.yMax = (result.yMax + BTreeEditorUtility.BottomConnectionHeight);
                 }
             }
             return result;
         }
         private Rect rectangle(Vector2 offset)
         {
-            if (this.m_EditorNode == null)
+            if (m_EditorNode == null)
             {
                 return default(Rect);
             }
-            float num = BTreeEditorUtility.TaskTitleGUIStyle.CalcSize(new GUIContent(this.ToString())).x + (float)BTreeEditorUtility.TextPadding;
+            float num = BTreeEditorUtility.TaskTitleGUIStyle.CalcSize(new GUIContent(ToString())).x + BTreeEditorUtility.TextPadding;
             if (!m_IsParent)
             {
                 float num2;
                 float num3;
                 BTreeEditorUtility.TaskCommentGUIStyle.CalcMinMaxWidth(new GUIContent("Comment(Test)"), out num2, out num3);
-                num3 += (float)BTreeEditorUtility.TextPadding;
+                num3 += BTreeEditorUtility.TextPadding;
                 num = ((num > num3) ? num : num3);
             }
-            num = Mathf.Min((float)BTreeEditorUtility.MaxWidth, Mathf.Max((float)BTreeEditorUtility.MinWidth, num));
-            return new Rect(this.m_EditorNode.m_Pos.x + offset.x - num / 2f, this.m_EditorNode.m_Pos.y + offset.y, num, (float)(BTreeEditorUtility.IconAreaHeight + BTreeEditorUtility.TitleHeight));
+            num = Mathf.Min(BTreeEditorUtility.MaxWidth, Mathf.Max(BTreeEditorUtility.MinWidth, num));
+            return new Rect(m_EditorNode.m_Pos.x + offset.x - num / 2f, m_EditorNode.m_Pos.y + offset.y, num, (BTreeEditorUtility.IconAreaHeight + BTreeEditorUtility.TitleHeight));
         }
         //确定连线横向高度
         private void determineConnectionHorizontalHeight(Rect nodeRect, Vector2 offset)
         {
-            if (this.m_IsParent)
+            if (m_IsParent)
             {
                 float num = 3.40282347E+38f;
                 float num2 = num;
-                for (int i = 0; i < this.m_ChildNodeConnectionList.Count; i++)
+                for (int i = 0; i < m_ChildNodeConnectionList.Count; i++)
                 {
-                    Rect rect = this.m_ChildNodeConnectionList[i].m_DestinationNodeDesigner.rectangle(offset, false);
+                    Rect rect = m_ChildNodeConnectionList[i].m_DestinationNodeDesigner.rectangle(offset, false);
                     if (rect.y < num)
                     {
                         num = rect.y;
@@ -244,9 +244,9 @@ namespace BTree.Editor
                 {
                     num = num2 - 15f;
                 }
-                for (int j = 0; j < this.m_ChildNodeConnectionList.Count; j++)
+                for (int j = 0; j < m_ChildNodeConnectionList.Count; j++)
                 {
-                    this.m_ChildNodeConnectionList[j].m_HorizontalHeight = num;
+                    m_ChildNodeConnectionList[j].m_HorizontalHeight = num;
                 }
             }
         }

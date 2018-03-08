@@ -31,7 +31,7 @@ namespace BTree.Editor
             Object.DontDestroyOnLoad(bTreeEditorWindow);
         }
 
-        private BTreeGraphDesigner<BTreeInputData, BTreeOutputData> mGraphDesigner = new BTreeGraphDesigner<BTreeInputData, BTreeOutputData>();
+        private BTreeGraphDesigner<BTreeInputData, BTreeOutputData> mGraphDesigner = null;
 
         private Rect mGraphRect;
         private Rect mFileToolBarRect;
@@ -68,7 +68,6 @@ namespace BTree.Editor
             if (mIsFirst)
             {
                 mIsFirst = false;
-                loadBTree();
             }
             mCurrentMousePosition = Event.current.mousePosition;
             setupSizes();
@@ -101,52 +100,52 @@ namespace BTree.Editor
             //if (BehaviorDesignerPreferences.GetBool(BDPreferneces.PropertiesPanelOnLeft))
             if (true)
             {
-                mFileToolBarRect = new Rect((float)BTreeEditorUtility.PropertyBoxWidth, 0f, (float)(Screen.width - BTreeEditorUtility.PropertyBoxWidth), (float)BTreeEditorUtility.ToolBarHeight);
-                mPropertyToolbarRect = new Rect(0f, 0f, (float)BTreeEditorUtility.PropertyBoxWidth, (float)BTreeEditorUtility.ToolBarHeight);
-                mPropertyBoxRect = new Rect(0f, this.mPropertyToolbarRect.height, (float)BTreeEditorUtility.PropertyBoxWidth, (float)Screen.height - this.mPropertyToolbarRect.height - (float)BTreeEditorUtility.EditorWindowTabHeight);
-                mGraphRect = new Rect((float)BTreeEditorUtility.PropertyBoxWidth, (float)BTreeEditorUtility.ToolBarHeight, (float)(Screen.width - BTreeEditorUtility.PropertyBoxWidth - BTreeEditorUtility.ScrollBarSize), (float)(Screen.height - BTreeEditorUtility.ToolBarHeight - BTreeEditorUtility.EditorWindowTabHeight - BTreeEditorUtility.ScrollBarSize));
-                mPreferencesPaneRect = new Rect((float)BTreeEditorUtility.PropertyBoxWidth + this.mGraphRect.width - (float)BTreeEditorUtility.PreferencesPaneWidth, (float)(BTreeEditorUtility.ToolBarHeight + (EditorGUIUtility.isProSkin ? 1 : 2)), (float)BTreeEditorUtility.PreferencesPaneWidth, (float)BTreeEditorUtility.PreferencesPaneHeight);
+                mFileToolBarRect = new Rect(BTreeEditorUtility.PropertyBoxWidth, 0f, (Screen.width - BTreeEditorUtility.PropertyBoxWidth), BTreeEditorUtility.ToolBarHeight);
+                mPropertyToolbarRect = new Rect(0f, 0f, BTreeEditorUtility.PropertyBoxWidth, BTreeEditorUtility.ToolBarHeight);
+                mPropertyBoxRect = new Rect(0f, mPropertyToolbarRect.height, BTreeEditorUtility.PropertyBoxWidth, Screen.height - mPropertyToolbarRect.height - BTreeEditorUtility.EditorWindowTabHeight);
+                mGraphRect = new Rect(BTreeEditorUtility.PropertyBoxWidth, BTreeEditorUtility.ToolBarHeight, (Screen.width - BTreeEditorUtility.PropertyBoxWidth - BTreeEditorUtility.ScrollBarSize), (Screen.height - BTreeEditorUtility.ToolBarHeight - BTreeEditorUtility.EditorWindowTabHeight - BTreeEditorUtility.ScrollBarSize));
+                mPreferencesPaneRect = new Rect(BTreeEditorUtility.PropertyBoxWidth + mGraphRect.width - BTreeEditorUtility.PreferencesPaneWidth, (BTreeEditorUtility.ToolBarHeight + (EditorGUIUtility.isProSkin ? 1 : 2)), BTreeEditorUtility.PreferencesPaneWidth, BTreeEditorUtility.PreferencesPaneHeight);
             }
             else
             {
-                mFileToolBarRect = new Rect(0f, 0f, (float)(Screen.width - BTreeEditorUtility.PropertyBoxWidth), (float)BTreeEditorUtility.ToolBarHeight);
-                mPropertyToolbarRect = new Rect((float)(Screen.width - BTreeEditorUtility.PropertyBoxWidth), 0f, (float)BTreeEditorUtility.PropertyBoxWidth, (float)BTreeEditorUtility.ToolBarHeight);
-                mPropertyBoxRect = new Rect((float)(Screen.width - BTreeEditorUtility.PropertyBoxWidth), this.mPropertyToolbarRect.height, (float)BTreeEditorUtility.PropertyBoxWidth, (float)Screen.height - this.mPropertyToolbarRect.height - (float)BTreeEditorUtility.EditorWindowTabHeight);
-                mGraphRect = new Rect(0f, (float)BTreeEditorUtility.ToolBarHeight, (float)(Screen.width - BTreeEditorUtility.PropertyBoxWidth - BTreeEditorUtility.ScrollBarSize), (float)(Screen.height - BTreeEditorUtility.ToolBarHeight - BTreeEditorUtility.EditorWindowTabHeight - BTreeEditorUtility.ScrollBarSize));
-                mPreferencesPaneRect = new Rect(this.mGraphRect.width - (float)BTreeEditorUtility.PreferencesPaneWidth, (float)(BTreeEditorUtility.ToolBarHeight + (EditorGUIUtility.isProSkin ? 1 : 2)), (float)BTreeEditorUtility.PreferencesPaneWidth, (float)BTreeEditorUtility.PreferencesPaneHeight);
+                mFileToolBarRect = new Rect(0f, 0f, (Screen.width - BTreeEditorUtility.PropertyBoxWidth), BTreeEditorUtility.ToolBarHeight);
+                mPropertyToolbarRect = new Rect((Screen.width - BTreeEditorUtility.PropertyBoxWidth), 0f, BTreeEditorUtility.PropertyBoxWidth, BTreeEditorUtility.ToolBarHeight);
+                mPropertyBoxRect = new Rect((Screen.width - BTreeEditorUtility.PropertyBoxWidth), mPropertyToolbarRect.height, BTreeEditorUtility.PropertyBoxWidth, Screen.height - mPropertyToolbarRect.height - BTreeEditorUtility.EditorWindowTabHeight);
+                mGraphRect = new Rect(0f, BTreeEditorUtility.ToolBarHeight, (Screen.width - BTreeEditorUtility.PropertyBoxWidth - BTreeEditorUtility.ScrollBarSize), (Screen.height - BTreeEditorUtility.ToolBarHeight - BTreeEditorUtility.EditorWindowTabHeight - BTreeEditorUtility.ScrollBarSize));
+                mPreferencesPaneRect = new Rect(mGraphRect.width - BTreeEditorUtility.PreferencesPaneWidth, (BTreeEditorUtility.ToolBarHeight + (EditorGUIUtility.isProSkin ? 1 : 2)), BTreeEditorUtility.PreferencesPaneWidth, BTreeEditorUtility.PreferencesPaneHeight);
             }
-            if (this.mGraphScrollPosition == new Vector2(-1f, -1f))
+            if (mGraphScrollPosition == new Vector2(-1f, -1f))
             {
-                this.mGraphScrollPosition = (this.mGraphScrollSize - new Vector2(this.mGraphRect.width, this.mGraphRect.height)) / 2f - 2f * new Vector2((float)BTreeEditorUtility.ScrollBarSize, (float)BTreeEditorUtility.ScrollBarSize);
+                mGraphScrollPosition = (mGraphScrollSize - new Vector2(mGraphRect.width, mGraphRect.height)) / 2f - 2f * new Vector2(BTreeEditorUtility.ScrollBarSize, BTreeEditorUtility.ScrollBarSize);
             }
         }
         //绘制图形区域
         private bool drawGraphArea()
         {
-            Vector2 vector = GUI.BeginScrollView(new Rect(this.mGraphRect.x, this.mGraphRect.y, this.mGraphRect.width + (float)BTreeEditorUtility.ScrollBarSize, this.mGraphRect.height + (float)BTreeEditorUtility.ScrollBarSize), this.mGraphScrollPosition, new Rect(0f, 0f, this.mGraphScrollSize.x, this.mGraphScrollSize.y), true, true);
-            if (vector != this.mGraphScrollPosition && Event.current.type != EventType.DragUpdated && Event.current.type != EventType.Ignore)
+            Vector2 vector = GUI.BeginScrollView(new Rect(mGraphRect.x, mGraphRect.y, mGraphRect.width + BTreeEditorUtility.ScrollBarSize, mGraphRect.height + BTreeEditorUtility.ScrollBarSize), mGraphScrollPosition, new Rect(0f, 0f, mGraphScrollSize.x, mGraphScrollSize.y), true, true);
+            if (vector != mGraphScrollPosition && Event.current.type != EventType.DragUpdated && Event.current.type != EventType.Ignore)
             {
-                mGraphOffset -= (vector - this.mGraphScrollPosition) / this.mGraphZoom;
+                mGraphOffset -= (vector - mGraphScrollPosition) / mGraphZoom;
                 mGraphScrollPosition = vector;
-                //this.mGraphDesigner.graphDirty();
+                //mGraphDesigner.graphDirty();
             }
             GUI.EndScrollView();
-            GUI.Box(this.mGraphRect, "", BTreeEditorUtility.GraphBackgroundGUIStyle);
+            GUI.Box(mGraphRect, "", BTreeEditorUtility.GraphBackgroundGUIStyle);
 
-            BTreeEditorZoomArea.Begin(this.mGraphRect, this.mGraphZoom);
+            BTreeEditorZoomArea.Begin(mGraphRect, mGraphZoom);
             Vector2 mousePosition;
             if (!getMousePositionInGraph(out mousePosition))
             {
                 mousePosition = new Vector2(-1f, -1f);
             }
             bool result = false;
-            if (this.mGraphDesigner != null && this.mGraphDesigner.drawNodes(mousePosition, this.mGraphOffset, this.mGraphZoom))
+            if (mGraphDesigner != null && mGraphDesigner.drawNodes(mousePosition, mGraphOffset, mGraphZoom))
             {
                 result = true;
             }
-            //if (this.mIsSelecting)
+            //if (mIsSelecting)
             //{
-            //    GUI.Box(this.getSelectionArea(), "", BehaviorDesignerUtility.SelectionGUIStyle);
+            //    GUI.Box(getSelectionArea(), "", BehaviorDesignerUtility.SelectionGUIStyle);
             //}
             BTreeEditorZoomArea.End();
             return result;
@@ -154,22 +153,50 @@ namespace BTree.Editor
         //绘制工具栏
         private void drawFileToolbar()
         {
-            GUILayout.BeginArea(this.mFileToolBarRect, EditorStyles.toolbar);
+            GUILayout.BeginArea(mFileToolBarRect, EditorStyles.toolbar);
             GUILayout.BeginHorizontal(new GUILayoutOption[0]);
-            if (GUILayout.Button("...", EditorStyles.toolbarButton, new GUILayoutOption[]
+            if (GUILayout.Button("Load", EditorStyles.toolbarButton, new GUILayoutOption[]
             {
-                GUILayout.Width(22f)
+                GUILayout.Width(42f)
             }))
             {
-                this.mBreadcrumbGameObjectBehaviorMenu.ShowAsContext();
+                loadBTree();
+            }
+            if (GUILayout.Button("Save", EditorStyles.toolbarButton, new GUILayoutOption[]
+            {
+                GUILayout.Width(42f)
+            }))
+            {
+                if (mGraphDesigner != null)
+                {
+                    saveBTree();
+                }
+                else
+                {
+                    EditorUtility.DisplayDialog("Unable to Save Behavior Tree", "Select a behavior tree from within the scene.", "OK");
+                }
+            }
+            if (GUILayout.Button("Export", EditorStyles.toolbarButton, new GUILayoutOption[]
+            {
+                GUILayout.Width(42f)
+            }))
+            {
+                if (mGraphDesigner != null)
+                {
+                    exportBtree();
+                }
+                else
+                {
+                    EditorUtility.DisplayDialog("Unable to Export Behavior Tree", "Select a behavior tree from within the scene.", "OK");
+                }
             }
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button("Preferences", this.mShowPrefPanel ? BTreeEditorUtility.ToolbarButtonSelectionGUIStyle : EditorStyles.toolbarButton, new GUILayoutOption[]
+            if (GUILayout.Button("Preferences", mShowPrefPanel ? BTreeEditorUtility.ToolbarButtonSelectionGUIStyle : EditorStyles.toolbarButton, new GUILayoutOption[]
             {
                 GUILayout.Width(80f)
             }))
             {
-                this.mShowPrefPanel = !this.mShowPrefPanel;
+                mShowPrefPanel = !mShowPrefPanel;
             }
             GUILayout.EndVertical();
             GUILayout.EndArea();
@@ -177,9 +204,9 @@ namespace BTree.Editor
         //绘制属性栏
         private void drawPropertiesBox()
         {
-            GUILayout.BeginArea(this.mPropertyToolbarRect, EditorStyles.toolbar);
+            GUILayout.BeginArea(mPropertyToolbarRect, EditorStyles.toolbar);
             GUILayout.EndArea();
-            GUILayout.BeginArea(this.mPropertyBoxRect, BTreeEditorUtility.PropertyBoxGUIStyle);
+            GUILayout.BeginArea(mPropertyBoxRect, BTreeEditorUtility.PropertyBoxGUIStyle);
 
             GUILayout.EndArea();
         }
@@ -188,16 +215,16 @@ namespace BTree.Editor
         private bool getMousePositionInGraph(out Vector2 mousePosition)
         {
             mousePosition = mCurrentMousePosition;
-            if (!this.mGraphRect.Contains(mousePosition))
+            if (!mGraphRect.Contains(mousePosition))
             {
                 return false;
             }
-            if (this.mShowPrefPanel && this.mPreferencesPaneRect.Contains(mousePosition))
+            if (mShowPrefPanel && mPreferencesPaneRect.Contains(mousePosition))
             {
                 return false;
             }
-            mousePosition -= new Vector2(this.mGraphRect.xMin, this.mGraphRect.yMin);
-            mousePosition /= this.mGraphZoom;
+            mousePosition -= new Vector2(mGraphRect.xMin, mGraphRect.yMin);
+            mousePosition /= mGraphZoom;
             return true;
         }
         //处理操作消息
@@ -322,7 +349,7 @@ namespace BTree.Editor
                 return false;
             }
             mGraphDesigner.clearNodeSelection();
-            var nodeDesigner = mGraphDesigner.nodeAt(point, this.mGraphOffset);
+            var nodeDesigner = mGraphDesigner.nodeAt(point, mGraphOffset);
             if (nodeDesigner != null)
             {
                 mGraphDesigner.select(nodeDesigner);
@@ -350,30 +377,77 @@ namespace BTree.Editor
         //鼠标左键Release
         private bool leftMouseRelease()
         {
+            Vector2 point;
+            if (!getMousePositionInGraph(out point))
+            {
+                return false;
+            }
             mNodeClicked = false;
             return true;
         }
         //鼠标右键down
         private bool rightMouseDown()
         {
+            Vector2 point;
+            if (!getMousePositionInGraph(out point))
+            {
+                return false;
+            }
             return true;
         }
         private bool mouseZoom()
         {
+            Vector2 point;
+            if (!getMousePositionInGraph(out point))
+            {
+                return false;
+            }
             return true;
         }
         private bool mousePan()
         {
+            Vector2 point;
+            if (!getMousePositionInGraph(out point))
+            {
+                return false;
+            }
             return true;
         }
         #endregion
+
+        #region 配置文件相关
         public void loadBTree()
         {
-            BTreeEditorConfig _config = new BTreeEditorConfig();
+            Debugger.Log("loadBTree");
+            string text = EditorUtility.OpenFilePanel("Load Behavior Tree", "Assets/Editor/BtreeEditor/Config", "xml");
+            BTreeEditorConfig _config = BTreeEditorSerialization.ReadXMLAtPath(text);
             mGraphDesigner = (new BTreeGraphDesigner<BTreeInputData, BTreeOutputData>());
             mGraphDesigner.load(_config);
         }
-       
-
+        public void saveBTree()
+        {
+            if (mGraphDesigner == null)
+            {
+                return;
+            }
+            Debugger.Log("saveBTree");
+            string text = EditorUtility.SaveFilePanel("Save Behavior Tree", "Assets/Editor/BtreeEditor/Config", mGraphDesigner.m_RootNode.m_NodeName,"xml");
+            if (text.Length != 0 && Application.dataPath.Length < text.Length)
+            {
+                BTreeEditorConfig _config = BTreeEditorNodeFactory<BTreeInputData, BTreeOutputData>.CreateBtreeEditorConfigFromGraphDesigner(mGraphDesigner);
+                BTreeEditorSerialization.WirteXMLAtPath(_config, text);
+            }
+        }
+        public void exportBtree()
+        {
+            if (mGraphDesigner == null)
+            {
+                return;
+            }
+            Debugger.Log("exportBtree");
+            TreeConfig _treeConfig = BTreeEditorNodeFactory<BTreeInputData, BTreeOutputData>.CreateTreeConfigFromBTreeGraphDesigner(mGraphDesigner);
+            BTreeNodeSerialization.WriteBinary(_treeConfig, mGraphDesigner.m_RootNode.m_NodeName);
+        }
+        #endregion
     }
 }

@@ -989,7 +989,7 @@ namespace BTree.Editor
         {
             Rect lastRect = GUILayoutUtility.GetLastRect();
             lastRect.x = -5f;
-            lastRect.y = (lastRect.y + (lastRect.height + (float)yOffset));
+            lastRect.y = (lastRect.y + (lastRect.height + yOffset));
             lastRect.height = (2f);
             lastRect.width = (lastRect.width + 10f);
             GUI.DrawTexture(lastRect, BTreeEditorUtility.ContentSeparatorTexture);
