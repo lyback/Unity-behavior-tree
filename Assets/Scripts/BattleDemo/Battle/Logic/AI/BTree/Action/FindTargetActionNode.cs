@@ -5,6 +5,11 @@ namespace Battle.Logic.AI.BTree
 {
     public class FindTargetActionNode : BTreeNodeAction<BTreeInputData, BTreeOutputData>
     {
+        public FindTargetActionNode()
+            : base()
+        {
+
+        }
         public FindTargetActionNode(BTreeNode<BTreeInputData, BTreeOutputData> _parentNode) 
             : base(_parentNode)
         {

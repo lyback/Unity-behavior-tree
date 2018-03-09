@@ -2,12 +2,18 @@
 //执行节点基类
 namespace BTreeFrame
 {
-    public class BTreeNodeAction<T, P> : BTreeNode<T, P>
+    public abstract class BTreeNodeAction<T, P> : BTreeNode<T, P>
         where T : BTreeTemplateData
         where P : BTreeTemplateData
     {
         private BTreeNodeStatus m_Status = BTreeNodeStatus.Ready;
         private bool m_NeedExit = false;
+
+        public BTreeNodeAction()
+            :base()
+        {
+            m_IsAcitonNode = true;
+        }
 
         public BTreeNodeAction(BTreeNode<T, P> _parentNode, BTreeNodePrecondition<T> _precondition = null) 
             : base(_parentNode, _precondition)

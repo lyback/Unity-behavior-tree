@@ -22,6 +22,21 @@ namespace BTree.Editor
         private bool m_IsShowHoverBar;
         private Texture m_Icon;
 
+        public BTreeNodeDesigner(BTreeEditorNode<T, P> _editorNode)
+        {
+            if (_editorNode == null)
+            {
+                Debugger.Log("BTreeNodeDesigner Init Null");
+                return;
+            }
+            m_EditorNode = _editorNode;
+            m_NodeName = _editorNode.m_Node.m_Name;
+            m_IsParent = m_EditorNode.m_Node.m_ChildCount != 0;
+            m_ChildNodeList = new List<BTreeNodeDesigner<T, P>>();
+            m_ChildNodeConnectionList = new List<BTreeNodeConnection<T, P>>();
+            loadTaskIcon();
+        }
+
         public void select()
         {
             m_Selected = true;
@@ -54,17 +69,6 @@ namespace BTree.Editor
         {
             Rect rect = rectangle(offset, false);
             return new Rect(rect.x + (rect.width - BTreeEditorUtility.ConnectionWidth) / 2f, rect.yMax, BTreeEditorUtility.ConnectionWidth, BTreeEditorUtility.BottomConnectionHeight);
-        }
-        public void init()
-        {
-            if (m_EditorNode == null)
-            {
-                Debugger.LogError("BTreeNodeDesigner init fail");
-                return;
-            }
-            m_NodeName = m_EditorNode.m_Node.m_Name;
-            m_IsParent = m_EditorNode.m_Node.m_ChildCount != 0;
-            loadTaskIcon();
         }
         public void makeEntryDisplay(BTreeNodeDesigner<T, P> _child)
         {

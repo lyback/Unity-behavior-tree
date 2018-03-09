@@ -4,6 +4,10 @@ namespace Battle.Logic.AI.BTree
 {
     public class MoveToActionNode : BTreeNodeAction<BTreeInputData, BTreeOutputData>
     {
+        public MoveToActionNode()
+            : base()
+        {
+        }
         public MoveToActionNode(BTreeNode<BTreeInputData, BTreeOutputData> _parentNode)
             : base(_parentNode)
         {

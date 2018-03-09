@@ -14,6 +14,7 @@ namespace BTree.Editor
         {
             BTreeNodeDesigner<T, P>[] _nodeDesigners = new BTreeNodeDesigner<T, P>[_config.m_EditorNodes.Length];
             BTreeEditorNode<T, P>[] _editorNodes = CreateBTreeEditorNode(_config);
+            //递归创建节点
             for (int i = 0; i < _nodeDesigners.Length; i++)
             {
                 if (_nodeDesigners[i] == null)
@@ -21,6 +22,7 @@ namespace BTree.Editor
                     _nodeDesigners[i] = CreateBTreeNodeDesigner(_config.m_EditorNodes, _editorNodes, ref _nodeDesigners, i);
                 }
             }
+            //初始化父节点与连线
             for (int i = 0; i < _nodeDesigners.Length; i++)
             {
                 var _editorNode = _editorNodes[i];
@@ -31,7 +33,6 @@ namespace BTree.Editor
                     BTreeNodeConnection<T, P> _connection = new BTreeNodeConnection<T, P>(_nodeDesigners[i], _nodeDesigners[_parentIndex], NodeConnectionType.Incoming);
                     _nodeDesigners[i].m_ParentNodeConnection = _connection;
                 }
-                _nodeDesigners[i].init();
             }
             return _nodeDesigners;
         }
@@ -46,11 +47,11 @@ namespace BTree.Editor
                     _nodeDesigners[_childIndex] = CreateBTreeNodeDesigner(_configNodes, _editorNodes, ref _nodeDesigners, _childIndex);
                 }
             }
-            BTreeNodeDesigner<T, P> _node = new BTreeNodeDesigner<T, P>();
-            _node.m_EditorNode = _editorNode;
-            _node.m_NodeName = _editorNode.m_Node.m_Name;
-            _node.m_ChildNodeList = new List<BTreeNodeDesigner<T, P>>();
-            _node.m_ChildNodeConnectionList = new List<BTreeNodeConnection<T, P>>();
+            BTreeNodeDesigner<T, P> _node = new BTreeNodeDesigner<T, P>(_editorNode);
+            //_node.m_EditorNode = _editorNode;
+            //_node.m_NodeName = _editorNode.m_Node.m_Name;
+            //_node.m_ChildNodeList = new List<BTreeNodeDesigner<T, P>>();
+            //_node.m_ChildNodeConnectionList = new List<BTreeNodeConnection<T, P>>();
             
             for (int i = 0; i < _editorNode.m_Node.m_ChildCount; i++)
             {

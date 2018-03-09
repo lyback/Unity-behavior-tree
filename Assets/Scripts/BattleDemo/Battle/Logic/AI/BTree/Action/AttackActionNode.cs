@@ -4,6 +4,10 @@ namespace Battle.Logic.AI.BTree
 {
     public class AttackActionNode : BTreeNodeAction<BTreeInputData, BTreeOutputData>
     {
+        public AttackActionNode()
+            : base()
+        {
+        }
         public AttackActionNode(BTreeNode<BTreeInputData, BTreeOutputData> _parentNode) 
             : base(_parentNode)
         {

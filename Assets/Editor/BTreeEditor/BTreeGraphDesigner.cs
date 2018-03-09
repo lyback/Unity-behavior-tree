@@ -2,6 +2,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 using BTreeFrame;
+using System;
+
 namespace BTree.Editor
 {
     public class BTreeGraphDesigner<T, P>
@@ -94,10 +96,13 @@ namespace BTree.Editor
             if (!nodeDesigner.m_EditorNode.m_IsCollapsed)
             {
                 nodeDesigner.drawNodeConnection(offset, graphZoom, nodeDesigner.m_EditorNode.m_Disable || disabledNode);
-                for (int i = 0; i < nodeDesigner.m_ChildNodeList.Count; i++)
+                if (nodeDesigner.m_ChildNodeList != null)
                 {
-                    var _child = nodeDesigner.m_ChildNodeList[i];
-                    drawNodeConnectionChildren(_child, offset, graphZoom, _child.m_EditorNode.m_Disable || disabledNode);
+                    for (int i = 0; i < nodeDesigner.m_ChildNodeList.Count; i++)
+                    {
+                        var _child = nodeDesigner.m_ChildNodeList[i];
+                        drawNodeConnectionChildren(_child, offset, graphZoom, _child.m_EditorNode.m_Disable || disabledNode);
+                    }
                 }
             }
         }
@@ -109,10 +114,13 @@ namespace BTree.Editor
                 return;
             }
             nodeDesigner.drawNodeComment(offset);
-            for (int i = 0; i < nodeDesigner.m_ChildNodeList.Count; i++)
+            if (nodeDesigner.m_ChildNodeList != null)
             {
-                var _child = nodeDesigner.m_ChildNodeList[i];
-                drawNodeCommentChildren(_child, offset);
+                for (int i = 0; i < nodeDesigner.m_ChildNodeList.Count; i++)
+                {
+                    var _child = nodeDesigner.m_ChildNodeList[i];
+                    drawNodeCommentChildren(_child, offset);
+                }
             }
         }
         //递归绘制节点
@@ -127,12 +135,15 @@ namespace BTree.Editor
             {
                 result = true;
             }
-            for (int i = 0; i < nodeDesigner.m_ChildNodeList.Count; i++)
+            if (nodeDesigner.m_ChildNodeList != null)
             {
-                var _child = nodeDesigner.m_ChildNodeList[i];
-                if (drawNodeChildren(_child, offset, _child.m_EditorNode.m_Disable))
+                for (int i = 0; i < nodeDesigner.m_ChildNodeList.Count; i++)
                 {
-                    result = true;
+                    var _child = nodeDesigner.m_ChildNodeList[i];
+                    if (drawNodeChildren(_child, offset, _child.m_EditorNode.m_Disable))
+                    {
+                        result = true;
+                    }
                 }
             }
             return result;
@@ -225,11 +236,14 @@ namespace BTree.Editor
         //取消所有选中
         public void clearNodeSelection()
         {
-            for (int i = 0; i < m_SelectedNodes.Count; i++)
+            if (m_SelectedNodes != null)
             {
-                m_SelectedNodes[i].deselect();
+                for (int i = 0; i < m_SelectedNodes.Count; i++)
+                {
+                    m_SelectedNodes[i].deselect();
+                }
+                m_SelectedNodes.Clear();
             }
-            m_SelectedNodes.Clear();
         }
         //拖动选择的节点
         public bool dragSelectedNodes(Vector2 delta, bool dragChildren, bool hasDragged)
@@ -260,6 +274,18 @@ namespace BTree.Editor
                 }
             }
         }
-
+        //添加节点
+        public BTreeNodeDesigner<T, P> addNode(Type type, Vector2 position)
+        {
+            BTreeNode<T, P> _node = (BTreeNode<T, P>)type.GetConstructor(new Type[] { }).Invoke(new object[] { });
+            BTreeEditorNode<T, P> _editorNode = new BTreeEditorNode<T, P>(_node);
+            BTreeNodeDesigner<T, P> _nodeDesigner = new BTreeNodeDesigner<T, P>(_editorNode);
+            if (m_DetachedNodes == null)
+            {
+                m_DetachedNodes = new List<BTreeNodeDesigner<T, P>>();
+            }
+            m_DetachedNodes.Add(_nodeDesigner);
+            return _nodeDesigner;
+        }
     }
 }

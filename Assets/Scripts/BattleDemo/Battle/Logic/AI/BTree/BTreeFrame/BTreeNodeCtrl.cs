@@ -15,6 +15,10 @@ namespace BTreeFrame
     {
         protected int m_CurrentSelectIndex = INVALID_CHILD_NODE_INDEX;
         protected int m_LastSelectIndex = INVALID_CHILD_NODE_INDEX;
+        public BTreeNodePrioritySelector()
+            : base()
+        {
+        }
         public BTreeNodePrioritySelector(BTreeNode<T, P> _parentNode, BTreeNodePrecondition<T> _precondition = null)
             : base(_parentNode, _precondition)
         {
@@ -80,6 +84,10 @@ namespace BTreeFrame
         where T : BTreeTemplateData
         where P : BTreeTemplateData
     {
+        public BTreeNodeNonePrioritySelector()
+            : base()
+        {
+        }
         public BTreeNodeNonePrioritySelector(BTreeNode<T, P> _parentNode, BTreeNodePrecondition<T> _precondition = null)
             : base(_parentNode, _precondition)
         {
@@ -109,7 +117,10 @@ namespace BTreeFrame
         where P : BTreeTemplateData
     {
         private int m_CurrentNodeIndex = INVALID_CHILD_NODE_INDEX;
-
+        public BTreeNodeSequence()
+            : base()
+        {
+        }
         public BTreeNodeSequence(BTreeNode<T, P> _parentNode, BTreeNodePrecondition<T> _precondition = null)
             : base(_parentNode, _precondition)
         {
@@ -189,7 +200,10 @@ namespace BTreeFrame
     {
         private BTreeParallelFinishCondition m_FinishCondition;
         private List<BTreeRunningStatus> m_ChildNodeSatuses = new List<BTreeRunningStatus>();
-
+        public BTreeNodeParallel()
+            : base()
+        {
+        }
         public BTreeNodeParallel(BTreeNode<T, P> _parentNode, BTreeNodePrecondition<T> _precondition = null)
             : base(_parentNode, _precondition)
         {
@@ -297,7 +311,10 @@ namespace BTreeFrame
         public const int INFINITELOOP = -1;
         private int m_LoopCount;
         private int m_CurrentCount;
-
+        public BTreeNodeLoop()
+            : base()
+        {
+        }
         public BTreeNodeLoop(BTreeNode<T, P> _parentNode, BTreeNodePrecondition<T> _precondition = null, int _loopCount = INFINITELOOP)
             : base(_parentNode, _precondition)
         {

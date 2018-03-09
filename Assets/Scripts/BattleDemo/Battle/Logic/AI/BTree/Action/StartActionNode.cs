@@ -4,6 +4,11 @@ namespace Battle.Logic.AI.BTree
 {
     public class StartActionNode : BTreeNodeAction<BTreeInputData, BTreeOutputData>
     {
+        public StartActionNode()
+            : base()
+        {
+
+        }
         public StartActionNode(BTreeNode<BTreeInputData, BTreeOutputData> _parentNode)
             : base(_parentNode)
         {

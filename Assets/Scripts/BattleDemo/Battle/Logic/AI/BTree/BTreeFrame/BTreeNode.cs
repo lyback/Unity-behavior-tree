@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace BTreeFrame
 {
-    public class BTreeNode<T, P> 
+    public abstract class BTreeNode<T, P> 
         where T : BTreeTemplateData
         where P : BTreeTemplateData
     {   
@@ -36,8 +36,14 @@ namespace BTreeFrame
 
         protected const int MAX_CHILD_NODE_COUNT = 16;
         protected const int INVALID_CHILD_NODE_INDEX = -1;
-
-
+        //必须有个无参的构造函数
+        public BTreeNode()
+        {
+            m_ChildCount = 0;
+            m_ParentNode = null;
+            m_NodePrecondition = null;
+            m_IsAcitonNode = false;
+        }
         public BTreeNode(BTreeNode<T, P> _parentNode, BTreeNodePrecondition<T> _precondition = null)
         {
             m_ChildCount = 0;
