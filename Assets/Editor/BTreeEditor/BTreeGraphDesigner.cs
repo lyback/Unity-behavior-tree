@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using BTreeFrame;
 using System;
+using Battle.Logic.AI.BTree;
 
 namespace BTree.Editor
 {
@@ -277,6 +278,10 @@ namespace BTree.Editor
         //添加节点
         public BTreeNodeDesigner<T, P> addNode(Type type, Vector2 position)
         {
+            if (type.IsGenericType)
+            {
+                type = type.MakeGenericType(typeof(T), typeof(P));
+            }
             BTreeNode<T, P> _node = (BTreeNode<T, P>)type.GetConstructor(new Type[] { }).Invoke(new object[] { });
             BTreeEditorNode<T, P> _editorNode = new BTreeEditorNode<T, P>(_node);
             BTreeNodeDesigner<T, P> _nodeDesigner = new BTreeNodeDesigner<T, P>(_editorNode);
