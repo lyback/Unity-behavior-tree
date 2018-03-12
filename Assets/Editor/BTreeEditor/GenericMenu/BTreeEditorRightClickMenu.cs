@@ -7,14 +7,11 @@ using BTreeFrame;
 
 namespace BTree.Editor
 {
-    public class BTreeEditorRightClickBlockMenu
+    public class BTreeEditorRightClickBlockMenu : BTreeEditorGenericMenuBase
     {
-        private GenericMenu m_Menu;
-        private BTreeEditorWindow m_Window;
         public BTreeEditorRightClickBlockMenu(BTreeEditorWindow _window)
+            : base(_window)
         {
-            m_Menu = new GenericMenu();
-            m_Window = _window;
             Init();
         }
         public void Init()
@@ -79,51 +76,6 @@ namespace BTree.Editor
         {
             m_Window.addNodeCallback(obj);
         }
-
-        public void AddDisabledItem(GUIContent content)
-        {
-            m_Menu.AddDisabledItem(content);
-        }
-        public void AddItem(GUIContent content, bool on, GenericMenu.MenuFunction func)
-        {
-            m_Menu.AddItem(content, on, func);
-        }
-        public void AddItem(GUIContent content, bool on, GenericMenu.MenuFunction2 func, object userData)
-        {
-            m_Menu.AddItem(content, on, func, userData);
-        }
         
-        public void AddSeparator(string path)
-        {
-            m_Menu.AddSeparator(path);
-        }
-        
-        public void DropDown(Rect position)
-        {
-            m_Menu.DropDown(position);
-        }
-       
-        public int GetItemCount()
-        {
-            return m_Menu.GetItemCount();
-        }
-        public void ShowAsContext()
-        {
-            m_Menu.ShowAsContext();
-        }
-
-        static bool IsSubclassOfRawGeneric(Type generic, Type toCheck)
-        {
-            while (toCheck != null && toCheck != typeof(object))
-            {
-                var cur = toCheck.IsGenericType ? toCheck.GetGenericTypeDefinition() : toCheck;
-                if (generic == cur)
-                {
-                    return true;
-                }
-                toCheck = toCheck.BaseType;
-            }
-            return false;
-        }
     }
 }

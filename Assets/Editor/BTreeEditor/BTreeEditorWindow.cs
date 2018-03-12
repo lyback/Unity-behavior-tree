@@ -38,17 +38,14 @@ namespace BTree.Editor
 
         //是否显示设置界面
         private bool mShowPrefPanel;
-        //是否显示右键菜单
-        private bool mShowRightClickBlockMenu;
         //是否点击节点中
         private bool mNodeClicked;
         //是否在拖动中
         private bool mIsDragging;
         
         private BTreeEditorRightClickBlockMenu mRightClickBlockMenu = null;
-        private GenericMenu mBreadcrumbGameObjectBehaviorMenu = new GenericMenu();
-        private GenericMenu mBreadcrumbGameObjectMenu = new GenericMenu();
-        private GenericMenu mBreadcrumbBehaviorMenu = new GenericMenu();
+        private BTreeEditorRightClickNodeMenu mRightClickNodeMenu = null;
+        private BTreeNodeDesigner mCurRightClickNode = null;
 
         private bool mIsFirst;
 
@@ -133,10 +130,6 @@ namespace BTree.Editor
             {
                 result = true;
             }
-            //if (mIsSelecting)
-            //{
-            //    GUI.Box(getSelectionArea(), "", BehaviorDesignerUtility.SelectionGUIStyle);
-            //}
             BTreeEditorZoomArea.End();
             return result;
         }
@@ -255,14 +248,8 @@ namespace BTree.Editor
                     }
                     else if (e.button == 1)
                     {
-                        if (mShowRightClickBlockMenu)
+                        if (rightMouseRelease())
                         {
-                            mShowRightClickBlockMenu = false;
-                            if (mRightClickBlockMenu == null)
-                            {
-                                mRightClickBlockMenu = new BTreeEditorRightClickBlockMenu(this);
-                            }
-                            mRightClickBlockMenu.ShowAsContext();
                             e.Use();
                             return;
                         }
@@ -393,14 +380,12 @@ namespace BTree.Editor
             }
             if (mGraphDesigner != null)
             {
+                mGraphDesigner.clearNodeSelection();
                 var nodeDesigner = mGraphDesigner.nodeAt(point, mGraphOffset);
-                if (nodeDesigner == null)
+                if (nodeDesigner != null)
                 {
-                    mShowRightClickBlockMenu = true;
-                }
-                else
-                {
-
+                    mGraphDesigner.select(nodeDesigner);
+                    mNodeClicked = true;
                 }
             }
             return true;
@@ -413,13 +398,26 @@ namespace BTree.Editor
             {
                 return false;
             }
-            if (mShowRightClickBlockMenu)
+            if (mGraphDesigner.m_SelectedNodes != null && mGraphDesigner.m_SelectedNodes.Count != 0)
             {
-                mShowRightClickBlockMenu = false;
+                if (mRightClickNodeMenu == null)
+                {
+                    mRightClickNodeMenu = new BTreeEditorRightClickNodeMenu(this);
+                }
+                bool isMult = mGraphDesigner.m_SelectedNodes.Count != 1;
+                bool isEnable = !mGraphDesigner.m_SelectedNodes[0].m_IsDisable;
+                mRightClickNodeMenu.ShowAsContext(isMult, isEnable);
+                return true;
+            }
+            else
+            {
+                if (mRightClickBlockMenu == null)
+                {
+                    mRightClickBlockMenu = new BTreeEditorRightClickBlockMenu(this);
+                }
                 mRightClickBlockMenu.ShowAsContext();
                 return true;
             }
-            return false;
         }
         private bool mouseZoom()
         {
@@ -439,6 +437,7 @@ namespace BTree.Editor
             }
             return true;
         }
+        //添加节点
         private void addNode(Type type, bool useMousePosition)
         {
             Vector2 vector = new Vector2(mGraphRect.width / (2f * mGraphZoom), 150f);
@@ -452,9 +451,31 @@ namespace BTree.Editor
 
             }
         }
+        //禁用节点
+        private void disableSelectNode()
+        {
+            if (mGraphDesigner != null)
+            {
+                mGraphDesigner.disableNodeSelection();
+            }
+        }
+        //启用节点
+        private void enableSelectNode()
+        {
+            if (mGraphDesigner != null)
+            {
+                mGraphDesigner.enableNodeSelection();
+            }
+        }
+        //删除节点
+        private void delectSelectNode()
+        {
+            if (mGraphDesigner != null)
+            {
+                mGraphDesigner.delectSelectNode();
+            }
+        }
         #endregion
-
-
 
         #region 配置文件相关
         public void loadBTree()
@@ -492,10 +513,23 @@ namespace BTree.Editor
             EditorUtility.DisplayDialog("Export", "导出行为树配置成功:" + name, "确定");
         }
         #endregion
-
+        #region 右键菜单点击回调
         public void addNodeCallback(object node)
         {
             addNode((Type)node,true);
         }
+        public void disableNodeCallback()
+        {
+            disableSelectNode();
+        }
+        public void enableNodeCallback()
+        {
+            enableSelectNode();
+        }
+        public void delectNodeCallback()
+        {
+            delectSelectNode();
+        }
+        #endregion
     }
 }

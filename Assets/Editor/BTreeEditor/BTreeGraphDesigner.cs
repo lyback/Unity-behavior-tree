@@ -244,6 +244,55 @@ namespace BTree.Editor
                 m_SelectedNodes.Clear();
             }
         }
+        //禁用节点
+        public void disableNodeSelection()
+        {
+            if (m_SelectedNodes != null)
+            {
+                for (int i = 0; i < m_SelectedNodes.Count; i++)
+                {
+                    SetNodeActive(m_SelectedNodes[i], false);
+                }
+            }
+        }
+        //启用节点
+        public void enableNodeSelection()
+        {
+            if (m_SelectedNodes != null)
+            {
+                for (int i = 0; i < m_SelectedNodes.Count; i++)
+                {
+                    SetNodeActive(m_SelectedNodes[i], true);
+                }
+            }
+        }
+        private void SetNodeActive(BTreeNodeDesigner nodeDesigner, bool isEnable)
+        {
+            if (isEnable)
+            {
+                nodeDesigner.enable();
+            }
+            else
+            {
+                nodeDesigner.disable();
+            }
+            if (nodeDesigner.m_ChildNodeList != null)
+            {
+                for (int i = 0; i < nodeDesigner.m_ChildNodeList.Count; i++)
+                {
+                    SetNodeActive(nodeDesigner.m_ChildNodeList[i], isEnable);
+                }
+            }
+        }
+        //删除选定节点
+        public void delectSelectNode()
+        {
+            for (int i = 0; i < m_SelectedNodes.Count; i++)
+            {
+                delectNode(m_SelectedNodes[i]);
+            }
+            clearNodeSelection();
+        }
         //拖动选择的节点
         public bool dragSelectedNodes(Vector2 delta, bool dragChildren, bool hasDragged)
         {
@@ -262,7 +311,7 @@ namespace BTree.Editor
             //}
             return true;
         }
-        public void dragTask(BTreeNodeDesigner nodeDesigner, Vector2 delta, bool dragChildren, bool hasDragged)
+        private void dragTask(BTreeNodeDesigner nodeDesigner, Vector2 delta, bool dragChildren, bool hasDragged)
         {
             nodeDesigner.movePosition(delta);
             if (nodeDesigner.m_IsParent && dragChildren)
@@ -276,9 +325,9 @@ namespace BTree.Editor
         //添加节点
         public BTreeNodeDesigner addNode(Type type, Vector2 position)
         {
-            
             BTreeNode _node = (BTreeNode)type.GetConstructor(new Type[] { }).Invoke(new object[] { });
             BTreeEditorNode _editorNode = new BTreeEditorNode(_node);
+            _editorNode.m_Pos = position;
             BTreeNodeDesigner _nodeDesigner = new BTreeNodeDesigner(_editorNode);
             if (m_DetachedNodes == null)
             {
@@ -286,6 +335,28 @@ namespace BTree.Editor
             }
             m_DetachedNodes.Add(_nodeDesigner);
             return _nodeDesigner;
+        }
+        //删除节点
+        public void delectNode(BTreeNodeDesigner nodeDesigner)
+        {
+            if (nodeDesigner.m_IsParent)
+            {
+                for (int i = 0; i < nodeDesigner.m_ChildNodeConnectionList.Count; i++)
+                {
+                    BTreeNodeDesigner _destinationNodeDesigner = nodeDesigner.m_ChildNodeConnectionList[i].m_DestinationNodeDesigner;
+                    m_DetachedNodes.Add(_destinationNodeDesigner);
+                    _destinationNodeDesigner.m_ParentNode = null;
+                }
+            }
+            if (nodeDesigner.m_ParentNode != null)
+            {
+                nodeDesigner.m_ParentNode.delectChildNode(nodeDesigner);
+            }
+            m_DetachedNodes.Remove(nodeDesigner);
+            if (m_RootNode.Equals(nodeDesigner))
+            {
+                m_RootNode = null;
+            }
         }
     }
 }

@@ -16,8 +16,9 @@ namespace BTree.Editor
         private bool m_Selected;
         private bool m_IsDirty = true;
         private bool m_IsEntryDisplay;
-        public bool m_IsParent { get; private set; }
         private bool m_IsShowHoverBar;
+        public bool m_IsParent { get; private set; }
+        public bool m_IsDisable { get { return m_EditorNode.m_Disable; } }
         private Texture m_Icon;
 
         public BTreeNodeDesigner(BTreeEditorNode _editorNode)
@@ -34,7 +35,15 @@ namespace BTree.Editor
             m_ChildNodeConnectionList = new List<BTreeNodeConnection>();
             loadTaskIcon();
         }
-
+        #region 节点操作方法
+        public void disable()
+        {
+            m_EditorNode.m_Disable = true;
+        }
+        public void enable()
+        {
+            m_EditorNode.m_Disable = false;
+        }
         public void select()
         {
             m_Selected = true;
@@ -42,6 +51,20 @@ namespace BTree.Editor
         public void deselect()
         {
             m_Selected = false;
+        }
+        public void delectChildNode(BTreeNodeDesigner childNodeDesigner)
+        {
+            m_ChildNodeList.Remove(childNodeDesigner);
+            for (int i = 0; i < m_ChildNodeConnectionList.Count; i++)
+            {
+                if (m_ChildNodeConnectionList[i].m_DestinationNodeDesigner.Equals(childNodeDesigner))
+                {
+                    m_ChildNodeConnectionList.RemoveAt(i);
+                    break;
+                }
+            }
+            childNodeDesigner.m_ParentNode = null;
+            m_IsDirty = true;
         }
         public void movePosition(Vector2 delta)
         {
@@ -75,18 +98,19 @@ namespace BTree.Editor
             m_ChildNodeList = new List<BTreeNodeDesigner>();
             m_ChildNodeList.Add(_child);
             m_ChildNodeConnectionList = new List<BTreeNodeConnection>();
-            m_ChildNodeConnectionList.Add(new BTreeNodeConnection(_child,this,NodeConnectionType.Outgoing));
+            m_ChildNodeConnectionList.Add(new BTreeNodeConnection(_child, this, NodeConnectionType.Outgoing));
         }
+        #endregion
+        #region 绘制方法相关
         //绘制节点
         public bool drawNode(Vector2 offset, bool drawSelected, bool disabled)
         {
             Rect rect = rectangle(offset, false);
-            GUI.color = Color.white;
+            GUI.color = m_IsDisable ? new Color(0.7f, 0.7f, 0.7f) : Color.white;
             //上部
             if (!m_IsEntryDisplay)
             {
                 GUI.DrawTexture(new Rect(rect.x + (rect.width - BTreeEditorUtility.ConnectionWidth) / 2f, rect.y - BTreeEditorUtility.TopConnectionHeight - BTreeEditorUtility.TaskBackgroundShadowSize + 4f, BTreeEditorUtility.ConnectionWidth, (BTreeEditorUtility.TopConnectionHeight + BTreeEditorUtility.TaskBackgroundShadowSize)), BTreeEditorUtility.TaskConnectionTopTexture, ScaleMode.ScaleToFit);
-                //GUI.DrawTexture(new Rect(rect.x + (rect.width - BTreeEditorUtility.ConnectionWidth) / 2f, rect.yMin - 3f, BTreeEditorUtility.ConnectionWidth, (BTreeEditorUtility.BottomConnectionHeight + BTreeEditorUtility.TaskBackgroundShadowSize)), BTreeEditorUtility.TaskConnectionTopTexture, ScaleMode.ScaleToFit);
             }
             //下部
             if (m_IsEntryDisplay || !m_EditorNode.m_Node.m_IsAcitonNode)
@@ -129,7 +153,7 @@ namespace BTree.Editor
         //绘制节点说明
         public void drawNodeComment(Vector2 offset)
         {
-            
+
         }
         //获取连线位置
         public Vector2 getConnectionPosition(Vector2 offset, NodeConnectionType connectionType)
@@ -147,7 +171,7 @@ namespace BTree.Editor
             }
             return result;
         }
-
+        #endregion
         private void loadTaskIcon()
         {
             Texture2D _icon = null;
@@ -186,7 +210,7 @@ namespace BTree.Editor
             }
             m_Icon = _icon;
         }
-        
+
         private Rect rectangle(Vector2 offset, bool includeConnections)
         {
             Rect result = rectangle(offset);
@@ -257,7 +281,7 @@ namespace BTree.Editor
         {
             return rectangle(offset, includeConnections).Contains(point);
         }
-       
+
         public override string ToString()
         {
             if (m_NodeName == null)
