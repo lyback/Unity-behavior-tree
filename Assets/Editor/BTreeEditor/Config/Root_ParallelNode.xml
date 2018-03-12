@@ -99,8 +99,8 @@
           <int>2</int>
         </m_OtherParams>
         <m_NodeName>Root_ParallelNode</m_NodeName>
-        <m_PosX>60</m_PosX>
-        <m_PosY>60</m_PosY>
+        <m_PosX>170</m_PosX>
+        <m_PosY>126</m_PosY>
         <m_Disable>false</m_Disable>
       </BTreeEditorNodeConfig>
       <BTreeEditorNodeConfig>
@@ -109,8 +109,8 @@
         <m_NodeSubType>0</m_NodeSubType>
         <m_ActionNodeName>StartActionNode</m_ActionNodeName>
         <m_NodeName>Start</m_NodeName>
-        <m_PosX>19</m_PosX>
-        <m_PosY>201</m_PosY>
+        <m_PosX>95</m_PosX>
+        <m_PosY>267</m_PosY>
         <m_Disable>false</m_Disable>
       </BTreeEditorNodeConfig>
       <BTreeEditorNodeConfig>
@@ -118,8 +118,8 @@
         <m_NodeType>1</m_NodeType>
         <m_NodeSubType>2</m_NodeSubType>
         <m_NodeName>TroopAction</m_NodeName>
-        <m_PosX>223</m_PosX>
-        <m_PosY>195</m_PosY>
+        <m_PosX>316</m_PosX>
+        <m_PosY>263</m_PosY>
         <m_Disable>false</m_Disable>
       </BTreeEditorNodeConfig>
       <BTreeEditorNodeConfig>
@@ -143,8 +143,8 @@
             <m_PreconditionName>HasTargetCondition</m_PreconditionName>
           </PreconditionConfig>
         </m_Preconditions>
-        <m_PosX>94</m_PosX>
-        <m_PosY>303</m_PosY>
+        <m_PosX>83</m_PosX>
+        <m_PosY>393</m_PosY>
         <m_Disable>false</m_Disable>
       </BTreeEditorNodeConfig>
       <BTreeEditorNodeConfig>
@@ -174,8 +174,8 @@
             <m_PreconditionName>IsInAttackRangeCondition</m_PreconditionName>
           </PreconditionConfig>
         </m_Preconditions>
-        <m_PosX>225</m_PosX>
-        <m_PosY>373</m_PosY>
+        <m_PosX>317</m_PosX>
+        <m_PosY>499</m_PosY>
         <m_Disable>false</m_Disable>
       </BTreeEditorNodeConfig>
       <BTreeEditorNodeConfig>
@@ -191,8 +191,8 @@
             <m_PreconditionName>HasTargetCondition</m_PreconditionName>
           </PreconditionConfig>
         </m_Preconditions>
-        <m_PosX>358</m_PosX>
-        <m_PosY>303</m_PosY>
+        <m_PosX>541</m_PosX>
+        <m_PosY>396</m_PosY>
         <m_Disable>false</m_Disable>
       </BTreeEditorNodeConfig>
     </m_EditorNodes>

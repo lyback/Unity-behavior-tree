@@ -2,19 +2,26 @@
 
 namespace Battle.Logic.AI.BTree
 {
-    public class AttackActionNode : BTreeNodeAction<BTreeInputData, BTreeOutputData>
+    public class AttackActionNode : BTreeNodeAction
     {
         public AttackActionNode()
             : base()
         {
         }
-        public AttackActionNode(BTreeNode<BTreeInputData, BTreeOutputData> _parentNode) 
+        public AttackActionNode(BTreeNode _parentNode) 
             : base(_parentNode)
         {
         }
 
-        protected override BTreeRunningStatus _DoExecute(BTreeInputData _input, ref BTreeOutputData _output)
+        protected override BTreeRunningStatus _DoExecute(BTreeTemplateData input, ref BTreeTemplateData output)
         {
+            BTreeInputData _input = input as BTreeInputData;
+            BTreeOutputData _output = output as BTreeOutputData;
+            if (_input == null || _output == null)
+            {
+                Debugger.LogError("数据类型错误");
+            }
+
             var troop = _input.troop;
             var outTroop = _output.troop;
             var target = _input.battleData.mAllTroopDic[troop.targetKey];

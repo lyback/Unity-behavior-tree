@@ -1,5 +1,6 @@
 ﻿#define BTREE
 using System.Collections.Generic;
+using BTreeFrame;
 #if FSM
 using Battle.Logic.AI.FSM;
 #endif
@@ -94,7 +95,9 @@ namespace Battle.Logic
                     m_TroopBTreeDic.Add(_atkTroop.key, new BTreeRoot());
                     m_TroopBTreeDic[_atkTroop.key].CreateBevTree();
                 }
-                m_TroopBTreeDic[_atkTroop.key].Tick(m_Input, ref m_Output);
+                BTreeTemplateData _output = m_Output as BTreeTemplateData;
+                m_TroopBTreeDic[_atkTroop.key].Tick(m_Input, ref _output);
+                m_Output = _output as BTreeOutputData;
                 m_AtkTroopList[i] = m_Output.troop;
 
             }
@@ -108,7 +111,9 @@ namespace Battle.Logic
                     m_TroopBTreeDic.Add(_defTroop.key, new BTreeRoot());
                     m_TroopBTreeDic[_defTroop.key].CreateBevTree();
                 }
-                m_TroopBTreeDic[_defTroop.key].Tick(m_Input, ref m_Output);
+                BTreeTemplateData _output = m_Output as BTreeTemplateData;
+                m_TroopBTreeDic[_defTroop.key].Tick(m_Input, ref _output);
+                m_Output = _output as BTreeOutputData;
                 m_DefTroopList[i] = m_Output.troop;
             }
         }

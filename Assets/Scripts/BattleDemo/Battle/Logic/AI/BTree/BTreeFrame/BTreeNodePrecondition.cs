@@ -2,30 +2,30 @@
 
 namespace BTreeFrame
 {
-    public abstract class BTreeNodePrecondition<T> where T : BTreeTemplateData
+    public abstract class BTreeNodePrecondition
     {
         public BTreeNodePrecondition(){}
-        public abstract bool ExternalCondition(T _input);
+        public abstract bool ExternalCondition(BTreeTemplateData _input);
     }
 
-    public class BTreeNodePreconditionTRUE<T> : BTreeNodePrecondition<T> where T : BTreeTemplateData
+    public class BTreeNodePreconditionTRUE : BTreeNodePrecondition
     {
-        public override bool ExternalCondition(T _input)
+        public override bool ExternalCondition(BTreeTemplateData _input)
         {
             return true;
         }
     }
-    public class BTreeNodePreconditionFALSE<T> : BTreeNodePrecondition<T> where T : BTreeTemplateData
+    public class BTreeNodePreconditionFALSE : BTreeNodePrecondition
     {
-        public override bool ExternalCondition(T _input)
+        public override bool ExternalCondition(BTreeTemplateData _input)
         {
             return false;
         }
     }
-    public class BTreeNodePreconditionNOT<T> : BTreeNodePrecondition<T> where T : BTreeTemplateData
+    public class BTreeNodePreconditionNOT : BTreeNodePrecondition
     {
-        private BTreeNodePrecondition<T> m_Precondition;
-        public BTreeNodePreconditionNOT(BTreeNodePrecondition<T> _precondition)
+        private BTreeNodePrecondition m_Precondition;
+        public BTreeNodePreconditionNOT(BTreeNodePrecondition _precondition)
         {
             if (_precondition == null)
             {
@@ -33,19 +33,19 @@ namespace BTreeFrame
             }
             m_Precondition = _precondition;
         }
-        public override bool ExternalCondition(T _input)
+        public override bool ExternalCondition(BTreeTemplateData _input)
         {
             return !m_Precondition.ExternalCondition(_input);
         }
-        public BTreeNodePrecondition<T> GetChildPrecondition()
+        public BTreeNodePrecondition GetChildPrecondition()
         {
             return m_Precondition;
         }
     }
-    public class BTreeNodePreconditionAND<T> : BTreeNodePrecondition<T> where T : BTreeTemplateData
+    public class BTreeNodePreconditionAND : BTreeNodePrecondition
     {
-        private BTreeNodePrecondition<T>[] m_Preconditions;
-        public BTreeNodePreconditionAND(params BTreeNodePrecondition<T>[] param)
+        private BTreeNodePrecondition[] m_Preconditions;
+        public BTreeNodePreconditionAND(params BTreeNodePrecondition[] param)
         {
             if (param == null)
             {
@@ -59,7 +59,7 @@ namespace BTreeFrame
             }
             m_Preconditions = param;
         }
-        public override bool ExternalCondition(T _input)
+        public override bool ExternalCondition(BTreeTemplateData _input)
         {
             for (int i = 0; i < m_Preconditions.Length; i++)
             {
@@ -70,7 +70,7 @@ namespace BTreeFrame
             }
             return true;
         }
-        public BTreeNodePrecondition<T>[] GetChildPrecondition()
+        public BTreeNodePrecondition[] GetChildPrecondition()
         {
             return m_Preconditions;
         }
@@ -83,10 +83,10 @@ namespace BTreeFrame
             return 0;
         }
     }
-    public class BTreeNodePreconditionOR<T> : BTreeNodePrecondition<T> where T : BTreeTemplateData
+    public class BTreeNodePreconditionOR : BTreeNodePrecondition
     {
-        private BTreeNodePrecondition<T>[] m_Preconditions;
-        public BTreeNodePreconditionOR(params BTreeNodePrecondition<T>[] param)
+        private BTreeNodePrecondition[] m_Preconditions;
+        public BTreeNodePreconditionOR(params BTreeNodePrecondition[] param)
         {
             if (param == null)
             {
@@ -100,7 +100,7 @@ namespace BTreeFrame
             }
             m_Preconditions = param;
         }
-        public override bool ExternalCondition(T _input)
+        public override bool ExternalCondition(BTreeTemplateData _input)
         {
             for (int i = 0; i < m_Preconditions.Length; i++)
             {
@@ -111,7 +111,7 @@ namespace BTreeFrame
             }
             return false;
         }
-        public BTreeNodePrecondition<T>[] GetChildPrecondition()
+        public BTreeNodePrecondition[] GetChildPrecondition()
         {
             return m_Preconditions;
         }

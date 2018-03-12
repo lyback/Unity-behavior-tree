@@ -2,10 +2,12 @@
 
 namespace Battle.Logic.AI.BTree
 {
-    public class HasTargetCondition : BTreeNodePrecondition<BTreeInputData>
+    public class HasTargetCondition : BTreeNodePrecondition
     {
-        public override bool ExternalCondition(BTreeInputData _input)
+        public override bool ExternalCondition(BTreeTemplateData input)
         {
+            var _input = (BTreeInputData)input;
+
             var troop = _input.troop;
             if (troop.targetKey != 0)
             {

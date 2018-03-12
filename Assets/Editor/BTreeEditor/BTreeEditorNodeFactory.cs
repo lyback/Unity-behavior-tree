@@ -5,15 +5,13 @@ using UnityEngine;
 
 namespace BTree.Editor
 {
-    class BTreeEditorNodeFactory<T, P>
-        where T : BTreeTemplateData
-        where P : BTreeTemplateData
+    class BTreeEditorNodeFactory
     {
         #region 从配置生成行为树编辑器相关方法
-        public static BTreeNodeDesigner<T, P>[] CreateBTreeNodeDesignerFromConfig(BTreeEditorTreeConfig _config)
+        public static BTreeNodeDesigner[] CreateBTreeNodeDesignerFromConfig(BTreeEditorTreeConfig _config)
         {
-            BTreeNodeDesigner<T, P>[] _nodeDesigners = new BTreeNodeDesigner<T, P>[_config.m_EditorNodes.Length];
-            BTreeEditorNode<T, P>[] _editorNodes = CreateBTreeEditorNode(_config);
+            BTreeNodeDesigner[] _nodeDesigners = new BTreeNodeDesigner[_config.m_EditorNodes.Length];
+            BTreeEditorNode[] _editorNodes = CreateBTreeEditorNode(_config);
             //递归创建节点
             for (int i = 0; i < _nodeDesigners.Length; i++)
             {
@@ -30,15 +28,15 @@ namespace BTree.Editor
                 {
                     int _parentIndex = _editorNode.m_Node.m_ParentNode.m_Index;
                     _nodeDesigners[i].m_ParentNode = _nodeDesigners[_parentIndex];
-                    BTreeNodeConnection<T, P> _connection = new BTreeNodeConnection<T, P>(_nodeDesigners[i], _nodeDesigners[_parentIndex], NodeConnectionType.Incoming);
+                    BTreeNodeConnection _connection = new BTreeNodeConnection(_nodeDesigners[i], _nodeDesigners[_parentIndex], NodeConnectionType.Incoming);
                     _nodeDesigners[i].m_ParentNodeConnection = _connection;
                 }
             }
             return _nodeDesigners;
         }
-        public static BTreeNodeDesigner<T, P> CreateBTreeNodeDesigner(BTreeEditorNodeConfig[] _configNodes, BTreeEditorNode<T, P>[] _editorNodes, ref BTreeNodeDesigner<T, P>[] _nodeDesigners, int _index)
+        public static BTreeNodeDesigner CreateBTreeNodeDesigner(BTreeEditorNodeConfig[] _configNodes, BTreeEditorNode[] _editorNodes, ref BTreeNodeDesigner[] _nodeDesigners, int _index)
         {
-            BTreeEditorNode<T, P> _editorNode = _editorNodes[_index];
+            BTreeEditorNode _editorNode = _editorNodes[_index];
             for (int i = 0; i < _editorNode.m_Node.m_ChildCount; i++)
             {
                 int _childIndex = _editorNode.m_Node.m_ChildNodeList[i].m_Index;
@@ -47,29 +45,29 @@ namespace BTree.Editor
                     _nodeDesigners[_childIndex] = CreateBTreeNodeDesigner(_configNodes, _editorNodes, ref _nodeDesigners, _childIndex);
                 }
             }
-            BTreeNodeDesigner<T, P> _node = new BTreeNodeDesigner<T, P>(_editorNode);
+            BTreeNodeDesigner _node = new BTreeNodeDesigner(_editorNode);
             //_node.m_EditorNode = _editorNode;
             //_node.m_NodeName = _editorNode.m_Node.m_Name;
-            //_node.m_ChildNodeList = new List<BTreeNodeDesigner<T, P>>();
-            //_node.m_ChildNodeConnectionList = new List<BTreeNodeConnection<T, P>>();
+            //_node.m_ChildNodeList = new List<BTreeNodeDesigner>();
+            //_node.m_ChildNodeConnectionList = new List<BTreeNodeConnection>();
             
             for (int i = 0; i < _editorNode.m_Node.m_ChildCount; i++)
             {
                 int _childIndex = _editorNode.m_Node.m_ChildNodeList[i].m_Index;
                 _node.m_ChildNodeList.Add(_nodeDesigners[_childIndex]);
-                BTreeNodeConnection<T, P> _connection = new BTreeNodeConnection<T, P>(_nodeDesigners[_childIndex], _node, NodeConnectionType.Outgoing);
+                BTreeNodeConnection _connection = new BTreeNodeConnection(_nodeDesigners[_childIndex], _node, NodeConnectionType.Outgoing);
                 _node.m_ChildNodeConnectionList.Add(_connection);
             }
             return _node;
         }
-        public static BTreeEditorNode<T, P>[] CreateBTreeEditorNode(BTreeEditorTreeConfig _config)
+        public static BTreeEditorNode[] CreateBTreeEditorNode(BTreeEditorTreeConfig _config)
         {
-            BTreeNodeFactory<T, P>.Init();
-            BTreeNode<T, P>[] _btreeNodes = BTreeNodeFactory<T, P>.CreateBTreeFromConfig(_config);
-            BTreeEditorNode<T, P>[] _editorNodes = new BTreeEditorNode<T, P>[_btreeNodes.Length];
+            BTreeNodeFactory.Init();
+            BTreeNode[] _btreeNodes = BTreeNodeFactory.CreateBTreeFromConfig(_config);
+            BTreeEditorNode[] _editorNodes = new BTreeEditorNode[_btreeNodes.Length];
             for (int i = 0; i < _editorNodes.Length; i++)
             {
-                _editorNodes[i] = new BTreeEditorNode<T, P>(_btreeNodes[i]);
+                _editorNodes[i] = new BTreeEditorNode(_btreeNodes[i]);
                 _editorNodes[i].m_Pos = new Vector2(_config.m_EditorNodes[i].m_PosX, _config.m_EditorNodes[i].m_PosY);
                 _editorNodes[i].m_Disable = _config.m_EditorNodes[i].m_Disable;
             }
@@ -78,7 +76,7 @@ namespace BTree.Editor
         #endregion
 
         #region 从行为树编辑器类生成配置
-        public static BTreeEditorConfig CreateBtreeEditorConfigFromGraphDesigner(BTreeGraphDesigner<T, P> _graphDesigner)
+        public static BTreeEditorConfig CreateBtreeEditorConfigFromGraphDesigner(BTreeGraphDesigner _graphDesigner)
         {
             BTreeEditorConfig _config = new BTreeEditorConfig();
             
@@ -92,15 +90,15 @@ namespace BTree.Editor
             }
             return _config;
         }
-        public static BTreeEditorTreeConfig CreateEditorTreeConfigFromRootEditorNode(BTreeNodeDesigner<T, P> _rootEditorNode)
+        public static BTreeEditorTreeConfig CreateEditorTreeConfigFromRootEditorNode(BTreeNodeDesigner _rootEditorNode)
         {
-            TreeConfig _treeConfig = BTreeNodeFactory<T, P>.CreateConfigFromBTreeRoot(_rootEditorNode.m_EditorNode.m_Node);
+            TreeConfig _treeConfig = BTreeNodeFactory.CreateConfigFromBTreeRoot(_rootEditorNode.m_EditorNode.m_Node);
             BTreeEditorTreeConfig _treeEditorConfig = new BTreeEditorTreeConfig(_treeConfig);
             CreateEditorNodeConfigFromRootEditorNode(_rootEditorNode, ref _treeEditorConfig.m_EditorNodes);
             
             return _treeEditorConfig;
         }
-        public static BTreeEditorNodeConfig CreateEditorNodeConfigFromRootEditorNode(BTreeNodeDesigner<T, P> _rootEditorNode, ref BTreeEditorNodeConfig[] _editorNodes)
+        public static BTreeEditorNodeConfig CreateEditorNodeConfigFromRootEditorNode(BTreeNodeDesigner _rootEditorNode, ref BTreeEditorNodeConfig[] _editorNodes)
         {
             int _index = _rootEditorNode.m_EditorNode.m_Node.m_Index;
             _editorNodes[_index].m_PosX = _rootEditorNode.m_EditorNode.m_Pos.x;
@@ -117,10 +115,10 @@ namespace BTree.Editor
         }
         #endregion
         #region 从行为树编辑器类生成运行时配置
-        public static TreeConfig CreateTreeConfigFromBTreeGraphDesigner(BTreeGraphDesigner<T, P> _graphDesigner)
+        public static TreeConfig CreateTreeConfigFromBTreeGraphDesigner(BTreeGraphDesigner _graphDesigner)
         {
-            BTreeNode<T, P> _root = _graphDesigner.m_RootNode.m_EditorNode.m_Node;
-            return BTreeNodeFactory<T, P>.CreateConfigFromBTreeRoot(_root);
+            BTreeNode _root = _graphDesigner.m_RootNode.m_EditorNode.m_Node;
+            return BTreeNodeFactory.CreateConfigFromBTreeRoot(_root);
         }
         #endregion
     }

@@ -3,20 +3,27 @@ using System.Collections.Generic;
 
 namespace Battle.Logic.AI.BTree
 {
-    public class FindTargetActionNode : BTreeNodeAction<BTreeInputData, BTreeOutputData>
+    public class FindTargetActionNode : BTreeNodeAction
     {
         public FindTargetActionNode()
             : base()
         {
 
         }
-        public FindTargetActionNode(BTreeNode<BTreeInputData, BTreeOutputData> _parentNode) 
+        public FindTargetActionNode(BTreeNode _parentNode) 
             : base(_parentNode)
         {
         }
         
-        protected override BTreeRunningStatus _DoExecute(BTreeInputData _input, ref BTreeOutputData _output)
+        protected override BTreeRunningStatus _DoExecute(BTreeTemplateData input, ref BTreeTemplateData output)
         {
+            BTreeInputData _input = input as BTreeInputData;
+            BTreeOutputData _output = output as BTreeOutputData;
+            if (_input == null || _output == null)
+            {
+                Debugger.LogError("数据类型错误");
+            }
+
             var troop = _input.troop;
             var outTroop = _output.troop;
 

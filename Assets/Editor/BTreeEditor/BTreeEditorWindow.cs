@@ -21,7 +21,7 @@ namespace BTree.Editor
             UnityEngine.Object.DontDestroyOnLoad(bTreeEditorWindow);
         }
 
-        private BTreeGraphDesigner<BTreeInputData, BTreeOutputData> mGraphDesigner = null;
+        private BTreeGraphDesigner mGraphDesigner = null;
 
         private Rect mGraphRect;
         private Rect mFileToolBarRect;
@@ -45,7 +45,7 @@ namespace BTree.Editor
         //是否在拖动中
         private bool mIsDragging;
         
-        private BTreeEditorRightClickBlockMenu<BTreeInputData, BTreeOutputData> mRightClickBlockMenu = null;
+        private BTreeEditorRightClickBlockMenu mRightClickBlockMenu = null;
         private GenericMenu mBreadcrumbGameObjectBehaviorMenu = new GenericMenu();
         private GenericMenu mBreadcrumbGameObjectMenu = new GenericMenu();
         private GenericMenu mBreadcrumbBehaviorMenu = new GenericMenu();
@@ -56,7 +56,7 @@ namespace BTree.Editor
         {
             if (mIsFirst)
             {
-                mGraphDesigner = new BTreeGraphDesigner<BTreeInputData, BTreeOutputData>();
+                mGraphDesigner = new BTreeGraphDesigner();
                 mIsFirst = false;
             }
             mCurrentMousePosition = Event.current.mousePosition;
@@ -260,7 +260,7 @@ namespace BTree.Editor
                             mShowRightClickBlockMenu = false;
                             if (mRightClickBlockMenu == null)
                             {
-                                mRightClickBlockMenu = new BTreeEditorRightClickBlockMenu<BTreeInputData, BTreeOutputData>(this);
+                                mRightClickBlockMenu = new BTreeEditorRightClickBlockMenu(this);
                             }
                             mRightClickBlockMenu.ShowAsContext();
                             e.Use();
@@ -462,7 +462,7 @@ namespace BTree.Editor
             Debugger.Log("loadBTree");
             string text = EditorUtility.OpenFilePanel("Load Behavior Tree", "Assets/Editor/BtreeEditor/Config", "xml");
             BTreeEditorConfig _config = BTreeEditorSerialization.ReadXMLAtPath(text);
-            mGraphDesigner = (new BTreeGraphDesigner<BTreeInputData, BTreeOutputData>());
+            mGraphDesigner = (new BTreeGraphDesigner());
             mGraphDesigner.load(_config);
         }
         public void saveBTree()
@@ -475,7 +475,7 @@ namespace BTree.Editor
             string text = EditorUtility.SaveFilePanel("Save Behavior Tree", "Assets/Editor/BtreeEditor/Config", mGraphDesigner.m_RootNode.m_NodeName,"xml");
             if (text.Length != 0 && Application.dataPath.Length < text.Length)
             {
-                BTreeEditorConfig _config = BTreeEditorNodeFactory<BTreeInputData, BTreeOutputData>.CreateBtreeEditorConfigFromGraphDesigner(mGraphDesigner);
+                BTreeEditorConfig _config = BTreeEditorNodeFactory.CreateBtreeEditorConfigFromGraphDesigner(mGraphDesigner);
                 BTreeEditorSerialization.WirteXMLAtPath(_config, text);
             }
         }
@@ -486,8 +486,10 @@ namespace BTree.Editor
                 return;
             }
             Debugger.Log("exportBtree");
-            TreeConfig _treeConfig = BTreeEditorNodeFactory<BTreeInputData, BTreeOutputData>.CreateTreeConfigFromBTreeGraphDesigner(mGraphDesigner);
-            BTreeNodeSerialization.WriteBinary(_treeConfig, mGraphDesigner.m_RootNode.m_NodeName);
+            TreeConfig _treeConfig = BTreeEditorNodeFactory.CreateTreeConfigFromBTreeGraphDesigner(mGraphDesigner);
+            string name = mGraphDesigner.m_RootNode.m_NodeName;
+            BTreeNodeSerialization.WriteBinary(_treeConfig, name);
+            EditorUtility.DisplayDialog("Export", "导出行为树配置成功:" + name, "确定");
         }
         #endregion
 

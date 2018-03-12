@@ -4,14 +4,26 @@ using System.Collections.Generic;
 
 namespace BTreeFrame
 {
+    //选择节点基类
+    public class BTreeNodeCtrl : BTreeNode
+    {
+        public BTreeNodeCtrl()
+            : base()
+        {
+
+        }
+        public BTreeNodeCtrl(BTreeNode _parentNode, BTreeNodePrecondition _precondition = null)
+            : base(_parentNode, _precondition)
+        {
+
+        }
+    }
     /// <summary>
     /// class:      带优先级的选择节点
     /// Evaluate:   从第一个子节点开始依次遍历所有的子节点，调用其Evaluate方法，当发现存在可以运行的子节点时，记录子节点索引，停止遍历，返回True。
     /// Tick:       调用可以运行的子节点的Tick方法，用它所返回的运行状态作为自身的运行状态返回
     /// </summary>
-    public class BTreeNodePrioritySelector<T, P> : BTreeNode<T, P>
-        where T : BTreeTemplateData
-        where P : BTreeTemplateData
+    public class BTreeNodePrioritySelector : BTreeNodeCtrl
     {
         protected int m_CurrentSelectIndex = INVALID_CHILD_NODE_INDEX;
         protected int m_LastSelectIndex = INVALID_CHILD_NODE_INDEX;
@@ -19,17 +31,17 @@ namespace BTreeFrame
             : base()
         {
         }
-        public BTreeNodePrioritySelector(BTreeNode<T, P> _parentNode, BTreeNodePrecondition<T> _precondition = null)
+        public BTreeNodePrioritySelector(BTreeNode _parentNode, BTreeNodePrecondition _precondition = null)
             : base(_parentNode, _precondition)
         {
 
         }
 
-        protected override bool _DoEvaluate(T _input)
+        protected override bool _DoEvaluate(BTreeTemplateData _input)
         {
             for (int i = 0; i < m_ChildCount; i++)
             {
-                BTreeNode<T, P> bn = m_ChildNodes[i];
+                BTreeNode bn = m_ChildNodes[i];
                 if (bn.Evaluate(_input))
                 {
                     m_CurrentSelectIndex = i;
@@ -38,16 +50,16 @@ namespace BTreeFrame
             }
             return false;
         }
-        protected override void _DoTransition(T _input)
+        protected override void _DoTransition(BTreeTemplateData _input)
         {
             if (_CheckIndex(m_LastSelectIndex))
             {
-                BTreeNode<T, P> bn = m_ChildNodes[m_LastSelectIndex];
+                BTreeNode bn = m_ChildNodes[m_LastSelectIndex];
                 bn.Transition(_input);
             }
             m_LastSelectIndex = INVALID_CHILD_NODE_INDEX;
         }
-        protected override BTreeRunningStatus _DoTick(T _input, ref P _output)
+        protected override BTreeRunningStatus _DoTick(BTreeTemplateData _input, ref BTreeTemplateData _output)
         {
             BTreeRunningStatus RunningStatus = BTreeRunningStatus.Finish;
             if (_CheckIndex(m_CurrentSelectIndex))
@@ -56,7 +68,7 @@ namespace BTreeFrame
                 {
                     if (_CheckIndex(m_LastSelectIndex))
                     {
-                        BTreeNode<T, P> bn = m_ChildNodes[m_LastSelectIndex];
+                        BTreeNode bn = m_ChildNodes[m_LastSelectIndex];
                         bn.Transition(_input);
                     }
                     m_LastSelectIndex = m_CurrentSelectIndex;
@@ -64,7 +76,7 @@ namespace BTreeFrame
             }
             if (_CheckIndex(m_LastSelectIndex))
             {
-                BTreeNode<T, P> bn = m_ChildNodes[m_LastSelectIndex];
+                BTreeNode bn = m_ChildNodes[m_LastSelectIndex];
                 RunningStatus = bn.Tick(_input, ref _output);
                 if (RunningStatus == BTreeRunningStatus.Finish)
                 {
@@ -80,23 +92,21 @@ namespace BTreeFrame
     /// Evaluate:   先调用上一个运行的子节点（若存在）的Evaluate方法，如果可以运行，则继续运保存该节点的索引，返回True，如果不能运行，则重新选择（同带优先级的选择节点的选择方式）
     /// Tick:       调用可以运行的子节点的Tick方法，用它所返回的运行状态作为自身的运行状态返回
     /// </summary>
-    public class BTreeNodeNonePrioritySelector<T,P> : BTreeNodePrioritySelector<T,P>
-        where T : BTreeTemplateData
-        where P : BTreeTemplateData
+    public class BTreeNodeNonePrioritySelector : BTreeNodePrioritySelector
     {
         public BTreeNodeNonePrioritySelector()
             : base()
         {
         }
-        public BTreeNodeNonePrioritySelector(BTreeNode<T, P> _parentNode, BTreeNodePrecondition<T> _precondition = null)
+        public BTreeNodeNonePrioritySelector(BTreeNode _parentNode, BTreeNodePrecondition _precondition = null)
             : base(_parentNode, _precondition)
         {
         }
-        protected override bool _DoEvaluate(T _input)
+        protected override bool _DoEvaluate(BTreeTemplateData _input)
         {
             if (_CheckIndex(m_CurrentSelectIndex))
             {
-                BTreeNode<T, P> bn = m_ChildNodes[m_CurrentSelectIndex];
+                BTreeNode bn = m_ChildNodes[m_CurrentSelectIndex];
                 if (bn.Evaluate(_input))
                 {
                     return true;
@@ -112,21 +122,19 @@ namespace BTreeFrame
     /// Tick:       调用可以运行的子节点的Tick方法，若返回运行结束，则将下一个子节点作为当前运行节点，若当前已是最后一个子节点，表示该序列已经运行结束，则自身返回运行结束。
     ///             若子节点返回运行中，则用它所返回的运行状态作为自身的运行状态返回
     /// </summary>
-    public class BTreeNodeSequence<T,P> : BTreeNode<T, P>
-        where T : BTreeTemplateData
-        where P : BTreeTemplateData
+    public class BTreeNodeSequence : BTreeNodeCtrl
     {
         private int m_CurrentNodeIndex = INVALID_CHILD_NODE_INDEX;
         public BTreeNodeSequence()
             : base()
         {
         }
-        public BTreeNodeSequence(BTreeNode<T, P> _parentNode, BTreeNodePrecondition<T> _precondition = null)
+        public BTreeNodeSequence(BTreeNode _parentNode, BTreeNodePrecondition _precondition = null)
             : base(_parentNode, _precondition)
         {
         }
 
-        protected override bool _DoEvaluate(T _input)
+        protected override bool _DoEvaluate(BTreeTemplateData _input)
         {
             int testNode;
             if (m_CurrentNodeIndex == INVALID_CHILD_NODE_INDEX)
@@ -139,7 +147,7 @@ namespace BTreeFrame
             }
             if (_CheckIndex(testNode))
             {
-                BTreeNode<T, P> bn = m_ChildNodes[testNode];
+                BTreeNode bn = m_ChildNodes[testNode];
                 if (bn.Evaluate(_input))
                 {
                     return true;
@@ -148,17 +156,17 @@ namespace BTreeFrame
             return false;
         }
 
-        protected override void _DoTransition(T _input)
+        protected override void _DoTransition(BTreeTemplateData _input)
         {
             if (_CheckIndex(m_CurrentNodeIndex))
             {
-                BTreeNode<T, P> bn = m_ChildNodes[m_CurrentNodeIndex];
+                BTreeNode bn = m_ChildNodes[m_CurrentNodeIndex];
                 bn.Transition(_input);
             }
             m_CurrentNodeIndex = INVALID_CHILD_NODE_INDEX;
         }
 
-        protected override BTreeRunningStatus _DoTick(T _input, ref P _output)
+        protected override BTreeRunningStatus _DoTick(BTreeTemplateData _input, ref BTreeTemplateData _output)
         {
             BTreeRunningStatus runningStatus = BTreeRunningStatus.Finish;
             //First Time
@@ -166,7 +174,7 @@ namespace BTreeFrame
             {
                 m_CurrentNodeIndex = 0;
             }
-            BTreeNode<T, P> bn = m_ChildNodes[m_CurrentNodeIndex];
+            BTreeNode bn = m_ChildNodes[m_CurrentNodeIndex];
             runningStatus = bn.Tick(_input, ref _output);
             if (runningStatus == BTreeRunningStatus.Finish)
             {
@@ -194,9 +202,7 @@ namespace BTreeFrame
     /// Tick:       调用所有子节点的Tick方法，若并行节点是“或者”的关系，则只要有一个子节点返回运行结束，那自身就返回运行结束。
     ///             若并行节点是“并且”的关系，则只有所有的子节点返回结束，自身才返回运行结束
     /// </summary>
-    public class BTreeNodeParallel<T,P> : BTreeNode<T, P>
-        where T : BTreeTemplateData
-        where P : BTreeTemplateData
+    public class BTreeNodeParallel : BTreeNodeCtrl
     {
         private BTreeParallelFinishCondition m_FinishCondition;
         private List<BTreeRunningStatus> m_ChildNodeSatuses = new List<BTreeRunningStatus>();
@@ -204,16 +210,16 @@ namespace BTreeFrame
             : base()
         {
         }
-        public BTreeNodeParallel(BTreeNode<T, P> _parentNode, BTreeNodePrecondition<T> _precondition = null)
+        public BTreeNodeParallel(BTreeNode _parentNode, BTreeNodePrecondition _precondition = null)
             : base(_parentNode, _precondition)
         {
         }
 
-        protected override bool _DoEvaluate(T _input)
+        protected override bool _DoEvaluate(BTreeTemplateData _input)
         {
             for (int i = 0; i < m_ChildCount; i++)
             {
-                BTreeNode<T, P> bn = m_ChildNodes[i];
+                BTreeNode bn = m_ChildNodes[i];
                 if (m_ChildNodeSatuses[i] == BTreeRunningStatus.Executing)
                 {
                     if (!bn.Evaluate(_input))
@@ -225,22 +231,22 @@ namespace BTreeFrame
             return true;
         }
 
-        protected override void _DoTransition(T _input)
+        protected override void _DoTransition(BTreeTemplateData _input)
         {
             for (int i = 0; i < m_ChildCount; i++)
             {
                 m_ChildNodeSatuses[i] = BTreeRunningStatus.Executing;
-                BTreeNode<T, P> bn = m_ChildNodes[i];
+                BTreeNode bn = m_ChildNodes[i];
                 bn.Transition(_input);
             }
         }
 
-        protected override BTreeRunningStatus _DoTick(T _input, ref P _output)
+        protected override BTreeRunningStatus _DoTick(BTreeTemplateData _input, ref BTreeTemplateData _output)
         {
             int finishedChildCount = 0;
             for (int i = 0; i < m_ChildCount; i++)
             {
-                BTreeNode<T, P> bn = m_ChildNodes[i];
+                BTreeNode bn = m_ChildNodes[i];
                 if (m_FinishCondition == BTreeParallelFinishCondition.OR)
                 {
                     if (m_ChildNodeSatuses[i] == BTreeRunningStatus.Executing)
@@ -277,7 +283,7 @@ namespace BTreeFrame
             return BTreeRunningStatus.Executing;
         }
 
-        public override void AddChildNode(BTreeNode<T, P> _childNode)
+        public override void AddChildNode(BTreeNode _childNode)
         {
             base.AddChildNode(_childNode);
             m_ChildNodeSatuses.Add(BTreeRunningStatus.Executing);
@@ -304,9 +310,7 @@ namespace BTreeFrame
     /// Evaluate:   预设的循环次数到了就返回False，否则，只调用第一个子节点的Evaluate方法，用它所返回的值作为自身的值返回
     /// Tick:       只调用第一个节点的Tick方法，若返回运行结束，则看是否需要重复运行，若循环次数没到，则自身返回运行中，若循环次数已到，则返回运行结束
     /// </summary>
-    public class BTreeNodeLoop<T,P> : BTreeNode<T, P>
-        where T : BTreeTemplateData
-        where P : BTreeTemplateData
+    public class BTreeNodeLoop : BTreeNodeCtrl
     {
         public const int INFINITELOOP = -1;
         private int m_LoopCount;
@@ -315,14 +319,14 @@ namespace BTreeFrame
             : base()
         {
         }
-        public BTreeNodeLoop(BTreeNode<T, P> _parentNode, BTreeNodePrecondition<T> _precondition = null, int _loopCount = INFINITELOOP)
+        public BTreeNodeLoop(BTreeNode _parentNode, BTreeNodePrecondition _precondition = null, int _loopCount = INFINITELOOP)
             : base(_parentNode, _precondition)
         {
             m_LoopCount = _loopCount;
             m_CurrentCount = 0;
         }
 
-        protected override bool _DoEvaluate(T _input)
+        protected override bool _DoEvaluate(BTreeTemplateData _input)
         {
             bool checkLoopCount = m_LoopCount == INFINITELOOP || m_CurrentCount < m_LoopCount;
             if (!checkLoopCount)
@@ -331,7 +335,7 @@ namespace BTreeFrame
             }
             if (_CheckIndex(0))
             {
-                BTreeNode<T, P> bn = m_ChildNodes[0];
+                BTreeNode bn = m_ChildNodes[0];
                 if (bn.Evaluate(_input))
                 {
                     return true;
@@ -339,21 +343,21 @@ namespace BTreeFrame
             }
             return false;
         }
-        protected override void _DoTransition(T _input)
+        protected override void _DoTransition(BTreeTemplateData _input)
         {
             if (_CheckIndex(0))
             {
-                BTreeNode<T, P> bn = m_ChildNodes[0];
+                BTreeNode bn = m_ChildNodes[0];
                 bn.Transition(_input);
             }
             m_CurrentCount = 0;
         }
-        protected override BTreeRunningStatus _DoTick(T _input, ref P _output)
+        protected override BTreeRunningStatus _DoTick(BTreeTemplateData _input, ref BTreeTemplateData _output)
         {
             BTreeRunningStatus runningStatus = BTreeRunningStatus.Finish;
             if (_CheckIndex(0))
             {
-                BTreeNode<T, P> bn = m_ChildNodes[0];
+                BTreeNode bn = m_ChildNodes[0];
                 runningStatus = bn.Tick(_input, ref _output);
 
                 if (runningStatus == BTreeRunningStatus.Finish)

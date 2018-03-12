@@ -7,9 +7,7 @@ using BTreeFrame;
 
 namespace BTree.Editor
 {
-    public class BTreeEditorRightClickBlockMenu<T, P>
-        where T : BTreeTemplateData
-        where P : BTreeTemplateData
+    public class BTreeEditorRightClickBlockMenu
     {
         private GenericMenu m_Menu;
         private BTreeEditorWindow m_Window;
@@ -55,11 +53,11 @@ namespace BTree.Editor
                     {
                         if (!types[j].IsAbstract)
                         {
-                            if (types[j].IsSubclassOf(typeof(BTreeNodeAction<T, P>)))
+                            if (types[j].IsSubclassOf(typeof(BTreeNodeAction)))
                             {
                                 actionList.Add(types[j]);
                             }
-                            else if (IsSubclassOfRawGeneric(typeof(BTreeNode<,>),types[j]))
+                            else if (types[j].IsSubclassOf(typeof(BTreeNodeCtrl)))
                             {
                                 selectorList.Add(types[j]);
                             }

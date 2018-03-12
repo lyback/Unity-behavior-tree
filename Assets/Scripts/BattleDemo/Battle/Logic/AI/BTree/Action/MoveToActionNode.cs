@@ -2,19 +2,26 @@
 
 namespace Battle.Logic.AI.BTree
 {
-    public class MoveToActionNode : BTreeNodeAction<BTreeInputData, BTreeOutputData>
+    public class MoveToActionNode : BTreeNodeAction
     {
         public MoveToActionNode()
             : base()
         {
         }
-        public MoveToActionNode(BTreeNode<BTreeInputData, BTreeOutputData> _parentNode)
+        public MoveToActionNode(BTreeNode _parentNode)
             : base(_parentNode)
         {
         }
 
-        protected override BTreeRunningStatus _DoExecute(BTreeInputData _input, ref BTreeOutputData _output)
+        protected override BTreeRunningStatus _DoExecute(BTreeTemplateData input, ref BTreeTemplateData output)
         {
+            BTreeInputData _input = input as BTreeInputData;
+            BTreeOutputData _output = output as BTreeOutputData;
+            if (_input == null || _output == null)
+            {
+                Debugger.LogError("数据类型错误");
+            }
+
             if (_input.troop.targetKey!=0)
             {
                 _output.troop.state = (int)TroopAnimState.Move;

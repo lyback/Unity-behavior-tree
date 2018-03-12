@@ -7,17 +7,15 @@ using Battle.Logic.AI.BTree;
 
 namespace BTree.Editor
 {
-    public class BTreeGraphDesigner<T, P>
-        where T : BTreeTemplateData
-        where P : BTreeTemplateData
+    public class BTreeGraphDesigner
     {
-        //public BTreeNodeDesigner<T, P> m_EntryNode { get; private set; }
-        public BTreeNodeDesigner<T, P> m_RootNode { get; private set; }
-        public List<BTreeNodeDesigner<T, P>> m_DetachedNodes = new List<BTreeNodeDesigner<T, P>>();
-        public List<BTreeNodeDesigner<T, P>> m_SelectedNodes = new List<BTreeNodeDesigner<T, P>>();
-        public BTreeNodeDesigner<T, P> m_HoverNode { get; private set; }
-        public BTreeNodeConnection<T, P> m_ActiveNodeConnection { get; set; }
-        public List<BTreeNodeConnection<T, P>> m_SelectedNodeConnections = new List<BTreeNodeConnection<T, P>>();
+        //public BTreeNodeDesigner m_EntryNode { get; private set; }
+        public BTreeNodeDesigner m_RootNode { get; private set; }
+        public List<BTreeNodeDesigner> m_DetachedNodes = new List<BTreeNodeDesigner>();
+        public List<BTreeNodeDesigner> m_SelectedNodes = new List<BTreeNodeDesigner>();
+        public BTreeNodeDesigner m_HoverNode { get; private set; }
+        public BTreeNodeConnection m_ActiveNodeConnection { get; set; }
+        public List<BTreeNodeConnection> m_SelectedNodeConnections = new List<BTreeNodeConnection>();
 
         #region 绘制相关
         public bool drawNodes(Vector2 mousePosition, Vector2 offset, float graphZoom)
@@ -88,7 +86,7 @@ namespace BTree.Editor
             return result;
         }
         //递归绘制连线
-        private void drawNodeConnectionChildren(BTreeNodeDesigner<T, P> nodeDesigner, Vector2 offset, float graphZoom, bool disabledNode)
+        private void drawNodeConnectionChildren(BTreeNodeDesigner nodeDesigner, Vector2 offset, float graphZoom, bool disabledNode)
         {
             if (nodeDesigner == null)
             {
@@ -108,7 +106,7 @@ namespace BTree.Editor
             }
         }
         //递归绘制节点说明
-        private void drawNodeCommentChildren(BTreeNodeDesigner<T, P> nodeDesigner, Vector2 offset)
+        private void drawNodeCommentChildren(BTreeNodeDesigner nodeDesigner, Vector2 offset)
         {
             if (nodeDesigner == null)
             {
@@ -125,7 +123,7 @@ namespace BTree.Editor
             }
         }
         //递归绘制节点
-        private bool drawNodeChildren(BTreeNodeDesigner<T, P> nodeDesigner, Vector2 offset, bool disabledNode)
+        private bool drawNodeChildren(BTreeNodeDesigner nodeDesigner, Vector2 offset, bool disabledNode)
         {
             if (nodeDesigner == null)
             {
@@ -153,19 +151,19 @@ namespace BTree.Editor
         //加载
         public void load(BTreeEditorConfig _config)
         {
-            m_RootNode = BTreeEditorNodeFactory<T, P>.CreateBTreeNodeDesignerFromConfig(_config.m_RootNode)[0];
+            m_RootNode = BTreeEditorNodeFactory.CreateBTreeNodeDesignerFromConfig(_config.m_RootNode)[0];
             if (_config.m_DetachedNode != null)
             {
-                m_DetachedNodes = new List<BTreeNodeDesigner<T, P>>();
+                m_DetachedNodes = new List<BTreeNodeDesigner>();
                 for (int i = 0; i < _config.m_DetachedNode.Count; i++)
                 {
-                    BTreeNodeDesigner<T, P> _detachedNode = BTreeEditorNodeFactory<T, P>.CreateBTreeNodeDesignerFromConfig(_config.m_DetachedNode[i])[0];
+                    BTreeNodeDesigner _detachedNode = BTreeEditorNodeFactory.CreateBTreeNodeDesignerFromConfig(_config.m_DetachedNode[i])[0];
                     m_DetachedNodes.Add(_detachedNode);
                 }
             }
         }
         //获取鼠标位置上的节点
-        public BTreeNodeDesigner<T, P> nodeAt(Vector2 point, Vector2 offset)
+        public BTreeNodeDesigner nodeAt(Vector2 point, Vector2 offset)
         {
             for (int i = 0; i < m_SelectedNodes.Count; i++)
             {
@@ -174,7 +172,7 @@ namespace BTree.Editor
                     return m_SelectedNodes[i];
                 }
             }
-            BTreeNodeDesigner<T, P> result;
+            BTreeNodeDesigner result;
             if (m_RootNode != null)
             {
                 result = nodeChildrenAt(m_RootNode, point, offset);
@@ -196,7 +194,7 @@ namespace BTree.Editor
             }
             return null;
         }
-        public BTreeNodeDesigner<T, P> nodeChildrenAt(BTreeNodeDesigner<T, P> nodeDesigner, Vector2 point, Vector2 offset)
+        public BTreeNodeDesigner nodeChildrenAt(BTreeNodeDesigner nodeDesigner, Vector2 point, Vector2 offset)
         {
             if (nodeDesigner.contains(point, offset, true))
             {
@@ -208,7 +206,7 @@ namespace BTree.Editor
                 {
                     for (int i = 0; i < nodeDesigner.m_ChildNodeList.Count; i++)
                     {
-                        BTreeNodeDesigner<T, P> result;
+                        BTreeNodeDesigner result;
                         if (nodeDesigner.m_ChildNodeList[i] != null)
                         {
                             result = nodeChildrenAt(nodeDesigner.m_ChildNodeList[i], point, offset);
@@ -223,13 +221,13 @@ namespace BTree.Editor
             return null;
         }
         //选中
-        public void select(BTreeNodeDesigner<T, P> nodeDesigner)
+        public void select(BTreeNodeDesigner nodeDesigner)
         {
             m_SelectedNodes.Add(nodeDesigner);
             nodeDesigner.select();
         }
         //取消选中
-        public void deselect(BTreeNodeDesigner<T, P> nodeDesigner)
+        public void deselect(BTreeNodeDesigner nodeDesigner)
         {
             m_SelectedNodes.Remove(nodeDesigner);
             nodeDesigner.deselect();
@@ -264,7 +262,7 @@ namespace BTree.Editor
             //}
             return true;
         }
-        public void dragTask(BTreeNodeDesigner<T, P> nodeDesigner, Vector2 delta, bool dragChildren, bool hasDragged)
+        public void dragTask(BTreeNodeDesigner nodeDesigner, Vector2 delta, bool dragChildren, bool hasDragged)
         {
             nodeDesigner.movePosition(delta);
             if (nodeDesigner.m_IsParent && dragChildren)
@@ -276,18 +274,15 @@ namespace BTree.Editor
             }
         }
         //添加节点
-        public BTreeNodeDesigner<T, P> addNode(Type type, Vector2 position)
+        public BTreeNodeDesigner addNode(Type type, Vector2 position)
         {
-            if (type.IsGenericType)
-            {
-                type = type.MakeGenericType(typeof(T), typeof(P));
-            }
-            BTreeNode<T, P> _node = (BTreeNode<T, P>)type.GetConstructor(new Type[] { }).Invoke(new object[] { });
-            BTreeEditorNode<T, P> _editorNode = new BTreeEditorNode<T, P>(_node);
-            BTreeNodeDesigner<T, P> _nodeDesigner = new BTreeNodeDesigner<T, P>(_editorNode);
+            
+            BTreeNode _node = (BTreeNode)type.GetConstructor(new Type[] { }).Invoke(new object[] { });
+            BTreeEditorNode _editorNode = new BTreeEditorNode(_node);
+            BTreeNodeDesigner _nodeDesigner = new BTreeNodeDesigner(_editorNode);
             if (m_DetachedNodes == null)
             {
-                m_DetachedNodes = new List<BTreeNodeDesigner<T, P>>();
+                m_DetachedNodes = new List<BTreeNodeDesigner>();
             }
             m_DetachedNodes.Add(_nodeDesigner);
             return _nodeDesigner;

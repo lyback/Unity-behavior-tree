@@ -5,15 +5,13 @@ using System;
 
 namespace BTree.Editor
 {
-    public class BTreeNodeDesigner<T, P>
-        where T : BTreeTemplateData
-        where P : BTreeTemplateData
+    public class BTreeNodeDesigner
     {
-        public BTreeEditorNode<T, P> m_EditorNode;
-        public BTreeNodeDesigner<T, P> m_ParentNode;
-        public List<BTreeNodeDesigner<T, P>> m_ChildNodeList;
-        public List<BTreeNodeConnection<T, P>> m_ChildNodeConnectionList;
-        public BTreeNodeConnection<T, P> m_ParentNodeConnection;
+        public BTreeEditorNode m_EditorNode;
+        public BTreeNodeDesigner m_ParentNode;
+        public List<BTreeNodeDesigner> m_ChildNodeList;
+        public List<BTreeNodeConnection> m_ChildNodeConnectionList;
+        public BTreeNodeConnection m_ParentNodeConnection;
         public string m_NodeName = "";
         private bool m_Selected;
         private bool m_IsDirty = true;
@@ -22,7 +20,7 @@ namespace BTree.Editor
         private bool m_IsShowHoverBar;
         private Texture m_Icon;
 
-        public BTreeNodeDesigner(BTreeEditorNode<T, P> _editorNode)
+        public BTreeNodeDesigner(BTreeEditorNode _editorNode)
         {
             if (_editorNode == null)
             {
@@ -32,8 +30,8 @@ namespace BTree.Editor
             m_EditorNode = _editorNode;
             m_NodeName = _editorNode.m_Node.m_Name;
             m_IsParent = m_EditorNode.m_Node.m_ChildCount != 0;
-            m_ChildNodeList = new List<BTreeNodeDesigner<T, P>>();
-            m_ChildNodeConnectionList = new List<BTreeNodeConnection<T, P>>();
+            m_ChildNodeList = new List<BTreeNodeDesigner>();
+            m_ChildNodeConnectionList = new List<BTreeNodeConnection>();
             loadTaskIcon();
         }
 
@@ -70,14 +68,14 @@ namespace BTree.Editor
             Rect rect = rectangle(offset, false);
             return new Rect(rect.x + (rect.width - BTreeEditorUtility.ConnectionWidth) / 2f, rect.yMax, BTreeEditorUtility.ConnectionWidth, BTreeEditorUtility.BottomConnectionHeight);
         }
-        public void makeEntryDisplay(BTreeNodeDesigner<T, P> _child)
+        public void makeEntryDisplay(BTreeNodeDesigner _child)
         {
             m_IsEntryDisplay = (m_IsParent = true);
             m_NodeName = "Entry";
-            m_ChildNodeList = new List<BTreeNodeDesigner<T, P>>();
+            m_ChildNodeList = new List<BTreeNodeDesigner>();
             m_ChildNodeList.Add(_child);
-            m_ChildNodeConnectionList = new List<BTreeNodeConnection<T, P>>();
-            m_ChildNodeConnectionList.Add(new BTreeNodeConnection<T, P>(_child,this,NodeConnectionType.Outgoing));
+            m_ChildNodeConnectionList = new List<BTreeNodeConnection>();
+            m_ChildNodeConnectionList.Add(new BTreeNodeConnection(_child,this,NodeConnectionType.Outgoing));
         }
         //绘制节点
         public bool drawNode(Vector2 offset, bool drawSelected, bool disabled)
@@ -164,20 +162,20 @@ namespace BTree.Editor
             else
             {
                 Type type = m_EditorNode.m_Node.GetType();
-                if (type == typeof(BTreeNodePrioritySelector<T, P>))
+                if (type == typeof(BTreeNodePrioritySelector))
                 {
                     _icon = BTreeEditorUtility.PrioritySelectorIcon;
                 }
-                else if (type == typeof(BTreeNodeNonePrioritySelector<T, P>))
+                else if (type == typeof(BTreeNodeNonePrioritySelector))
                 {
                     _icon = BTreeEditorUtility.PrioritySelectorIcon;
                 }
-                else if (type == typeof(BTreeNodeSequence<T, P>))
+                else if (type == typeof(BTreeNodeSequence))
                 {
                     _icon = BTreeEditorUtility.SequenceIcon;
 
                 }
-                else if (type == typeof(BTreeNodeParallel<T, P>))
+                else if (type == typeof(BTreeNodeParallel))
                 {
                     _icon = BTreeEditorUtility.ParallelSelectorIcon;
                 }

@@ -11,18 +11,16 @@ namespace BTree.Editor
         Outgoing,
         Fixed
     }
-    public class BTreeNodeConnection<T, P>
-        where T : BTreeTemplateData
-        where P : BTreeTemplateData
+    public class BTreeNodeConnection
     {
-        public BTreeNodeDesigner<T, P> m_DestinationNodeDesigner;
-        public BTreeNodeDesigner<T, P> m_OriginatingNodeDesigner;
+        public BTreeNodeDesigner m_DestinationNodeDesigner;
+        public BTreeNodeDesigner m_OriginatingNodeDesigner;
         public float m_HorizontalHeight;
 
         public NodeConnectionType m_NodeConnectionType;
         private bool m_Selected;
         
-        public BTreeNodeConnection(BTreeNodeDesigner<T, P> _dest, BTreeNodeDesigner<T, P> _orig, NodeConnectionType _type)
+        public BTreeNodeConnection(BTreeNodeDesigner _dest, BTreeNodeDesigner _orig, NodeConnectionType _type)
         {
             m_DestinationNodeDesigner = _dest;
             m_OriginatingNodeDesigner = _orig;
