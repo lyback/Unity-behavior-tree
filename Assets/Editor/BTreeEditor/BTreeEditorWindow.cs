@@ -20,8 +20,22 @@ namespace BTree.Editor
             bTreeEditorWindow.minSize = new Vector2(600f, 500f);
             UnityEngine.Object.DontDestroyOnLoad(bTreeEditorWindow);
         }
-
-        private BTreeGraphDesigner mGraphDesigner = null;
+        private BTreeGraphDesigner _mGraphDesigner;
+        private BTreeGraphDesigner mGraphDesigner
+        {
+            get
+            {
+                if (_mGraphDesigner == null)
+                {
+                    _mGraphDesigner = new BTreeGraphDesigner();
+                }
+                return _mGraphDesigner;
+            }
+            set
+            {
+                _mGraphDesigner = value;
+            }
+        }
 
         private Rect mGraphRect;
         private Rect mFileToolBarRect;
@@ -42,6 +56,10 @@ namespace BTree.Editor
         private bool mNodeClicked;
         //是否在拖动中
         private bool mIsDragging;
+        //是否在连线状态
+        private bool mIsConnectingLine;
+        //当前鼠标位置的节点
+        private BTreeNodeDesigner mCurMousePosNode;
         
         private BTreeEditorRightClickBlockMenu mRightClickBlockMenu = null;
         private BTreeEditorRightClickNodeMenu mRightClickNodeMenu = null;
@@ -53,7 +71,6 @@ namespace BTree.Editor
         {
             if (mIsFirst)
             {
-                mGraphDesigner = new BTreeGraphDesigner();
                 mIsFirst = false;
             }
             mCurrentMousePosition = Event.current.mousePosition;
@@ -61,7 +78,7 @@ namespace BTree.Editor
             handleEvents();
             if (Draw())
             {
-                base.Repaint();
+                Repaint();
             }
         }
 
@@ -126,9 +143,15 @@ namespace BTree.Editor
                 mousePosition = new Vector2(-1f, -1f);
             }
             bool result = false;
-            if (mGraphDesigner != null && mGraphDesigner.drawNodes(mousePosition, mGraphOffset, mGraphZoom))
+            if (mGraphDesigner.drawNodes(mousePosition, mGraphOffset, mGraphZoom))
             {
                 result = true;
+            }
+            if (mIsConnectingLine)
+            {
+                var _curNode = mGraphDesigner.nodeAt(mousePosition, mGraphOffset);
+                Vector2 des = _curNode == null ? mousePosition : _curNode.m_EditorNode.m_Pos;
+                mGraphDesigner.drawTempConnection(des, mGraphOffset, mGraphZoom);
             }
             BTreeEditorZoomArea.End();
             return result;
@@ -150,28 +173,14 @@ namespace BTree.Editor
                 GUILayout.Width(42f)
             }))
             {
-                if (mGraphDesigner != null)
-                {
-                    saveBTree();
-                }
-                else
-                {
-                    EditorUtility.DisplayDialog("Unable to Save Behavior Tree", "Select a behavior tree from within the scene.", "OK");
-                }
+                saveBTree();
             }
             if (GUILayout.Button("Export", EditorStyles.toolbarButton, new GUILayoutOption[]
             {
                 GUILayout.Width(42f)
             }))
             {
-                if (mGraphDesigner != null)
-                {
-                    exportBtree();
-                }
-                else
-                {
-                    EditorUtility.DisplayDialog("Unable to Export Behavior Tree", "Select a behavior tree from within the scene.", "OK");
-                }
+                exportBtree();
             }
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("Preferences", mShowPrefPanel ? BTreeEditorUtility.ToolbarButtonSelectionGUIStyle : EditorStyles.toolbarButton, new GUILayoutOption[]
@@ -328,18 +337,21 @@ namespace BTree.Editor
             Vector2 point;
             if (!getMousePositionInGraph(out point))
             {
+                mIsConnectingLine = false;
                 return false;
             }
-            if (mGraphDesigner != null)
+            var nodeDesigner = mGraphDesigner.nodeAt(point, mGraphOffset);
+            if (mIsConnectingLine && nodeDesigner != null)
             {
-                mGraphDesigner.clearNodeSelection();
-                var nodeDesigner = mGraphDesigner.nodeAt(point, mGraphOffset);
-                if (nodeDesigner != null)
-                {
-                    mGraphDesigner.select(nodeDesigner);
-                    mNodeClicked = true;
-                }
+                mGraphDesigner.addSelectNodeLine(nodeDesigner);
             }
+            mGraphDesigner.clearNodeSelection();
+            if (nodeDesigner != null)
+            {
+                mGraphDesigner.select(nodeDesigner);
+                mNodeClicked = true;
+            }
+            mIsConnectingLine = false;
             return true;
         }
         private bool leftMouseDragged()
@@ -374,19 +386,17 @@ namespace BTree.Editor
         private bool rightMouseDown()
         {
             Vector2 point;
+            mIsConnectingLine = false;
             if (!getMousePositionInGraph(out point))
             {
                 return false;
             }
-            if (mGraphDesigner != null)
+            mGraphDesigner.clearNodeSelection();
+            var nodeDesigner = mGraphDesigner.nodeAt(point, mGraphOffset);
+            if (nodeDesigner != null)
             {
-                mGraphDesigner.clearNodeSelection();
-                var nodeDesigner = mGraphDesigner.nodeAt(point, mGraphOffset);
-                if (nodeDesigner != null)
-                {
-                    mGraphDesigner.select(nodeDesigner);
-                    mNodeClicked = true;
-                }
+                mGraphDesigner.select(nodeDesigner);
+                mNodeClicked = true;
             }
             return true;
         }
@@ -404,9 +414,7 @@ namespace BTree.Editor
                 {
                     mRightClickNodeMenu = new BTreeEditorRightClickNodeMenu(this);
                 }
-                bool isMult = mGraphDesigner.m_SelectedNodes.Count != 1;
-                bool isEnable = !mGraphDesigner.m_SelectedNodes[0].m_IsDisable;
-                mRightClickNodeMenu.ShowAsContext(isMult, isEnable);
+                mRightClickNodeMenu.ShowAsContext(mGraphDesigner.m_SelectedNodes);
                 return true;
             }
             else
@@ -454,26 +462,22 @@ namespace BTree.Editor
         //禁用节点
         private void disableSelectNode()
         {
-            if (mGraphDesigner != null)
-            {
-                mGraphDesigner.disableNodeSelection();
-            }
+            mGraphDesigner.disableNodeSelection();
         }
         //启用节点
         private void enableSelectNode()
         {
-            if (mGraphDesigner != null)
-            {
-                mGraphDesigner.enableNodeSelection();
-            }
+            mGraphDesigner.enableNodeSelection();
         }
         //删除节点
         private void delectSelectNode()
         {
-            if (mGraphDesigner != null)
-            {
-                mGraphDesigner.delectSelectNode();
-            }
+            mGraphDesigner.delectSelectNode();
+        }
+        //设置入口节点
+        private void setSelectNodeAsEntry()
+        {
+            mGraphDesigner.setSelectNodeAsEntry();
         }
         #endregion
 
@@ -529,6 +533,14 @@ namespace BTree.Editor
         public void delectNodeCallback()
         {
             delectSelectNode();
+        }
+        public void connectLineCallback()
+        {
+            mIsConnectingLine = true;
+        }
+        public void setEntryNodeCallback()
+        {
+            setSelectNodeAsEntry();
         }
         #endregion
     }

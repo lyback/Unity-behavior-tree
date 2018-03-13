@@ -85,6 +85,21 @@ namespace BTree.Editor
             }
             return result;
         }
+        //绘制临时连线
+        public void drawTempConnection(Vector2 destination, Vector2 offset, float graphZoom)
+        {
+            if (m_SelectedNodes != null && m_SelectedNodes.Count == 1)
+            {
+                Color color = Color.red;
+                Handles.color = color;
+                Vector3[] array = new Vector3[]
+                {
+                    m_SelectedNodes[0].getConnectionPosition(offset,NodeConnectionType.Outgoing),
+                    destination
+                };
+                Handles.DrawAAPolyLine(BTreeEditorUtility.TaskConnectionTexture, 1f / graphZoom, array);
+            }
+        }
         //递归绘制连线
         private void drawNodeConnectionChildren(BTreeNodeDesigner nodeDesigner, Vector2 offset, float graphZoom, bool disabledNode)
         {
@@ -147,11 +162,13 @@ namespace BTree.Editor
             }
             return result;
         }
+        
         #endregion
         //加载
         public void load(BTreeEditorConfig _config)
         {
             m_RootNode = BTreeEditorNodeFactory.CreateBTreeNodeDesignerFromConfig(_config.m_RootNode)[0];
+            m_RootNode.SetEntryDisplay(true);
             if (_config.m_DetachedNode != null)
             {
                 m_DetachedNodes = new List<BTreeNodeDesigner>();
@@ -293,6 +310,42 @@ namespace BTree.Editor
             }
             clearNodeSelection();
         }
+        //添加连线
+        public void addSelectNodeLine(BTreeNodeDesigner destNode)
+        {
+            if (m_RootNode != null && m_RootNode.Equals(destNode))
+            {
+                return;
+            }
+            if (m_SelectedNodes != null && m_SelectedNodes.Count == 1)
+            {
+                m_SelectedNodes[0].AddChildNode(destNode);
+            }
+            if (m_DetachedNodes != null)
+            {
+                for (int i = 0; i < m_DetachedNodes.Count; i++)
+                {
+                    if (m_DetachedNodes[i].Equals(destNode))
+                    {
+                        m_DetachedNodes.RemoveAt(i);
+                    }
+                }
+            }
+        }
+        //设置入口节点
+        public void setSelectNodeAsEntry()
+        {
+            if (m_SelectedNodes != null && m_SelectedNodes.Count == 1)
+            {
+                if (m_RootNode != null)
+                {
+                    m_RootNode.SetEntryDisplay(false);
+                    m_DetachedNodes.Add(m_RootNode);
+                }
+                m_RootNode = m_SelectedNodes[0];
+                m_SelectedNodes[0].SetEntryDisplay(true);
+            }
+        }
         //拖动选择的节点
         public bool dragSelectedNodes(Vector2 delta, bool dragChildren, bool hasDragged)
         {
@@ -329,11 +382,19 @@ namespace BTree.Editor
             BTreeEditorNode _editorNode = new BTreeEditorNode(_node);
             _editorNode.m_Pos = position;
             BTreeNodeDesigner _nodeDesigner = new BTreeNodeDesigner(_editorNode);
-            if (m_DetachedNodes == null)
+            if (m_RootNode == null)
             {
-                m_DetachedNodes = new List<BTreeNodeDesigner>();
+                m_RootNode = _nodeDesigner;
+                _nodeDesigner.SetEntryDisplay(true);
             }
-            m_DetachedNodes.Add(_nodeDesigner);
+            else
+            {
+                if (m_DetachedNodes == null)
+                {
+                    m_DetachedNodes = new List<BTreeNodeDesigner>();
+                }
+                m_DetachedNodes.Add(_nodeDesigner);
+            }
             return _nodeDesigner;
         }
         //删除节点
@@ -353,7 +414,7 @@ namespace BTree.Editor
                 nodeDesigner.m_ParentNode.delectChildNode(nodeDesigner);
             }
             m_DetachedNodes.Remove(nodeDesigner);
-            if (m_RootNode.Equals(nodeDesigner))
+            if (m_RootNode != null && m_RootNode.Equals(nodeDesigner))
             {
                 m_RootNode = null;
             }

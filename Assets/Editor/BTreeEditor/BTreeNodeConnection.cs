@@ -40,11 +40,12 @@ namespace BTree.Editor
             Vector3[] array = new Vector3[]
             {
                 source,
-                new Vector2(source.x, this.m_HorizontalHeight),
-                new Vector2(destination.x, this.m_HorizontalHeight),
+                new Vector2(source.x, m_HorizontalHeight),
+                new Vector2(destination.x, m_HorizontalHeight),
                 destination
             };
             Handles.DrawAAPolyLine(BTreeEditorUtility.TaskConnectionTexture, 1f / graphZoom, array);
         }
+        
     }
 }

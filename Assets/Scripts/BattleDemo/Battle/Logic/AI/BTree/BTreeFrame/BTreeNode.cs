@@ -37,6 +37,7 @@ namespace BTreeFrame
         //必须有个无参的构造函数
         public BTreeNode()
         {
+            m_Name = GetType().Name;
             m_ChildCount = 0;
             m_ParentNode = null;
             m_NodePrecondition = null;
@@ -76,6 +77,19 @@ namespace BTreeFrame
             }
             m_ChildNodes.Add(_childNode);
             m_ChildCount++;
+        }
+
+        public virtual void DelChildNode(BTreeNode _childNode)
+        {
+            for (int i = 0; i < m_ChildCount; i++)
+            {
+                if (m_ChildNodes[i].Equals(_childNode))
+                {
+                    m_ChildNodes.RemoveAt(i);
+                    m_ChildCount--;
+                    break;
+                }
+            }
         }
 
         public BTreeNode SetNodePrecondition(BTreeNodePrecondition _NodePrecondition)

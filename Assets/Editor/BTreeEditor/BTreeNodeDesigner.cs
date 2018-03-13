@@ -15,10 +15,37 @@ namespace BTree.Editor
         public string m_NodeName = "";
         private bool m_Selected;
         private bool m_IsDirty = true;
-        private bool m_IsEntryDisplay;
         private bool m_IsShowHoverBar;
-        public bool m_IsParent { get; private set; }
-        public bool m_IsDisable { get { return m_EditorNode.m_Disable; } }
+        public bool m_IsEntryDisplay;
+        public bool m_IsDisable
+        {
+            get
+            {
+                if (m_EditorNode != null)
+                {
+                    return m_EditorNode.m_Disable;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+        public bool m_IsParent
+        {
+            get
+            {
+                if (m_EditorNode != null)
+                {
+                    return m_EditorNode.m_Node.m_ChildCount != 0;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
+
         private Texture m_Icon;
 
         public BTreeNodeDesigner(BTreeEditorNode _editorNode)
@@ -30,7 +57,6 @@ namespace BTree.Editor
             }
             m_EditorNode = _editorNode;
             m_NodeName = _editorNode.m_Node.m_Name;
-            m_IsParent = m_EditorNode.m_Node.m_ChildCount != 0;
             m_ChildNodeList = new List<BTreeNodeDesigner>();
             m_ChildNodeConnectionList = new List<BTreeNodeConnection>();
             loadTaskIcon();
@@ -60,11 +86,43 @@ namespace BTree.Editor
                 if (m_ChildNodeConnectionList[i].m_DestinationNodeDesigner.Equals(childNodeDesigner))
                 {
                     m_ChildNodeConnectionList.RemoveAt(i);
+                    m_EditorNode.DelChildNode(childNodeDesigner.m_EditorNode);
+                    markDirty();
                     break;
                 }
             }
             childNodeDesigner.m_ParentNode = null;
-            m_IsDirty = true;
+        }
+        public void AddChildNode(BTreeNodeDesigner destNode)
+        {
+            BTreeNodeConnection line = new BTreeNodeConnection(destNode, this, NodeConnectionType.Outgoing);
+            if (m_ChildNodeConnectionList == null)
+            {
+                m_ChildNodeConnectionList = new List<BTreeNodeConnection>();
+            }
+            for (int i = 0; i < m_ChildNodeConnectionList.Count; i++)
+            {
+                if (m_ChildNodeConnectionList[i].m_DestinationNodeDesigner.Equals(destNode))
+                {
+                    return;
+                }
+            }
+            m_ChildNodeConnectionList.Add(line);
+            m_ChildNodeList.Add(destNode);
+            m_EditorNode.AddChildNode(destNode.m_EditorNode);
+            destNode.AddParentConnectionLine(this);
+            markDirty();
+        }
+        public void AddParentConnectionLine(BTreeNodeDesigner orgNode)
+        {
+            BTreeNodeConnection line = new BTreeNodeConnection(this, orgNode, NodeConnectionType.Incoming);
+            if (m_ParentNodeConnection != null)
+            {
+                m_ParentNodeConnection.m_OriginatingNodeDesigner.delectChildNode(this);
+            }
+            m_ParentNodeConnection = line;
+            m_ParentNode = orgNode;
+            markDirty();
         }
         public void movePosition(Vector2 delta)
         {
@@ -91,14 +149,9 @@ namespace BTree.Editor
             Rect rect = rectangle(offset, false);
             return new Rect(rect.x + (rect.width - BTreeEditorUtility.ConnectionWidth) / 2f, rect.yMax, BTreeEditorUtility.ConnectionWidth, BTreeEditorUtility.BottomConnectionHeight);
         }
-        public void makeEntryDisplay(BTreeNodeDesigner _child)
+        public void SetEntryDisplay(bool isEntry)
         {
-            m_IsEntryDisplay = (m_IsParent = true);
-            m_NodeName = "Entry";
-            m_ChildNodeList = new List<BTreeNodeDesigner>();
-            m_ChildNodeList.Add(_child);
-            m_ChildNodeConnectionList = new List<BTreeNodeConnection>();
-            m_ChildNodeConnectionList.Add(new BTreeNodeConnection(_child, this, NodeConnectionType.Outgoing));
+            m_IsEntryDisplay = isEntry;
         }
         #endregion
         #region 绘制方法相关
@@ -175,11 +228,7 @@ namespace BTree.Editor
         private void loadTaskIcon()
         {
             Texture2D _icon = null;
-            if (m_IsEntryDisplay)
-            {
-                _icon = BTreeEditorUtility.LoadTexture("EntryIcon.png");
-            }
-            else if (m_EditorNode.m_Node.m_IsAcitonNode)
+            if (m_EditorNode.m_Node.m_IsAcitonNode)
             {
                 _icon = BTreeEditorUtility.LoadTexture("ActionIcon.png");
             }
@@ -250,7 +299,7 @@ namespace BTree.Editor
         {
             if (m_IsParent)
             {
-                float num = 3.40282347E+38f;
+                float num = float.MaxValue;
                 float num2 = num;
                 for (int i = 0; i < m_ChildNodeConnectionList.Count; i++)
                 {
@@ -284,11 +333,12 @@ namespace BTree.Editor
 
         public override string ToString()
         {
+            string isEntry = m_IsEntryDisplay ? "(Entry)" : "";
             if (m_NodeName == null)
             {
-                return "";
+                return isEntry;
             }
-            return m_NodeName;
+            return m_NodeName + isEntry;
         }
     }
 }

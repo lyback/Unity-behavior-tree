@@ -14,5 +14,13 @@ namespace BTree.Editor
         {
             m_Node = _node;
         }
+        public void AddChildNode(BTreeEditorNode _node)
+        {
+            m_Node.AddChildNode(_node.m_Node);
+        }
+        public void DelChildNode(BTreeEditorNode _node)
+        {
+            m_Node.DelChildNode(_node.m_Node);
+        }
     }
 }

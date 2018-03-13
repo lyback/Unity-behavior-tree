@@ -94,13 +94,13 @@ namespace BTree.Editor
         {
             TreeConfig _treeConfig = BTreeNodeFactory.CreateConfigFromBTreeRoot(_rootEditorNode.m_EditorNode.m_Node);
             BTreeEditorTreeConfig _treeEditorConfig = new BTreeEditorTreeConfig(_treeConfig);
-            CreateEditorNodeConfigFromRootEditorNode(_rootEditorNode, ref _treeEditorConfig.m_EditorNodes);
+            CreateEditorNodeConfigFromRootEditorNode(_rootEditorNode, ref _treeEditorConfig.m_EditorNodes, 0);
             
             return _treeEditorConfig;
         }
-        public static BTreeEditorNodeConfig CreateEditorNodeConfigFromRootEditorNode(BTreeNodeDesigner _rootEditorNode, ref BTreeEditorNodeConfig[] _editorNodes)
+        public static BTreeEditorNodeConfig CreateEditorNodeConfigFromRootEditorNode(BTreeNodeDesigner _rootEditorNode, ref BTreeEditorNodeConfig[] _editorNodes, int _index)
         {
-            int _index = _rootEditorNode.m_EditorNode.m_Node.m_Index;
+            //int _index = _rootEditorNode.m_EditorNode.m_Node.m_Index;
             _editorNodes[_index].m_PosX = _rootEditorNode.m_EditorNode.m_Pos.x;
             _editorNodes[_index].m_PosY = _rootEditorNode.m_EditorNode.m_Pos.y;
             _editorNodes[_index].m_Disable = _rootEditorNode.m_EditorNode.m_Disable;
@@ -108,7 +108,7 @@ namespace BTree.Editor
             {
                 for (int i = 0; i < _rootEditorNode.m_ChildNodeList.Count; i++)
                 {
-                    CreateEditorNodeConfigFromRootEditorNode(_rootEditorNode.m_ChildNodeList[i], ref _editorNodes);
+                    CreateEditorNodeConfigFromRootEditorNode(_rootEditorNode.m_ChildNodeList[i], ref _editorNodes, _index + 1 + i);
                 }
             }
             return _editorNodes[_index];
