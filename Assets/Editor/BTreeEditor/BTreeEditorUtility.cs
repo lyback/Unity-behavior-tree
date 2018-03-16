@@ -903,8 +903,6 @@ namespace BTree.Editor
             {
                 return s;
             }
-            s = s.Replace("_uScript", "uScript");
-            s = s.Replace("_PlayMaker", "PlayMaker");
             if (s.Length > 2 && s.Substring(0, 2).CompareTo("m_") == 0)
             {
                 s = s.Substring(2, s.Length - 2);
@@ -912,8 +910,6 @@ namespace BTree.Editor
             Regex regex = new Regex("(?<=[A-Z])(?=[A-Z][a-z])|(?<=[^A-Z])(?=[A-Z])|(?<=[A-Za-z])(?=[^A-Za-z])", RegexOptions.IgnorePatternWhitespace);
             s = regex.Replace(s, " ");
             s = s.Replace("_", " ");
-            s = s.Replace("u Script", " uScript");
-            s = s.Replace("Play Maker", "PlayMaker");
             return (char.ToUpper(s[0]) + s.Substring(1)).Trim();
         }
 

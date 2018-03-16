@@ -330,7 +330,7 @@ namespace BTreeFrame
                     {
                         case SelectorNodeType.BTreeNodeParallel:
                             _otherParams = new int[1];
-                            _otherParams[0] = (int)((BTreeNodeParallel)_node).GetFinishCondition();
+                            _otherParams[0] = (int)((BTreeNodeParallel)_node).m_FinishCondition;
                             break;
                         case SelectorNodeType.BTreeNodeLoop:
                             _otherParams = new int[1];
@@ -365,7 +365,7 @@ namespace BTreeFrame
         public static BTreeNode CreateParallelNode(BTreeNode _parent, string _nodeName, BTreeParallelFinishCondition _conditionType)
         {
             BTreeNodeParallel node = new BTreeNodeParallel(_parent);
-            node.SetFinishCondition(_conditionType);
+            node.m_FinishCondition = _conditionType;
             CreateNodeCommon(node, _parent, _nodeName);
             return node;
         }

@@ -12,7 +12,9 @@ namespace BTree.Editor
         public List<BTreeNodeDesigner> m_ChildNodeList;
         public List<BTreeNodeConnection> m_ChildNodeConnectionList;
         public BTreeNodeConnection m_ParentNodeConnection;
-        public string m_NodeName = "";
+
+        public string m_NodeName { get { return m_EditorNode.m_Node.m_Name; } }
+
         private bool m_Selected;
         private bool m_IsDirty = true;
         private bool m_IsShowHoverBar;
@@ -56,7 +58,6 @@ namespace BTree.Editor
                 return;
             }
             m_EditorNode = _editorNode;
-            m_NodeName = _editorNode.m_Node.m_Name;
             m_ChildNodeList = new List<BTreeNodeDesigner>();
             m_ChildNodeConnectionList = new List<BTreeNodeConnection>();
             loadTaskIcon();

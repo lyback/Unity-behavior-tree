@@ -204,7 +204,7 @@ namespace BTreeFrame
     /// </summary>
     public class BTreeNodeParallel : BTreeNodeCtrl
     {
-        private BTreeParallelFinishCondition m_FinishCondition;
+        public BTreeParallelFinishCondition m_FinishCondition;
         private List<BTreeRunningStatus> m_ChildNodeSatuses = new List<BTreeRunningStatus>();
         public BTreeNodeParallel()
             : base()
@@ -288,14 +288,7 @@ namespace BTreeFrame
             base.AddChildNode(_childNode);
             m_ChildNodeSatuses.Add(BTreeRunningStatus.Executing);
         }
-        public void SetFinishCondition(BTreeParallelFinishCondition _condition)
-        {
-            m_FinishCondition = _condition;
-        }
-        public BTreeParallelFinishCondition GetFinishCondition()
-        {
-            return m_FinishCondition;
-        }
+
         protected void _RestChildNodeStatus()
         {
             for (int i = 0; i < m_ChildCount; i++)
@@ -312,9 +305,9 @@ namespace BTreeFrame
     /// </summary>
     public class BTreeNodeLoop : BTreeNodeCtrl
     {
-        public const int INFINITELOOP = -1;
-        private int m_LoopCount;
+        public int m_LoopCount;
         private int m_CurrentCount;
+        private const int INFINITELOOP = -1;
         public BTreeNodeLoop()
             : base()
         {
