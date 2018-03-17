@@ -11,6 +11,25 @@ namespace BTree.Editor
 
         public void drawInspector(BTreeNodeDesigner _selectNode)
         {
+            GUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Script", new GUILayoutOption[] { GUILayout.Width(100) });
+            string[] scripts = AssetDatabase.FindAssets("t:Script " + _selectNode.m_EditorNode.m_Node.GetType().Name);
+            if (scripts != null &&scripts.Length > 0)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(scripts[0]);
+                MonoScript monoScript = (MonoScript)AssetDatabase.LoadAssetAtPath(path, typeof(MonoScript));
+                EditorGUILayout.ObjectField("", monoScript, typeof(MonoScript), false);
+            }
+            GUILayout.EndHorizontal();
+
+            //if (GUILayout.Button(BTreeEditorUtility.GearTexture, BTreeEditorUtility.TransparentButtonGUIStyle, new GUILayoutOption[0]))
+            //{
+            //    GenericMenu genericMenu = new GenericMenu();
+            //    genericMenu.AddItem(new GUIContent("Edit Script"), false, new GenericMenu.MenuFunction2(openInFileEditor), _selectNode.m_EditorNode.m_Node);
+            //    //genericMenu.AddItem(new GUIContent("Reset"), false, new GenericMenu.MenuFunction2(this.resetTask), _selectNode);
+            //    genericMenu.ShowAsContext();
+            //}
+
             var _node = _selectNode.m_EditorNode.m_Node;
             Type _nodeType = _selectNode.m_EditorNode.m_Node.GetType();
             FieldInfo[] fields = _nodeType.GetFields(BindingFlags.Instance | BindingFlags.Public);
@@ -29,7 +48,7 @@ namespace BTree.Editor
             try
             {
                 GUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField(BTreeEditorUtility.SplitCamelCase(_field.Name), new GUILayoutOption[] { GUILayout.Width(120) });
+                EditorGUILayout.LabelField(BTreeEditorUtility.SplitCamelCase(_field.Name), new GUILayoutOption[] { GUILayout.Width(100) });
                 if (_field.FieldType == typeof(int))
                 {
                     var _val = EditorGUILayout.IntField((int)(_field.GetValue(_node)));
@@ -77,5 +96,11 @@ namespace BTree.Editor
 
             }
         }
+        private void openInFileEditor(object _node)
+        {
+            Debugger.Log(_node.GetType().Name);
+            
+        }
+
     }
 }
