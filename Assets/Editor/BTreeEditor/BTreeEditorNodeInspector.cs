@@ -11,10 +11,12 @@ namespace BTree.Editor
     {
         private UnityEngine.Object[] m_Precondition = new UnityEngine.Object[20];
 
+        private const int SPACEDETLE = 10;
+
         public void drawInspector(BTreeNodeDesigner _selectNode)
         {
             GUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField("Script", new GUILayoutOption[] { GUILayout.Width(100) });
+            EditorGUILayout.LabelField("Script:", new GUILayoutOption[] { GUILayout.Width(100) });
             string[] scripts = AssetDatabase.FindAssets("t:Script " + _selectNode.m_EditorNode.m_Node.GetType().Name);
             if (scripts != null &&scripts.Length > 0)
             {
@@ -31,7 +33,6 @@ namespace BTree.Editor
             //    //genericMenu.AddItem(new GUIContent("Reset"), false, new GenericMenu.MenuFunction2(this.resetTask), _selectNode);
             //    genericMenu.ShowAsContext();
             //}
-
             var _node = _selectNode.m_EditorNode.m_Node;
             Type _nodeType = _selectNode.m_EditorNode.m_Node.GetType();
             FieldInfo[] fields = _nodeType.GetFields(BindingFlags.Instance | BindingFlags.Public);
@@ -39,8 +40,10 @@ namespace BTree.Editor
             {
                 DrawValue(_node, fields[i]);
             }
+            GUILayout.Label("Precondition:");
             int index = -1;
             _node.m_NodePrecondition = DrawPrecondition(_node.GetNodePrecondition(), 0, ref index);
+            GUILayout.FlexibleSpace();
         }
 
         BTreeNodePrecondition DrawPrecondition(BTreeNodePrecondition _condition, int _space, ref int index)
@@ -67,6 +70,7 @@ namespace BTree.Editor
             }
             else
             {
+                m_Precondition[index] = null;
                 GUILayout.BeginHorizontal();
                 GUILayout.Space(_space);
                 string[] scripts = AssetDatabase.FindAssets("t:Script " + _condition.GetType().Name);
@@ -78,47 +82,108 @@ namespace BTree.Editor
                     Type type = GetPreconditionType(obj.name);
                     if (type == null)
                     {
-                        m_Precondition[index] = null;
                         return _condition;
                     }
                     result = (BTreeNodePrecondition)type.GetConstructor(new Type[] { }).Invoke(new object[] { });
                 }
                 GUILayout.EndHorizontal();
-                _space = _space + 5;
+                _space = _space + SPACEDETLE;
 
+                BTreeNodePrecondition _lastPreCondition = _condition;
                 if (result is BTreeNodePreconditionAND)
                 {
                     GUILayout.BeginHorizontal();
                     GUILayout.Space(_space);
-                    BTreeNodePreconditionAND CurPreCondition = (BTreeNodePreconditionAND)_condition;
-                    int childCount = CurPreCondition.GetChildPreconditionCount();
+                    int childCount = 0;
+                    if (_lastPreCondition is BTreeNodePreconditionAND)
+                    {
+                        BTreeNodePreconditionAND _lastCondAND = (BTreeNodePreconditionAND)_lastPreCondition;
+                        childCount = _lastCondAND.GetChildPreconditionCount();
+                    }
                     var val = EditorGUILayout.IntField(childCount);
                     GUILayout.EndHorizontal();
 
-                    BTreeNodePrecondition[] childPreconditions = new BTreeNodePrecondition[val];
-                    BTreeNodePrecondition[] curChildPreconditions = CurPreCondition.GetChildPrecondition();
-                    for (int i = 0; i < val; i++)
+                    if (_lastPreCondition is BTreeNodePreconditionAND)
                     {
-                        BTreeNodePrecondition _cond = null;
-                        if (curChildPreconditions.Length >= i+1)
+                        BTreeNodePreconditionAND _lastCondAND = (BTreeNodePreconditionAND)_lastPreCondition;
+                        BTreeNodePrecondition[] childPreconditions = new BTreeNodePrecondition[val];
+                        BTreeNodePrecondition[] curChildPreconditions = _lastCondAND.GetChildPrecondition();
+                        for (int i = 0; i < val; i++)
                         {
-                            _cond = curChildPreconditions[i];
+                            BTreeNodePrecondition _cond = null;
+                            if (curChildPreconditions.Length >= i + 1)
+                            {
+                                _cond = curChildPreconditions[i];
+                            }
+                            childPreconditions[i] = DrawPrecondition(_cond, _space, ref index);
                         }
-                        childPreconditions[i] = DrawPrecondition(_cond, _space, ref index);
+                        ((BTreeNodePreconditionAND)result).SetChildPrecondition(childPreconditions);
                     }
-                    ((BTreeNodePreconditionAND)result).SetChildPrecondition(childPreconditions);
+                    else
+                    {
+                        BTreeNodePrecondition[] childPreconditions = new BTreeNodePrecondition[val];
+                        for (int i = 0; i < val; i++)
+                        {
+                            childPreconditions[i] = DrawPrecondition(null, _space, ref index);
+                        }
+                        ((BTreeNodePreconditionAND)result).SetChildPrecondition(childPreconditions);
+                    }
+
                 }
                 else if (result is BTreeNodePreconditionOR)
                 {
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Space(_space);
+                    int childCount = 0;
+                    if (_lastPreCondition is BTreeNodePreconditionOR)
+                    {
+                        BTreeNodePreconditionOR _lastCondOR = (BTreeNodePreconditionOR)_lastPreCondition;
+                        childCount = _lastCondOR.GetChildPreconditionCount();
+                    }
+                    var val = EditorGUILayout.IntField(childCount);
+                    GUILayout.EndHorizontal();
+
+                    if (_lastPreCondition is BTreeNodePreconditionOR)
+                    {
+                        BTreeNodePreconditionOR _lastCondOR = (BTreeNodePreconditionOR)_lastPreCondition;
+                        BTreeNodePrecondition[] childPreconditions = new BTreeNodePrecondition[val];
+                        BTreeNodePrecondition[] curChildPreconditions = _lastCondOR.GetChildPrecondition();
+                        for (int i = 0; i < val; i++)
+                        {
+                            BTreeNodePrecondition _cond = null;
+                            if (curChildPreconditions.Length >= i + 1)
+                            {
+                                _cond = curChildPreconditions[i];
+                            }
+                            childPreconditions[i] = DrawPrecondition(_cond, _space, ref index);
+                        }
+                        ((BTreeNodePreconditionOR)result).SetChildPrecondition(childPreconditions);
+                    }
+                    else
+                    {
+                        BTreeNodePrecondition[] childPreconditions = new BTreeNodePrecondition[val];
+                        for (int i = 0; i < val; i++)
+                        {
+                            childPreconditions[i] = DrawPrecondition(null, _space, ref index);
+                        }
+                        ((BTreeNodePreconditionOR)result).SetChildPrecondition(childPreconditions);
+                    }
                 }
                 else if (result is BTreeNodePreconditionNOT)
                 {
+                    BTreeNodePrecondition curChildPreconditions = null;
+                    if (_lastPreCondition is BTreeNodePreconditionNOT)
+                    {
+                        BTreeNodePreconditionNOT _lastCondNOT = (BTreeNodePreconditionNOT)_lastPreCondition;
+                        curChildPreconditions = _lastCondNOT.GetChildPrecondition();
+                    }
+                    curChildPreconditions = DrawPrecondition(curChildPreconditions, _space, ref index);
+                    ((BTreeNodePreconditionNOT)result).SetChildPrecondition(curChildPreconditions);
                 }
             }
             
             return result;
         }
-
         void DrawValue(BTreeNode _node, FieldInfo _field)
         {
             if (_field == null)
@@ -128,7 +193,7 @@ namespace BTree.Editor
             try
             {
                 GUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField(BTreeEditorUtility.SplitCamelCase(_field.Name), new GUILayoutOption[] { GUILayout.Width(100) });
+                EditorGUILayout.LabelField(BTreeEditorUtility.SplitCamelCase(_field.Name)+":", new GUILayoutOption[] { GUILayout.Width(100) });
                 if (_field.FieldType == typeof(int))
                 {
                     var _val = EditorGUILayout.IntField((int)(_field.GetValue(_node)));

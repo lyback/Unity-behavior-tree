@@ -6,33 +6,57 @@ namespace BTreeFrame
     public class BTreeNodeFactory
     {
 
-        public static Dictionary<string, Type> PreconditionTypeDic = new Dictionary<string, Type>();
-        public static Dictionary<string, Type> ActionTypeDic = new Dictionary<string, Type>();
-
+        private static Dictionary<string, Type> _PreconditionTypeDic = null;
+        public static Dictionary<string, Type> PreconditionTypeDic
+        {
+            get
+            {
+                if (_PreconditionTypeDic == null)
+                {
+                    Init();
+                }
+                return _PreconditionTypeDic;
+            }
+        }
+        private static Dictionary<string, Type> _ActionTypeDic = null;
+        public static Dictionary<string, Type> ActionTypeDic
+        {
+            get
+            {
+                if (_ActionTypeDic == null)
+                {
+                    Init();
+                }
+                return _ActionTypeDic;
+            }
+        }
         public static void AddActionType(Type type)
         {
-            if (ActionTypeDic.ContainsKey(type.Name))
+            if (_ActionTypeDic.ContainsKey(type.Name))
             {
-                ActionTypeDic[type.Name] = type;
+                _ActionTypeDic[type.Name] = type;
             }
             else
             {
-                ActionTypeDic.Add(type.Name, type);
+                _ActionTypeDic.Add(type.Name, type);
             }
         }
         public static void AddPreconditionType(Type type)
         {
-            if (PreconditionTypeDic.ContainsKey(type.Name))
+            if (_PreconditionTypeDic.ContainsKey(type.Name))
             {
-                PreconditionTypeDic[type.Name] = type;
+                _PreconditionTypeDic[type.Name] = type;
             }
             else
             {
-                PreconditionTypeDic.Add(type.Name, type);
+                _PreconditionTypeDic.Add(type.Name, type);
             }
         }
         public static void Init()
         {
+            _ActionTypeDic = new Dictionary<string, Type>();
+            _PreconditionTypeDic = new Dictionary<string, Type>();
+
             AddActionType(typeof(AttackActionNode));
             AddActionType(typeof(FindTargetActionNode));
             AddActionType(typeof(IdleActionNode));
@@ -208,10 +232,11 @@ namespace BTreeFrame
             _tree.m_Name = _root.m_Name;
             int _nodeCount = GetBTreeChildNodeNum(_root) + 1;
             _tree.m_Nodes = new TreeNodeConfig[_nodeCount];
-            GetTreeNodeConfigFromBTreeRoot(_root, ref _tree.m_Nodes, 0, -1);
+            int index = 0;
+            GetTreeNodeConfigFromBTreeRoot(_root, ref _tree.m_Nodes, ref index, -1);
             return _tree;
         }
-        private static void GetTreeNodeConfigFromBTreeRoot(BTreeNode _root, ref TreeNodeConfig[] _treeNodeList, int _index, int _parentIndex)
+        private static void GetTreeNodeConfigFromBTreeRoot(BTreeNode _root, ref TreeNodeConfig[] _treeNodeList, ref int _index, int _parentIndex)
         {
             _treeNodeList[_index] = new TreeNodeConfig();
             _treeNodeList[_index].m_NodeName = _root.m_Name;
@@ -226,24 +251,24 @@ namespace BTreeFrame
                 _treeNodeList[_index].m_NodeType = (int)NodeType.SelectorNode;
             }
             _treeNodeList[_index].m_ActionNodeName = _isAction ? _root.GetType().Name : null;
-            _treeNodeList[_index].m_NodeSubType = !_isAction ? (int)(Enum.Parse(typeof(SelectorNodeType), _root.GetType().Name.Split('`')[0])) : 0;
+            _treeNodeList[_index].m_NodeSubType = !_isAction ? (int)(Enum.Parse(typeof(SelectorNodeType), _root.GetType().Name)) : 0;
             _treeNodeList[_index].m_OtherParams = GetOtherParamsFromBTreeNode(_root, (NodeType)_treeNodeList[_index].m_NodeType, (SelectorNodeType)_treeNodeList[_index].m_NodeSubType);
             if (_root.GetNodePrecondition() != null)
             {
                 int _preconditionCount = GetBTreeChildPreconditionNum(_root.GetNodePrecondition()) + 1;
                 _treeNodeList[_index].m_Preconditions = new PreconditionConfig[_preconditionCount];
-                int index = -1;
+                int index = 0;
                 GetPreconditionConfigFromBtreeNode(_root.GetNodePrecondition(), ref _treeNodeList[_index].m_Preconditions, ref index, -1);
             }
+            int parentIndex = _index;
             for (int i = 0; i < _root.m_ChildCount; i++)
             {
-                int _childIndex = _index + i + 1;
-                GetTreeNodeConfigFromBTreeRoot(_root.m_ChildNodeList[i], ref _treeNodeList, _childIndex, _index);
+                _index = _index + 1;
+                GetTreeNodeConfigFromBTreeRoot(_root.m_ChildNodeList[i], ref _treeNodeList, ref _index, parentIndex);
             }
         }
         private static void GetPreconditionConfigFromBtreeNode(BTreeNodePrecondition _precondition, ref PreconditionConfig[] _preconditionList, ref int _index, int _parentIndex = -1)
         {
-            _index = _index + 1;
             _preconditionList[_index] = new PreconditionConfig();
             _preconditionList[_index].m_ParentIndex = _parentIndex;
             Type type = _precondition.GetType();
@@ -253,11 +278,12 @@ namespace BTreeFrame
                 _preconditionList[_index].m_Type = (int)PreconditionType.And;
                 BTreeNodePrecondition[] _childPreconditon = ((BTreeNodePreconditionAND)_precondition).GetChildPrecondition();
                 _preconditionList[_index].m_ChildIndexs = new int[_childPreconditon.Length];
+                int parentIndex = _index;
                 for (int i = 0; i < _childPreconditon.Length; i++)
                 {
-                    int _childIndex = _index + 1;
-                    _preconditionList[_index].m_ChildIndexs[i] = _childIndex;
-                    GetPreconditionConfigFromBtreeNode(_childPreconditon[i], ref _preconditionList, _childIndex, _index);
+                    _index = _index + 1;
+                    _preconditionList[parentIndex].m_ChildIndexs[i] = _index;
+                    GetPreconditionConfigFromBtreeNode(_childPreconditon[i], ref _preconditionList, ref _index, parentIndex);
                 }
             }
             else if (type.Equals(typeof(BTreeNodePreconditionOR)))
@@ -265,11 +291,12 @@ namespace BTreeFrame
                 _preconditionList[_index].m_Type = (int)PreconditionType.Or;
                 BTreeNodePrecondition[] _childPreconditon = ((BTreeNodePreconditionOR)_precondition).GetChildPrecondition();
                 _preconditionList[_index].m_ChildIndexs = new int[_childPreconditon.Length];
+                int parentIndex = _index;
                 for (int i = 0; i < _childPreconditon.Length; i++)
                 {
-                    int _childIndex = _index + i + 1;
-                    _preconditionList[_index].m_ChildIndexs[i] = _childIndex;
-                    GetPreconditionConfigFromBtreeNode(_childPreconditon[i], ref _preconditionList, _childIndex, _index);
+                    _index = _index + 1;
+                    _preconditionList[parentIndex].m_ChildIndexs[i] = _index;
+                    GetPreconditionConfigFromBtreeNode(_childPreconditon[i], ref _preconditionList, ref _index, parentIndex);
                 }
             }
             else if (type.Equals(typeof(BTreeNodePreconditionNOT)))
@@ -277,9 +304,10 @@ namespace BTreeFrame
                 _preconditionList[_index].m_Type = (int)PreconditionType.Not;
                 BTreeNodePrecondition _childPreconditon = ((BTreeNodePreconditionNOT)_precondition).GetChildPrecondition();
                 _preconditionList[_index].m_ChildIndexs = new int[1];
-                int _childIndex = _index + 1;
-                _preconditionList[_index].m_ChildIndexs[0] = _childIndex;
-                GetPreconditionConfigFromBtreeNode(_childPreconditon, ref _preconditionList, _childIndex, _index);
+                _preconditionList[_index].m_ChildIndexs[0] = _index + 1;
+                int parentIndex = _index;
+                _index = _index + 1;
+                GetPreconditionConfigFromBtreeNode(_childPreconditon, ref _preconditionList, ref _index, parentIndex);
             }
         }
         private static int GetBTreeChildPreconditionNum(BTreeNodePrecondition _precondition)
