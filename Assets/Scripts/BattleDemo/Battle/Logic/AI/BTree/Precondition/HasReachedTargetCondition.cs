@@ -4,6 +4,7 @@ namespace Battle.Logic.AI.BTree
 {
     public class HasReachedTargetCondition : BTreeNodePrecondition
     {
+        public HasReachedTargetCondition() { }
         public override bool ExternalCondition(BTreeTemplateData input)
         {
             var _input = (BTreeInputData)input;

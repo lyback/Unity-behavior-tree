@@ -6,8 +6,8 @@ namespace BTreeFrame
     public class BTreeNodeFactory
     {
 
-        private static Dictionary<string, Type> PreconditionTypeDic = new Dictionary<string, Type>();
-        private static Dictionary<string, Type> ActionTypeDic = new Dictionary<string, Type>();
+        public static Dictionary<string, Type> PreconditionTypeDic = new Dictionary<string, Type>();
+        public static Dictionary<string, Type> ActionTypeDic = new Dictionary<string, Type>();
 
         public static void AddActionType(Type type)
         {
@@ -232,7 +232,8 @@ namespace BTreeFrame
             {
                 int _preconditionCount = GetBTreeChildPreconditionNum(_root.GetNodePrecondition()) + 1;
                 _treeNodeList[_index].m_Preconditions = new PreconditionConfig[_preconditionCount];
-                GetPreconditionConfigFromBtreeNode(_root.GetNodePrecondition(), ref _treeNodeList[_index].m_Preconditions, 0, -1);
+                int index = -1;
+                GetPreconditionConfigFromBtreeNode(_root.GetNodePrecondition(), ref _treeNodeList[_index].m_Preconditions, ref index, -1);
             }
             for (int i = 0; i < _root.m_ChildCount; i++)
             {
@@ -240,8 +241,9 @@ namespace BTreeFrame
                 GetTreeNodeConfigFromBTreeRoot(_root.m_ChildNodeList[i], ref _treeNodeList, _childIndex, _index);
             }
         }
-        private static void GetPreconditionConfigFromBtreeNode(BTreeNodePrecondition _precondition, ref PreconditionConfig[] _preconditionList, int _index, int _parentIndex = -1)
+        private static void GetPreconditionConfigFromBtreeNode(BTreeNodePrecondition _precondition, ref PreconditionConfig[] _preconditionList, ref int _index, int _parentIndex = -1)
         {
+            _index = _index + 1;
             _preconditionList[_index] = new PreconditionConfig();
             _preconditionList[_index].m_ParentIndex = _parentIndex;
             Type type = _precondition.GetType();
@@ -253,7 +255,7 @@ namespace BTreeFrame
                 _preconditionList[_index].m_ChildIndexs = new int[_childPreconditon.Length];
                 for (int i = 0; i < _childPreconditon.Length; i++)
                 {
-                    int _childIndex = _index + i + 1;
+                    int _childIndex = _index + 1;
                     _preconditionList[_index].m_ChildIndexs[i] = _childIndex;
                     GetPreconditionConfigFromBtreeNode(_childPreconditon[i], ref _preconditionList, _childIndex, _index);
                 }

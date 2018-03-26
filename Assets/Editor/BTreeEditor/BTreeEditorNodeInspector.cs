@@ -4,10 +4,12 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 using BTreeFrame;
+
 namespace BTree.Editor
 {
     public class BTreeEditorNodeInspector
     {
+        private UnityEngine.Object[] m_Precondition = new UnityEngine.Object[20];
 
         public void drawInspector(BTreeNodeDesigner _selectNode)
         {
@@ -37,9 +39,87 @@ namespace BTree.Editor
             {
                 DrawValue(_node, fields[i]);
             }
+            int index = -1;
+            _node.m_NodePrecondition = DrawPrecondition(_node.GetNodePrecondition(), 0, ref index);
         }
 
-        public void DrawValue(BTreeNode _node, FieldInfo _field)
+        BTreeNodePrecondition DrawPrecondition(BTreeNodePrecondition _condition, int _space, ref int index)
+        {
+            index = index + 1;
+            BTreeNodePrecondition result = null;
+            if (_condition == null)
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Space(_space);
+                
+                m_Precondition[index] = EditorGUILayout.ObjectField("", m_Precondition[index], typeof(MonoScript), false);
+                if (m_Precondition[index] != null)
+                {
+                    Type type = GetPreconditionType(m_Precondition[index].name);
+                    if (type == null)
+                    {
+                        m_Precondition[index] = null;
+                        return _condition;
+                    }
+                    result = (BTreeNodePrecondition)type.GetConstructor(new Type[] { }).Invoke(new object[] { });
+                }
+                GUILayout.EndHorizontal();
+            }
+            else
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Space(_space);
+                string[] scripts = AssetDatabase.FindAssets("t:Script " + _condition.GetType().Name);
+                if (scripts.Length > 0)
+                {
+                    string path = AssetDatabase.GUIDToAssetPath(scripts[0]);
+                    MonoScript monoScript = (MonoScript)AssetDatabase.LoadAssetAtPath(path, typeof(MonoScript));
+                    var obj = EditorGUILayout.ObjectField("", monoScript, typeof(MonoScript), false);
+                    Type type = GetPreconditionType(obj.name);
+                    if (type == null)
+                    {
+                        m_Precondition[index] = null;
+                        return _condition;
+                    }
+                    result = (BTreeNodePrecondition)type.GetConstructor(new Type[] { }).Invoke(new object[] { });
+                }
+                GUILayout.EndHorizontal();
+                _space = _space + 5;
+
+                if (result is BTreeNodePreconditionAND)
+                {
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Space(_space);
+                    BTreeNodePreconditionAND CurPreCondition = (BTreeNodePreconditionAND)_condition;
+                    int childCount = CurPreCondition.GetChildPreconditionCount();
+                    var val = EditorGUILayout.IntField(childCount);
+                    GUILayout.EndHorizontal();
+
+                    BTreeNodePrecondition[] childPreconditions = new BTreeNodePrecondition[val];
+                    BTreeNodePrecondition[] curChildPreconditions = CurPreCondition.GetChildPrecondition();
+                    for (int i = 0; i < val; i++)
+                    {
+                        BTreeNodePrecondition _cond = null;
+                        if (curChildPreconditions.Length >= i+1)
+                        {
+                            _cond = curChildPreconditions[i];
+                        }
+                        childPreconditions[i] = DrawPrecondition(_cond, _space, ref index);
+                    }
+                    ((BTreeNodePreconditionAND)result).SetChildPrecondition(childPreconditions);
+                }
+                else if (result is BTreeNodePreconditionOR)
+                {
+                }
+                else if (result is BTreeNodePreconditionNOT)
+                {
+                }
+            }
+            
+            return result;
+        }
+
+        void DrawValue(BTreeNode _node, FieldInfo _field)
         {
             if (_field == null)
             {
@@ -101,6 +181,29 @@ namespace BTree.Editor
             Debugger.Log(_node.GetType().Name);
             
         }
-
+        private Type GetPreconditionType(string name)
+        {
+            Type type = null;
+            if (name == typeof(BTreeNodePreconditionAND).Name)
+            {
+                type = typeof(BTreeNodePreconditionAND);
+            }
+            else if (name == typeof(BTreeNodePreconditionOR).Name)
+            {
+                type = typeof(BTreeNodePreconditionOR);
+            }
+            else if (name == typeof(BTreeNodePreconditionNOT).Name)
+            {
+                type = typeof(BTreeNodePreconditionNOT);
+            }
+            else
+            {
+                if (BTreeNodeFactory.PreconditionTypeDic.ContainsKey(name))
+                {
+                    type = BTreeNodeFactory.PreconditionTypeDic[name];
+                }
+            }
+            return type;
+        }
     }
 }
