@@ -375,15 +375,10 @@ namespace BTree.Editor
             {
                 return false;
             }
-            bool flag = m_SelectedNodes.Count == 1;
             for (int i = 0; i < m_SelectedNodes.Count; i++)
             {
                 dragTask(m_SelectedNodes[i], delta, dragChildren, hasDragged);
             }
-            //if (flag && dragChildren && m_RootNode != null)
-            //{
-            //    dragTask(m_RootNode, delta, dragChildren, hasDragged);
-            //}
             return true;
         }
         private void dragTask(BTreeNodeDesigner nodeDesigner, Vector2 delta, bool dragChildren, bool hasDragged)
