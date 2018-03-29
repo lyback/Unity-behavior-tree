@@ -78,7 +78,7 @@ namespace Battle.Logic
                 }
             }
 
-            string frameKey = m_currentFrame.ToString();
+            //string frameKey = m_currentFrame.ToString();
             if (m_TroopLogicCtrl.UpdateLogic(m_currentFrame))
             {
                 m_isFinish = true;

@@ -100,10 +100,10 @@ namespace Battle.View
         private void Exit()
         {
             TimerHelper.Remove(m_TimeObj);
-            if (BattleLogicDefine.isServer)
-            {
+            //if (BattleLogicDefine.isServer)
+            //{
 
-            }
+            //}
         }
     }
 
