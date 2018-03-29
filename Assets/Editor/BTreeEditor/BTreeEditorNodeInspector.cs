@@ -258,9 +258,9 @@ namespace BTree.Editor
                 }
                 GUILayout.EndHorizontal();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                Debugger.LogWarning(e.Message);
             }
         }
         private void openInFileEditor(object _node)

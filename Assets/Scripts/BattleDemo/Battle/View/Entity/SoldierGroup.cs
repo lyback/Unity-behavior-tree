@@ -59,7 +59,7 @@ namespace Battle.View
             m_BaseCount = data.count;
             if (data.count > 0)
             {
-                float deg = CalcRad(dir_x, dir_y);
+                //float deg = CalcRad(dir_x, dir_y);
                 InitAllSoldiers(data.count, (TroopAnimState)data.state);
             }
         }

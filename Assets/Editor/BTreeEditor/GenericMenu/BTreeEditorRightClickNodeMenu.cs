@@ -36,7 +36,7 @@ namespace BTree.Editor
         
         public void ShowAsContext(List<BTreeNodeDesigner> _selectNodes)
         {
-            bool isMult = _selectNodes.Count != 1; ;
+            bool isMult = _selectNodes.Count != 1;
             bool isDisable = _selectNodes[0].m_IsDisable;
             bool isAction = _selectNodes[0].m_EditorNode.m_Node.m_IsAcitonNode;
             bool isEntry = _selectNodes[0].m_ParentNode == null && !_selectNodes[0].m_IsEntryDisplay;

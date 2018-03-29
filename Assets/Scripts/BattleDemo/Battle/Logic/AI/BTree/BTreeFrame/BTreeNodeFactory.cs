@@ -200,7 +200,7 @@ namespace BTreeFrame
         private static BTreeNodePrecondition CreatePrecondition(ref BTreeNodePrecondition[] _nodePreconditions, PreconditionConfig[] _condConfigs, int _index)
         {
             int[] _childIndexs = _condConfigs[_index].m_ChildIndexs;
-            int _parentIndex = _condConfigs[_index].m_ParentIndex;
+            //int _parentIndex = _condConfigs[_index].m_ParentIndex;
             if (_childIndexs != null && _childIndexs.Length != 0)
             {
                 for (int i = 0; i < _childIndexs.Length; i++)
