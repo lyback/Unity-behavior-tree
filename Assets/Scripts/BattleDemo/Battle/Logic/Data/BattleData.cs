@@ -47,7 +47,7 @@ namespace Battle.Logic
             mAtcTroopList = new List<TroopData>();
             mDefTroopList = new List<TroopData>();
             mAllTroopDic = new Dictionary<uint, TroopData>();
-            int atkCount = 30;
+            int atkCount = 2;
             for (int i = 0; i < atkCount; i++)
             {
                 TroopData troop = new TroopData();
@@ -62,13 +62,13 @@ namespace Battle.Logic
                 mAtcTroopList.Add(troop);
                 mAllTroopDic.Add(troop.key, troop);
             }
-            int defCount = 30;
+            int defCount = 2;
             for (int i = 0; i < defCount; i++)
             {
                 TroopData troop = new TroopData();
                 troop.count = 100;
                 troop.isAtkTroop = false;
-                troop.key = (uint)i+100;
+                troop.key = (uint)(i+ atkCount +1);
                 troop.type = (SoldierType)rand.Random(4);
                 troop.x = i * 100;
                 troop.y = -100;

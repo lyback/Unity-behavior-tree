@@ -39,6 +39,7 @@ namespace BTree.Editor
             bool isMult = _selectNodes.Count != 1;
             bool isDisable = _selectNodes[0].m_IsDisable;
             bool isAction = _selectNodes[0].m_EditorNode.m_Node.m_IsAcitonNode;
+            bool isChild = _selectNodes[0].m_ParentNode != null;
             bool isEntry = _selectNodes[0].m_ParentNode == null && !_selectNodes[0].m_IsEntryDisplay;
             m_Menu = new GenericMenu();
             if (!isMult)
@@ -50,6 +51,11 @@ namespace BTree.Editor
                 if (isEntry)
                 {
                     AddItem(new GUIContent("Set As EntryNode"), false, new GenericMenu.MenuFunction(SetEntryNodeCallback));
+                }
+                if (isChild)
+                {
+                    AddItem(new GUIContent("Move Up Index"), false, new GenericMenu.MenuFunction(MoveUpIndexCallback));
+                    AddItem(new GUIContent("Move Down Index"), false, new GenericMenu.MenuFunction(MoveDownIndexCallback));
                 }
                 if (isDisable)
                 {
@@ -83,6 +89,14 @@ namespace BTree.Editor
         private void SetEntryNodeCallback()
         {
             m_Window.setEntryNodeCallback();
+        }
+        private void MoveUpIndexCallback()
+        {
+            m_Window.moveUpIndexCallback();
+        }
+        private void MoveDownIndexCallback()
+        {
+            m_Window.moveDownIndexCallback();
         }
     }
 }

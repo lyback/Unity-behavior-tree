@@ -4,3 +4,5 @@ BattleDemo.sln
 BattleDemo.CSharp.csproj
 .vs/BattleDemo/v14/.suo
 BattleDemo.CSharp.Editor.csproj
+*.sln
+*.csproj

@@ -40,6 +40,7 @@ namespace BTreeFrame
         }
         protected override bool _DoEvaluate(BTreeTemplateData _input)
         {
+            base._DoEvaluate(_input);
             if (_CheckIndex(m_CurrentSelectIndex))
             {
                 BTreeNode bn = m_ChildNodes[m_CurrentSelectIndex];

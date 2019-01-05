@@ -45,5 +45,43 @@ namespace BTree.Editor
         {
             m_Node.DelChildNode(_node.m_Node);
         }
+        public void MoveUpIndex()
+        {
+            if (m_Node.m_ParentNode != null)
+            {
+                var childNodes = m_Node.m_ParentNode.m_ChildNodes;
+                for (int i = 0; i < childNodes.Count; i++)
+                {
+                    if (childNodes[i].Equals(m_Node))
+                    {
+                        if (i > 0)
+                        {
+                            var temp = childNodes[i - 1];
+                            childNodes[i - 1] = m_Node;
+                            childNodes[i] = temp;
+                        }
+                    }
+                }
+            }
+        }
+        public void MoveDownIndex()
+        {
+            if (m_Node.m_ParentNode != null)
+            {
+                var childNodes = m_Node.m_ParentNode.m_ChildNodes;
+                for (int i = 0; i < childNodes.Count; i++)
+                {
+                    if (childNodes[i].Equals(m_Node))
+                    {
+                        if (i < childNodes.Count - 1)
+                        {
+                            var temp = childNodes[i + 1];
+                            childNodes[i + 1] = m_Node;
+                            childNodes[i] = temp;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

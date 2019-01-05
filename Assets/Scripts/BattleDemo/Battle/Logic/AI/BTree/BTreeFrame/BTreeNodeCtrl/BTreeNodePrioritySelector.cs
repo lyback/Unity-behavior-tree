@@ -44,6 +44,7 @@ namespace BTreeFrame
 
         protected override bool _DoEvaluate(BTreeTemplateData _input)
         {
+            base._DoEvaluate(_input);
             for (int i = 0; i < m_ChildCount; i++)
             {
                 BTreeNode bn = m_ChildNodes[i];
@@ -57,6 +58,7 @@ namespace BTreeFrame
         }
         protected override void _DoTransition(BTreeTemplateData _input)
         {
+            base._DoTransition(_input);
             if (_CheckIndex(m_LastSelectIndex))
             {
                 BTreeNode bn = m_ChildNodes[m_LastSelectIndex];
@@ -66,6 +68,7 @@ namespace BTreeFrame
         }
         protected override BTreeRunningStatus _DoTick(BTreeTemplateData _input, ref BTreeTemplateData _output)
         {
+            base._DoTick(_input, ref _output);
             BTreeRunningStatus RunningStatus = BTreeRunningStatus.Finish;
             if (_CheckIndex(m_CurrentSelectIndex))
             {

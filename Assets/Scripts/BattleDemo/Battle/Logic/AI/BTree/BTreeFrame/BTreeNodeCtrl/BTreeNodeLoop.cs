@@ -46,6 +46,7 @@ namespace BTreeFrame
 
         protected override bool _DoEvaluate(BTreeTemplateData _input)
         {
+            base._DoEvaluate(_input);
             bool checkLoopCount = m_LoopCount == INFINITELOOP || m_CurrentCount < m_LoopCount;
             if (!checkLoopCount)
             {
@@ -63,6 +64,7 @@ namespace BTreeFrame
         }
         protected override void _DoTransition(BTreeTemplateData _input)
         {
+            base._DoTransition(_input);
             if (_CheckIndex(0))
             {
                 BTreeNode bn = m_ChildNodes[0];
@@ -72,7 +74,7 @@ namespace BTreeFrame
         }
         protected override BTreeRunningStatus _DoTick(BTreeTemplateData _input, ref BTreeTemplateData _output)
         {
-            BTreeRunningStatus runningStatus = BTreeRunningStatus.Finish;
+            BTreeRunningStatus runningStatus = base._DoTick(_input, ref _output);
             if (_CheckIndex(0))
             {
                 BTreeNode bn = m_ChildNodes[0];

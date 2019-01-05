@@ -40,6 +40,7 @@ namespace Battle.Logic.AI.BTree
 
         protected override BTreeRunningStatus _DoExecute(BTreeTemplateData input, ref BTreeTemplateData output)
         {
+            base._DoExecute(input, ref output);
             BTreeInputData _input = input as BTreeInputData;
             BTreeOutputData _output = output as BTreeOutputData;
             if (_input == null || _output == null)

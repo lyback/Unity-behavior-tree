@@ -61,7 +61,7 @@ namespace BTree.Editor
             BTreeEditorNode _editorNode = _editorNodes[_index];
             for (int i = 0; i < _editorNode.m_Node.m_ChildCount; i++)
             {
-                int _childIndex = _editorNode.m_Node.m_ChildNodeList[i].m_Index;
+                int _childIndex = _editorNode.m_Node.m_ChildNodes[i].m_Index;
                 if (_nodeDesigners[_childIndex] == null)
                 {
                     _nodeDesigners[_childIndex] = CreateBTreeNodeDesigner(_configNodes, _editorNodes, ref _nodeDesigners, _childIndex);
@@ -75,7 +75,7 @@ namespace BTree.Editor
             
             for (int i = 0; i < _editorNode.m_Node.m_ChildCount; i++)
             {
-                int _childIndex = _editorNode.m_Node.m_ChildNodeList[i].m_Index;
+                int _childIndex = _editorNode.m_Node.m_ChildNodes[i].m_Index;
                 _node.m_ChildNodeList.Add(_nodeDesigners[_childIndex]);
                 BTreeNodeConnection _connection = new BTreeNodeConnection(_nodeDesigners[_childIndex], _node, NodeConnectionType.Outgoing);
                 _node.m_ChildNodeConnectionList.Add(_connection);
