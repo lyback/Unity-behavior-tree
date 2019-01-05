@@ -176,23 +176,37 @@ namespace BTree.Editor
         {
             GUILayout.BeginArea(mFileToolBarRect, EditorStyles.toolbar);
             GUILayout.BeginHorizontal(new GUILayoutOption[0]);
-            if (GUILayout.Button("Load", EditorStyles.toolbarButton, new GUILayoutOption[]
+            if (GUILayout.Button("LoadXML", EditorStyles.toolbarButton, new GUILayoutOption[]
             {
-                GUILayout.Width(42f)
+                GUILayout.Width(80f)
             }))
             {
-                loadBTree();
+                loadBTree("xml");
             }
-            if (GUILayout.Button("Save", EditorStyles.toolbarButton, new GUILayoutOption[]
+            if (GUILayout.Button("SaveXML", EditorStyles.toolbarButton, new GUILayoutOption[]
             {
-                GUILayout.Width(42f)
+                GUILayout.Width(80f)
             }))
             {
-                saveBTree();
+                saveBTree("xml");
             }
-            if (GUILayout.Button("Export", EditorStyles.toolbarButton, new GUILayoutOption[]
+            if (GUILayout.Button("LoadBinary", EditorStyles.toolbarButton, new GUILayoutOption[]
             {
-                GUILayout.Width(42f)
+                GUILayout.Width(80f)
+            }))
+            {
+                loadBTree("binary");
+            }
+            if (GUILayout.Button("SaveBinary", EditorStyles.toolbarButton, new GUILayoutOption[]
+            {
+                GUILayout.Width(80f)
+            }))
+            {
+                saveBTree("binary");
+            }
+            if (GUILayout.Button("ExportRunTime", EditorStyles.toolbarButton, new GUILayoutOption[]
+            {
+                GUILayout.Width(100f)
             }))
             {
                 exportBtree();
@@ -497,28 +511,55 @@ namespace BTree.Editor
         {
             mGraphDesigner.setSelectNodeAsEntry();
         }
+        //前移节点
+        private void moveUpSelectNodeIndex()
+        {
+            mGraphDesigner.moveUpSelectNodeIndex();
+        }
+        //后移节点
+        private void moveDownSelectNodeIndex()
+        {
+            mGraphDesigner.moveDownSelectNodeIndex();
+        }
         #endregion
 
         #region 配置文件相关
-        public void loadBTree()
+        public void loadBTree(string type)
         {
-            string text = EditorUtility.OpenFilePanel("Load Behavior Tree", "Assets/Editor/BtreeEditor/Config", "xml");
+            string text = EditorUtility.OpenFilePanel("Load Behavior Tree", BTreeEditorSerialization.m_ConfigPath, type);
             if (!string.IsNullOrEmpty(text))
             {
-                Debugger.Log("loadBTree");
-                BTreeEditorConfig _config = BTreeEditorSerialization.ReadXMLAtPath(text);
+                Debugger.Log("loadBTree:" + type);
+                BTreeEditorConfig _config = null;
+                if (type == "xml")
+                {
+                    _config = BTreeEditorSerialization.ReadXMLAtPath(text);
+                }
+                else if (type == "binary")
+                {
+                    _config = BTreeEditorSerialization.ReadBinary(text);
+                }
                 mGraphDesigner = (new BTreeGraphDesigner());
                 mGraphDesigner.load(_config);
             }
         }
-        public void saveBTree()
+        public void saveBTree(string type)
         {
             if (mGraphDesigner == null || mGraphDesigner.m_RootNode == null)
             {
                 EditorUtility.DisplayDialog("Save Error", "未创建根节点", "ok");
                 return;
             }
-            string text = EditorUtility.SaveFilePanel("Save Behavior Tree", "Assets/Editor/BtreeEditor/Config", mGraphDesigner.m_RootNode.m_NodeName,"xml");
+            string suffix = "";
+            if (type == "xml")
+            {
+                suffix = "xml";
+            }
+            else if (type == "binary")
+            {
+                suffix = "btreeEditor";
+            }
+            string text = EditorUtility.SaveFilePanel("Save Behavior Tree", BTreeEditorSerialization.m_ConfigPath, mGraphDesigner.m_RootNode.m_NodeName, suffix);
             if (text.Length != 0 && Application.dataPath.Length < text.Length)
             {
                 Debugger.Log("saveBTree");
@@ -538,7 +579,7 @@ namespace BTree.Editor
             TreeConfig _treeConfig = BTreeEditorNodeFactory.CreateTreeConfigFromBTreeGraphDesigner(mGraphDesigner);
             string name = mGraphDesigner.m_RootNode.m_NodeName;
             BTreeNodeSerialization.WriteBinary(_treeConfig, name);
-            EditorUtility.DisplayDialog("Export", "导出行为树配置成功:" + name, "ok");
+            EditorUtility.DisplayDialog("Export", "导出运行时行为树配置成功:" + name, "ok");
         }
         #endregion
         #region 右键菜单点击回调
@@ -565,6 +606,14 @@ namespace BTree.Editor
         public void setEntryNodeCallback()
         {
             setSelectNodeAsEntry();
+        }
+        public void moveUpIndexCallback()
+        {
+            moveUpSelectNodeIndex();
+        }
+        public void moveDownIndexCallback()
+        {
+            moveDownSelectNodeIndex();
         }
         #endregion
     }

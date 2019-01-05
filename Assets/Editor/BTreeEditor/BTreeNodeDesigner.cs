@@ -38,6 +38,29 @@ namespace BTree.Editor
 
         public string m_NodeName { get { return m_EditorNode.m_Node.m_Name; } }
 
+        private int _Index = -1;
+        private int m_Index
+        {
+            get
+            {
+                if (_Index == -1)
+                {
+                    if (m_ParentNode != null)
+                    {
+                        _Index = 0;
+                        for (int i = 0; i < m_ParentNode.m_ChildNodeList.Count; i++)
+                        {
+                            if (m_ParentNode.m_ChildNodeList[i].Equals(this))
+                            {
+                                _Index = i+1;
+                                return _Index;
+                            }
+                        }
+                    }
+                }
+                return _Index;
+            }
+        }
         private bool m_Selected;
         private bool m_IsDirty = true;
         private bool m_IsShowHoverBar;
@@ -105,6 +128,10 @@ namespace BTree.Editor
         public void delectChildNode(BTreeNodeDesigner childNodeDesigner)
         {
             m_ChildNodeList.Remove(childNodeDesigner);
+            for (int i = 0; i < m_ChildNodeList.Count; i++)
+            {
+                m_ChildNodeList[i].ReSetIndex();
+            }
             for (int i = 0; i < m_ChildNodeConnectionList.Count; i++)
             {
                 if (m_ChildNodeConnectionList[i].m_DestinationNodeDesigner.Equals(childNodeDesigner))
@@ -135,6 +162,7 @@ namespace BTree.Editor
             m_ChildNodeList.Add(destNode);
             m_EditorNode.AddChildNode(destNode.m_EditorNode);
             destNode.AddParentConnectionLine(this);
+            destNode.ReSetIndex();
             markDirty();
         }
         public void AddParentConnectionLine(BTreeNodeDesigner orgNode)
@@ -176,6 +204,52 @@ namespace BTree.Editor
         public void SetEntryDisplay(bool isEntry)
         {
             m_IsEntryDisplay = isEntry;
+        }
+        public void MoveUpIndex()
+        {
+            if (m_ParentNode != null)
+            {
+                for (int i = 0; i < m_ParentNode.m_ChildNodeList.Count; i++)
+                {
+                    if (m_ParentNode.m_ChildNodeList[i].Equals(this))
+                    {
+                        if (i > 0)
+                        {
+                            var temp = m_ParentNode.m_ChildNodeList[i - 1];
+                            m_ParentNode.m_ChildNodeList[i - 1] = this;
+                            m_ParentNode.m_ChildNodeList[i] = temp;
+                            m_ParentNode.m_ChildNodeList[i].ReSetIndex();
+                            m_ParentNode.m_ChildNodeList[i - 1].ReSetIndex();
+                        }
+                    }
+                }
+            }
+            m_EditorNode.MoveUpIndex();
+        }
+        public void MoveDownIndex()
+        {
+            if (m_ParentNode != null)
+            {
+                for (int i = 0; i < m_ParentNode.m_ChildNodeList.Count; i++)
+                {
+                    if (m_ParentNode.m_ChildNodeList[i].Equals(this))
+                    {
+                        if (i < m_ParentNode.m_ChildNodeList.Count - 1)
+                        {
+                            var temp = m_ParentNode.m_ChildNodeList[i + 1];
+                            m_ParentNode.m_ChildNodeList[i + 1] = this;
+                            m_ParentNode.m_ChildNodeList[i] = temp;
+                            m_ParentNode.m_ChildNodeList[i].ReSetIndex();
+                            m_ParentNode.m_ChildNodeList[i + 1].ReSetIndex();
+                        }
+                    }
+                }
+            }
+            m_EditorNode.MoveDownIndex();
+        }
+        public void ReSetIndex()
+        {
+            _Index = -1;
         }
         #endregion
         #region 绘制方法相关
@@ -358,12 +432,14 @@ namespace BTree.Editor
         public override string ToString()
         {
             string isEntry = m_IsEntryDisplay ? "(Entry)" : "";
+            string index = m_ParentNode != null ? "(" + m_Index + ")" : "";
             if (m_NodeName == null)
             {
-                return isEntry;
+                return isEntry + index;
             }
+            
             string name = m_NodeName.Replace("BTreeNode", "");
-            return name + isEntry;
+            return name + isEntry + index;
         }
     }
 }

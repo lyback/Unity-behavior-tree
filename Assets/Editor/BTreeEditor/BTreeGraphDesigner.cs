@@ -436,5 +436,21 @@ namespace BTree.Editor
                 m_RootNode = null;
             }
         }
+        //前移节点
+        public void moveUpSelectNodeIndex()
+        {
+            if (m_SelectedNodes != null && m_SelectedNodes.Count == 1)
+            {
+                m_SelectedNodes[0].MoveUpIndex();
+            }
+        }
+        //后移节点
+        public void moveDownSelectNodeIndex()
+        {
+            if (m_SelectedNodes != null && m_SelectedNodes.Count == 1)
+            {
+                m_SelectedNodes[0].MoveDownIndex();
+            }
+        }
     }
 }

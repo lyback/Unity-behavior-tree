@@ -287,7 +287,7 @@ namespace BTreeFrame
             for (int i = 0; i < _root.m_ChildCount; i++)
             {
                 _index = _index + 1;
-                GetTreeNodeConfigFromBTreeRoot(_root.m_ChildNodeList[i], ref _treeNodeList, ref _index, parentIndex);
+                GetTreeNodeConfigFromBTreeRoot(_root.m_ChildNodes[i], ref _treeNodeList, ref _index, parentIndex);
             }
         }
         private static void GetPreconditionConfigFromBtreeNode(BTreeNodePrecondition _precondition, ref PreconditionConfig[] _preconditionList, ref int _index, int _parentIndex = -1)
@@ -404,11 +404,11 @@ namespace BTreeFrame
         private static int GetBTreeChildNodeNum(BTreeNode _root)
         {
             int _count = _root.m_ChildCount;
-            for (int i = 0; i < _root.m_ChildNodeList.Count; i++)
+            for (int i = 0; i < _root.m_ChildNodes.Count; i++)
             {
-                if (_root.m_ChildNodeList[i].m_ChildCount != 0)
+                if (_root.m_ChildNodes[i].m_ChildCount != 0)
                 {
-                    _count += GetBTreeChildNodeNum(_root.m_ChildNodeList[i]);
+                    _count += GetBTreeChildNodeNum(_root.m_ChildNodes[i]);
                 }
             }
             return _count;

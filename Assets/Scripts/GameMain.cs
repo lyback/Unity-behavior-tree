@@ -20,6 +20,8 @@
 //CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 //////////////////////////////////////////////////////////////////////////////////////
+#define DEBUG
+#define DEBUG_BTREE
 
 using Neatly.Timer;
 using UnityEngine;
@@ -32,6 +34,7 @@ public class GameMain : MonoBehaviour
     void Awake()
     {
         //Application.targetFrameRate = 60;
+        Debugger.LogLevel = Debugger.Level.LOG;
         NeatlyTimer.Init();
         MainBattleManager.Instance.Start();
         MainBattleManager.Instance.InitLogicTime(1 / BattleLogicDefine.logicSecFrame);

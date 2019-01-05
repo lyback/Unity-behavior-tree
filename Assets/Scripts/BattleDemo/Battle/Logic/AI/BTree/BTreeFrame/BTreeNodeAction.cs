@@ -41,13 +41,23 @@ namespace BTreeFrame
             m_IsAcitonNode = true;
         }
 
-        protected virtual void _DoEnter(BTreeTemplateData _input) { }
-        protected virtual BTreeRunningStatus _DoExecute(BTreeTemplateData _input, ref BTreeTemplateData _output) { return BTreeRunningStatus.Finish; }
-        protected virtual void _DoExit(BTreeTemplateData _input, BTreeRunningStatus _status) { }
-
+        protected virtual void _DoEnter(BTreeTemplateData _input)
+        {
+            Debugger.Log_Btree("_DoEnter:" + m_Name);
+        }
+        protected virtual BTreeRunningStatus _DoExecute(BTreeTemplateData _input, ref BTreeTemplateData _output)
+        {
+            Debugger.Log_Btree("_DoExecute:" + m_Name);
+            return BTreeRunningStatus.Finish;
+        }
+        protected virtual void _DoExit(BTreeTemplateData _input, BTreeRunningStatus _status)
+        {
+            Debugger.Log_Btree("_DoExit:" + m_Name);
+        }
 
         protected override void _DoTransition(BTreeTemplateData _input)
         {
+            base._DoTransition(_input);
             if (m_NeedExit)
             {
                 _DoExit(_input, BTreeRunningStatus.Error);
@@ -59,7 +69,7 @@ namespace BTreeFrame
 
         protected override BTreeRunningStatus _DoTick(BTreeTemplateData _input, ref BTreeTemplateData _output)
         {
-            BTreeRunningStatus runningStatus = BTreeRunningStatus.Finish;
+            BTreeRunningStatus runningStatus = base._DoTick(_input, ref _output);
             if (m_Status == BTreeNodeStatus.Ready)
             {
                 _DoEnter(_input);

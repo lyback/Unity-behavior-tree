@@ -56,6 +56,7 @@ namespace Battle.Logic.AI.BTree
         }
         public void Tick(BTreeTemplateData _input, ref BTreeTemplateData _output)
         {
+            Debugger.Log_Btree("****************Tick_Begin****************");
             if (m_TreeRoot.Evaluate(_input))
             {
                 m_TreeRoot.Tick(_input, ref _output);
@@ -64,6 +65,8 @@ namespace Battle.Logic.AI.BTree
             {
                 m_TreeRoot.Transition(_input);
             }
+            Debugger.Log_Btree("****************Tick_End****************");
+
         }
     }
     

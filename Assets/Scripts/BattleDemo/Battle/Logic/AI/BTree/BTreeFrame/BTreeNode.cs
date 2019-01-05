@@ -35,15 +35,7 @@ namespace BTreeFrame
         public BTreeNodePrecondition m_NodePrecondition { get; set; }
 
         //子节点
-        protected List<BTreeNode> m_ChildNodes = new List<BTreeNode>();
-        public List<BTreeNode> m_ChildNodeList
-        {
-            get
-            {
-                List<BTreeNode> _ChildNodes = new List<BTreeNode>(m_ChildNodes);
-                return _ChildNodes;
-            }
-        }
+        public List<BTreeNode> m_ChildNodes = new List<BTreeNode>();
         //子节点数
         public int m_ChildCount{ get; protected set; }
         //父节点
@@ -138,14 +130,17 @@ namespace BTreeFrame
 
         protected virtual bool _DoEvaluate(BTreeTemplateData _input)
         {
+            Debugger.Log_Btree("_DoEvaluate:" + m_Name);
             return true;
         }
         protected virtual void _DoTransition(BTreeTemplateData _input)
         {
+            Debugger.Log_Btree("_DoTransition:" + m_Name);
             return;
         }
         protected virtual BTreeRunningStatus _DoTick(BTreeTemplateData _input, ref BTreeTemplateData _output)
         {
+            Debugger.Log_Btree("_DoTick:" + m_Name);
             return BTreeRunningStatus.Finish;
         }
 
