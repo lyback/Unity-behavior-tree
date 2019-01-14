@@ -33,19 +33,42 @@ namespace Kd_Tree
         public KdTreeNode buildKdTree(List<TreeData> objList)
         {
             _treeNode = new KdTreeNode();
-
-            _treeNode = buildKdTreeRecursive(objList);
-
+            //_treeNode = buildKdTreeRecursive(objList);
+            _treeNode = buildKdTreeRecursive2(objList, 0, objList.Count); // 耗时更短，内存消耗更小
             return _treeNode;
         }
-
+        private KdTreeNode buildKdTreeRecursive2(List<TreeData> objList, int startIndex, int length)
+        {
+            if (length == 0)
+            {
+                return null;
+            }
+            KdTreeNode node = new KdTreeNode();
+            if (length == 1)
+            {
+                node.m_Data = objList[0];
+                node.optimalSplit = -1;
+                return node;
+            }
+            // 计算最优分割项(最大方差法)
+            int optimalSplit = GetOptimalSplitAxis(objList.GetRange(startIndex, length));
+            //根据分割项，选出中位节点，分割出左右子树
+            objList.Sort(startIndex, length, new KdTreeComparer(optimalSplit));
+            int middleIndex = startIndex + length / 2;
+            node.m_Data = objList[middleIndex];
+            node.optimalSplit = optimalSplit;
+            int leftStartIndex = startIndex;
+            node.m_LeftNode = buildKdTreeRecursive2(objList, leftStartIndex, middleIndex - leftStartIndex);
+            int rightStartIndex = middleIndex + 1;
+            node.m_RightNode = buildKdTreeRecursive2(objList, rightStartIndex, startIndex + length - rightStartIndex);
+            return node;
+        }
         private KdTreeNode buildKdTreeRecursive(List<TreeData> objList)
         {
             if (objList.Count == 0)
             {
                 return null;
             }
-
             KdTreeNode node = new KdTreeNode();
             if (objList.Count == 1)
             {
@@ -53,7 +76,6 @@ namespace Kd_Tree
                 node.optimalSplit = -1;
                 return node;
             }
-
             // 计算最优分割项(最大方差法)
             int optimalSplit = GetOptimalSplitAxis(objList);
             //根据分割项，选出中位节点，分割出左右子树
@@ -77,18 +99,15 @@ namespace Kd_Tree
             int optimalSplit = 0;
             int valueCount = objList[0].m_Value.Count;
 
-            List<double> varList = new List<double>();
+            double maxVar = 0;
             for (int i = 0; i < valueCount; i++)
             {
                 double ave = objList.Average(x => x.m_Value[i]);
                 double sum = objList.Sum(x => (x.m_Value[i] - ave) * (x.m_Value[i] - ave));
                 double var = sum / objList.Count;
-                varList.Add(var);
-            }
-            for (int i = 1; i < varList.Count; i++)
-            {
-                if (varList[i] > varList[i - 1])
+                if (var > maxVar)
                 {
+                    maxVar = var;
                     optimalSplit = i;
                 }
             }
@@ -107,5 +126,18 @@ namespace Kd_Tree
     public class TreeData
     {
         public List<int> m_Value;
+    }
+
+    public class KdTreeComparer : IComparer<TreeData>
+    {
+        private int optimalSplit;
+        public KdTreeComparer(int _optimalSplit)
+        {
+            optimalSplit = _optimalSplit;
+        }
+        public int Compare(TreeData x, TreeData y)
+        {
+            return x.m_Value[optimalSplit].CompareTo(y.m_Value[optimalSplit]);
+        }
     }
 }

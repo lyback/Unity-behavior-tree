@@ -4,10 +4,10 @@ using Kd_Tree;
 
 public class TestKdTree : MonoBehaviour {
 
+    List<TreeData> data = new List<TreeData>();
 	// Use this for initialization
 	void Start () {
 
-        List<TreeData> data = new List<TreeData>();
         for (int i = 0; i < 100; i++)
         {
             data.Add(new TreeData());
@@ -23,6 +23,6 @@ public class TestKdTree : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
-	}
+
+    }
 }
