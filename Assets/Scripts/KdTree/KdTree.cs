@@ -248,6 +248,30 @@ namespace Kd_Tree
             }
             return dis;
         }
+        public string ToString(int optimalSplit)
+        {
+            string name = "";
+            for (int i = 0; i < m_Value.Count; i++)
+            {
+                if (i == 0)
+                {
+                    name += "(";
+                }
+                if (i == optimalSplit)
+                {
+                    name += m_Value[i] + "+,";
+                }
+                else
+                {
+                    name += m_Value[i] + ",";
+                }
+                if (i == m_Value.Count - 1)
+                {
+                    name += ")";
+                }
+            }
+            return name;
+        }
     }
 
     public class KdTreeComparer : IComparer<TreeData>

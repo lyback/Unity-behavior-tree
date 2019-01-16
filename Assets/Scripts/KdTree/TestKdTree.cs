@@ -5,21 +5,17 @@ using UnityEngine.Profiling;
 
 public class TestKdTree : MonoBehaviour {
     public int seed = 0;
+    public int k = 3;
     public Transform dataParent;
     public Transform treeParent;
     List<TreeData> data = new List<TreeData>();
-	// Use this for initialization
-    void Awake()
-    {
-        DebugData();
-    }
     void Start () {
         Random.InitState(seed);
         for (int i = 0; i < 10000; i++)
         {
             data.Add(new TreeData());
             data[i].m_Value = new List<int>();
-            for (int j = 0; j < 3; j++)
+            for (int j = 0; j < k; j++)
             {
                 data[i].m_Value.Add(Random.Range(0, 100));
             }
@@ -28,11 +24,11 @@ public class TestKdTree : MonoBehaviour {
         Profiler.BeginSample("buildKdTree");
         var tree = kdtree.buildKdTree(data);
         Profiler.EndSample();
-        //DebugTree(tree, treeParent);
+        DebugTree(tree, treeParent);
 
         TreeData target = new TreeData();
         target.m_Value = new List<int>();
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < k; i++)
         {
             target.m_Value.Add(Random.Range(0, 100));
         }
@@ -55,21 +51,15 @@ public class TestKdTree : MonoBehaviour {
         }
         Profiler.EndSample();
 
-        Vector3 targetV3 = new Vector3(target.m_Value[0], target.m_Value[1], target.m_Value[2]);
-        Vector3 norV3 = new Vector3(data[minIndex].m_Value[0], data[minIndex].m_Value[1], data[minIndex].m_Value[2]);
-        Vector3 nnV3 = new Vector3(nearestNode.m_Data.m_Value[0], nearestNode.m_Data.m_Value[1], nearestNode.m_Data.m_Value[2]);
-        GenObj(targetV3, PrimitiveType.Capsule);
-        GenObj(nnV3, PrimitiveType.Sphere);
-        GenObj(norV3, PrimitiveType.Cylinder);
-        Debug.Log("target:"+targetV3);
-        Debug.Log("norV3:"+ norV3 + " dis:" + Vector3.Distance(norV3, targetV3));
-        Debug.Log("nnV3:" + nnV3 + " dis:" + Vector3.Distance(nnV3, targetV3));
+        Debug.Log("target:" + target.ToString(-1));
+        Debug.Log("norV3:" + data[minIndex].ToString(-1) + "dis:" + minDis);
+        Debug.Log("nnV3:" + nearestNode.m_Data.ToString(-1) + " dis:" + nearestNode.Distance(target));
     }
-	void DebugTree(KdTreeNode root, Transform parent)
+
+    #region DEBUG
+    void DebugTree(KdTreeNode root, Transform parent)
     {
-        var pos = root.m_Data.m_Value;
-        Vector3 v3 = new Vector3(pos[0], pos[1], pos[2]);
-        var obj = GenObj(v3, PrimitiveType.Cube, parent);
+        var obj = GenObj(root, parent);
         if (root.m_LeftNode != null)
         {
             DebugTree(root.m_LeftNode, obj.transform);
@@ -79,22 +69,14 @@ public class TestKdTree : MonoBehaviour {
             DebugTree(root.m_RightNode, obj.transform);
         }
     }
-    void DebugData()
+    GameObject GenObj(KdTreeNode root, Transform parent = null)
     {
-        for (int i = 0; i < data.Count; i++)
-        {
-            Vector3 v3 = new Vector3(data[i].m_Value[0], data[i].m_Value[1], data[i].m_Value[2]);
-            GenObj(v3, PrimitiveType.Cube, dataParent);
-        }
-    }
-    GameObject GenObj(Vector3 v3, PrimitiveType type, Transform parent = null)
-    {
-        var obj = GameObject.CreatePrimitive(type);
+        var obj = new GameObject(root.m_Data.ToString(root.optimalSplit));
         if (parent != null)
         {
             obj.transform.parent = parent;
         }
-        obj.transform.position = v3;
         return obj;
     }
+    #endregion
 }
