@@ -204,38 +204,6 @@ namespace Kd_Tree
         }
     }
 
-    public class KdTreeNode
-    {
-        public TreeData m_Data;
-        public int optimalSplit;
-        public KdTreeNode m_LeftNode;
-        public KdTreeNode m_RightNode;
-        public KdTreeNode m_ParentNode;
-        public bool m_IsSelfLeft;
-
-        public bool LeftOf(TreeData data)
-        {
-            return m_Data.m_Value[optimalSplit] > data.m_Value[optimalSplit];
-        }
-        public bool RightOf(TreeData data)
-        {
-            return m_Data.m_Value[optimalSplit] < data.m_Value[optimalSplit];
-        }
-        public int Distance(TreeData data)
-        {
-            int dis = 0;
-            for (int i = 0; i < m_Data.m_Value.Count; i++)
-            {
-                dis += Math.Abs(m_Data.m_Value[i] * m_Data.m_Value[i] - data.m_Value[i] * data.m_Value[i]);
-            }
-            return dis;
-        }
-        public int DisOfSplit(TreeData data)
-        {
-            return Math.Abs(m_Data.m_Value[optimalSplit] * m_Data.m_Value[optimalSplit] - data.m_Value[optimalSplit] * data.m_Value[optimalSplit]);
-        }
-    }
-
     public class TreeData
     {
         public List<int> m_Value;
