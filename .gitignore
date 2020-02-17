@@ -6,3 +6,6 @@ BattleDemo.CSharp.csproj
 BattleDemo.CSharp.Editor.csproj
 *.sln
 *.csproj
+obj/
+.vscode/
+.vs/

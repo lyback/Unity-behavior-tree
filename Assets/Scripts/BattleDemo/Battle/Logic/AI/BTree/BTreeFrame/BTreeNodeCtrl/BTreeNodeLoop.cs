@@ -85,7 +85,7 @@ namespace BTreeFrame
                     if (m_LoopCount != INFINITELOOP)
                     {
                         m_CurrentCount++;
-                        if (m_CurrentCount == m_LoopCount)
+                        if (m_CurrentCount <= m_LoopCount)
                         {
                             runningStatus = BTreeRunningStatus.Executing;
                         }

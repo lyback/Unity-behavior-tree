@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Jee/Normal/AlphaRG" {
     Properties {
   	    _Color ("Color", Color) = (1,1,1,1)
@@ -43,7 +45,7 @@ Shader "Jee/Normal/AlphaRG" {
                 VertexOutput o ;
                 o.uv0 = TRANSFORM_TEX(v.texcoord0, _MainTex);
                 o.vertexColor = v.vertexColor;
-                o.pos = mul(UNITY_MATRIX_MVP, v.vertex );
+                o.pos = UnityObjectToClipPos(v.vertex );
      
                 return o;
             }
