@@ -1,14 +1,32 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
-public class GraphEdge
+public class GraphEdge : System.ICloneable
 {
-    protected int m_iFrom;
-    protected int m_iTo;
+    public int From{
+        get;
+        set;
+    }
+    public int To{
+        get;
+        set;
+    }
 
     public GraphEdge(int from, int to)
     {
-        m_iFrom = from;
-        m_iTo = to;
+        From = from;
+        To = to;
+    }
+
+
+    public virtual double Distance(){
+        return 0;
+    }
+
+    
+    public virtual Object Clone()
+    {
+        return this.MemberwiseClone();
     }
 }

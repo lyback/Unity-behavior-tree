@@ -1,12 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 
-public class GraphNode
+public class GraphNode : System.ICloneable
 {
-    protected int m_iIndex;
+    public int m_iIndex
+    {
+        get;
+        protected set;
+    }
 
     public GraphNode(int index)
     {
         m_iIndex = index;
+    }
+
+    public virtual Object Clone()
+    {
+        return this.MemberwiseClone();
     }
 }
