@@ -1,12 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-public class SparseGraph<NODE, EDGE> : IEnumerable<NODE> where NODE : GraphNode where EDGE : GraphEdge, new()
-{
-    private List<NODE> m_Nodes;
-    private List<List<EDGE>> m_Edges;
-    private bool m_bDiGraph;
-    private int m_iNextNodeIndex;
 
+public class SparseGraph<NODE, EDGE> : BaseGraph<NODE, EDGE> where NODE : GraphNode where EDGE : GraphEdge, new()
+{
     public SparseGraph()
     {
 
@@ -18,7 +14,7 @@ public class SparseGraph<NODE, EDGE> : IEnumerable<NODE> where NODE : GraphNode 
     //--------------------------------------------------------------------------
     public bool isNodePresent(int nd)
     {
-        if ((m_Nodes[nd].m_iIndex == -1) || (nd >= m_Nodes.Count))
+        if ((m_Nodes[nd].Index == -1) || (nd >= m_Nodes.Count))
         {
             return false;
         }
@@ -67,7 +63,7 @@ public class SparseGraph<NODE, EDGE> : IEnumerable<NODE> where NODE : GraphNode 
     //
     //  clone and non clone methods for obtaining a reference to a specific edge
     //----------------------------------------------------------------------------
-    EDGE GetEdge(int from, int to)
+    public EDGE GetEdge(int from, int to)
     {
         if (from < 0 || from >= m_Nodes.Count || to < 0 || to >= m_Nodes.Count)
         {
@@ -83,7 +79,7 @@ public class SparseGraph<NODE, EDGE> : IEnumerable<NODE> where NODE : GraphNode 
         }
         return null;
     }
-    EDGE GetEdge_Clone(int from, int to)
+    public EDGE GetEdge_Clone(int from, int to)
     {
         if (from < 0 || from >= m_Nodes.Count || to < 0 || to >= m_Nodes.Count)
         {
@@ -107,7 +103,7 @@ public class SparseGraph<NODE, EDGE> : IEnumerable<NODE> where NODE : GraphNode 
     //  graph is a digraph then a similar edge connecting the nodes in the opposite
     //  direction will be automatically added.
     //-----------------------------------------------------------------------------
-    void AddEdge(EDGE edge)
+    public void AddEdge(EDGE edge)
     {
         int _nodeCount = m_Nodes.Count;
         if (edge.From < 0 || edge.From > _nodeCount || edge.To < 0 || edge.To > _nodeCount)
@@ -128,10 +124,140 @@ public class SparseGraph<NODE, EDGE> : IEnumerable<NODE> where NODE : GraphNode 
             //check to make sure the edge is unique before adding
             if (UniqueEdge(edge.To, edge.From))
             {
-                EDGE NewEdge = edge;
+                EDGE NewEdge = edge.Clone() as EDGE;
                 NewEdge.To = edge.From;
                 NewEdge.From = edge.To;
                 m_Edges[edge.To].Add(NewEdge);
+            }
+        }
+    }
+
+    //----------------------------- RemoveEdge ---------------------------------
+    public void RemoveEdge(int from, int to)
+    {
+        if (from >= m_Nodes.Count || to >= m_Nodes.Count)
+        {
+            return;
+        }
+
+        if (!m_bDiGraph)
+        {
+            for (int i = 0; i < m_Edges[to].Count; i++)
+            {
+                if (m_Edges[to][i].To == from)
+                {
+                    m_Edges[to].RemoveAt(i);
+                }
+            }
+        }
+        for (int j = 0; j < m_Edges[from].Count; j++)
+        {
+            if (m_Edges[from][j].To == to)
+            {
+                m_Edges[from].RemoveAt(j);
+            }
+        }
+    }
+
+
+    //-------------------------- AddNode -------------------------------------
+    //
+    //  Given a node this method first checks to see if the node has been added
+    //  previously but is now innactive. If it is, it is reactivated.
+    //
+    //  If the node has not been added previously, it is checked to make sure its
+    //  index matches the next node index before being added to the graph
+    //------------------------------------------------------------------------
+    public int AddNode(NODE node)
+    {
+        if (node.Index < (int)m_Nodes.Count)
+        {
+            //make sure the client is not trying to add a node with the same ID as
+            //a currently active node
+            if (m_Nodes[node.Index].Index == -1)
+            {
+                return -1;
+            }
+            m_Nodes[node.Index] = node;
+
+            return m_iNextNodeIndex;
+        }
+        else
+        {
+            //make sure the new node has been indexed correctly
+            if (node.Index == m_iNextNodeIndex)
+            {
+                return -1;
+            }
+
+            m_Nodes.Add(node);
+            m_Edges.Add(new List<EDGE>());
+
+            return m_iNextNodeIndex++;
+        }
+    }
+
+
+    //------------------------------- RemoveNode -----------------------------
+    //
+    //  Removes a node from the graph and removes any links to neighbouring
+    //  nodes
+    //------------------------------------------------------------------------
+    public void RemoveNode(int node)
+    {
+        if (node >= m_Nodes.Count)
+        {
+            return;
+        }
+
+        //set this node's index to invalid_node_index
+        m_Nodes[node].Index = -1;
+
+        //if the graph is not directed remove all edges leading to this node and then
+        //clear the edges leading from the node
+        if (!m_bDiGraph)
+        {
+            //visit each neighbour and erase any edges leading to this node
+            for (int i = 0; i < m_Edges[node].Count; i++)
+            {
+                var _to = m_Edges[node][i].To;
+                for (int j = 0; j < m_Edges[_to].Count; j++)
+                {
+                    if (m_Edges[_to][j].To == node)
+                    {
+                        m_Edges[_to].RemoveAt(j);
+                        break;
+                    }
+                }
+            }
+            //finally, clear this node's edges
+            m_Edges[node].Clear();
+        }
+        //if a digraph remove the edges the slow way
+        else
+        {
+            CullInvalidEdges();
+        }
+    }
+
+    //-------------------------- SetEdgeCost ---------------------------------
+    //
+    //  Sets the cost of a specific edge
+    //------------------------------------------------------------------------
+    public void SetEdgeCost(int from, int to, double NewCost)
+    {
+        //make sure the nodes given are valid
+        if (from >= m_Nodes.Count || to >= m_Nodes.Count)
+        {
+            return;
+        }
+        //visit each neighbour and erase any edges leading to this node
+        for (int i = 0; i < m_Edges[from].Count; i++)
+        {
+            if (m_Edges[from][i].To == to)
+            {
+                m_Edges[from][i].Cost = NewCost;
+                break;
             }
         }
     }
@@ -142,6 +268,10 @@ public class SparseGraph<NODE, EDGE> : IEnumerable<NODE> where NODE : GraphNode 
     //------------------------------------------------------------------------
     bool UniqueEdge(int from, int to)
     {
+        if (from < 0 || from >= m_Edges.Count)
+        {
+            return false;
+        }
         var _edges = m_Edges[from];
         if (_edges != null)
         {
@@ -176,16 +306,4 @@ public class SparseGraph<NODE, EDGE> : IEnumerable<NODE> where NODE : GraphNode 
         }
     }
 
-
-    public virtual IEnumerator<NODE> GetEnumerator()
-    {
-        if (m_Nodes == null)
-            yield break;
-
-        yield return m_Nodes[0];
-    }
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
 }

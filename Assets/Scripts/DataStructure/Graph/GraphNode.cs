@@ -4,15 +4,19 @@ using System;
 
 public class GraphNode : System.ICloneable
 {
-    public int m_iIndex
+    public GraphNode()
+    {
+
+    }
+    public int Index
     {
         get;
-        protected set;
+        set;
     }
 
     public GraphNode(int index)
     {
-        m_iIndex = index;
+        Index = index;
     }
 
     public virtual Object Clone()
