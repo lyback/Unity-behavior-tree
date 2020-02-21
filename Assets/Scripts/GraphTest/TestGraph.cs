@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Kd_Tree;
-using UnityEngine.Profiling;
+using System.Text;
 
 public class TestGraph : MonoBehaviour
 {
@@ -27,16 +26,17 @@ public class TestGraph : MonoBehaviour
         Graph_SearchDFS<GraphNode, GraphEdge> DFSSearcher = new Graph_SearchDFS<GraphNode, GraphEdge>(m_Graph, source, target);
         if (DFSSearcher.IsFound())
         {
-            var route = DFSSearcher.GetSpanningTree();
-            int lastNode = target;
-            for (int i = route.Count-1; i >= 0; i--)
+            var route = DFSSearcher.GetPathToTarget();
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < route.Count; i++)
             {
-                if (route[i].To == lastNode)
+                sb.Append(route[i]);
+                if (i != route.Count-1)
                 {
-                    Debug.Log(route[i].From + "->" + route[i].To);
-                    lastNode = route[i].From;
+                    sb.Append("<-");
                 }
             }
+            Debug.Log(sb.ToString());
         }
     }
 }

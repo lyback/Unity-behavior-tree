@@ -91,13 +91,25 @@ public class Graph_SearchDFS<NODE, EDGE> where NODE : GraphNode where EDGE : Gra
         return m_bFound;
     }
 
-    public List<int> GetRoute()
+    public List<int> GetPathToTarget()
     {
-        return m_Route;
+        List<int> path = new List<int>();
+        //just return an empty path if no path to target found or if
+        //no target has been specified
+        if (!m_bFound || m_iTarget < 0) return path;
+
+        int nd = m_iTarget;
+
+        path.Add(nd);
+
+        while (nd != m_iSource)
+        {
+            nd = m_Route[nd];
+
+            path.Add(nd);
+        }
+
+        return path;
     }
 
-    public List<EDGE> GetSpanningTree()
-    {
-        return m_SpanningTree;
-    }
 }
