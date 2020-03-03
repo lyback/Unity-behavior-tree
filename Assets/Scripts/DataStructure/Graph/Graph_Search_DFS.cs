@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-public class Graph_SearchDFS<NODE, EDGE> where NODE : GraphNode where EDGE : GraphEdge, new()
+public class Graph_Search_DFS<NODE, EDGE> where NODE : GraphNode where EDGE : GraphEdge, new()
 {
     //to aid legibility
     enum VisitState
@@ -26,7 +26,7 @@ public class Graph_SearchDFS<NODE, EDGE> where NODE : GraphNode where EDGE : Gra
     //true if a path to the target has been found
     bool m_bFound;
 
-    public Graph_SearchDFS(BaseGraph<NODE, EDGE> graph, int source, int target)
+    public Graph_Search_DFS(BaseGraph<NODE, EDGE> graph, int source, int target)
     {
         m_Graph = graph;
         m_iSource = source;

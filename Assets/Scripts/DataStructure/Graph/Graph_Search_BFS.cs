@@ -1,0 +1,118 @@
+using System.Collections.Generic;
+public class Graph_Search_BFS<NODE, EDGE> where NODE : GraphNode where EDGE : GraphEdge, new()
+{
+    //to aid legibility
+    enum VisitState
+    {
+        visited, unvisited, no_parent_assigned
+    };
+    //a reference to the graph to be searched
+    BaseGraph<NODE, EDGE> m_Graph;
+
+    //this records the indexes of all the nodes that are visited as the
+    //search progresses
+    List<VisitState> m_Visited;
+    //this holds the route taken to the target. Given a node index, the value
+    //at that index is the node's parent. ie if the path to the target is
+    //3-8-27, then m_Route[8] will hold 3 and m_Route[27] will hold 8.
+    List<int> m_Route;
+    //As the search progresses, this will hold all the edges the algorithm has
+    //examined. THIS IS NOT NECESSARY FOR THE SEARCH, IT IS HERE PURELY
+    //TO PROVIDE THE USER WITH SOME VISUAL FEEDBACK
+    List<EDGE> m_SpanningTree = new List<EDGE>();
+    //the source and target node indices
+    int m_iSource, m_iTarget;
+
+    //true if a path to the target has been found
+    bool m_bFound;
+
+    public Graph_Search_BFS(BaseGraph<NODE, EDGE> graph, int source, int target)
+    {
+        m_Graph = graph;
+        m_iSource = source;
+        m_iTarget = target;
+        m_bFound = false;
+        m_Visited = new List<VisitState>(m_Graph.NodeCount);
+        m_Route = new List<int>(m_Graph.NodeCount);
+        for (int i = 0; i < m_Graph.NodeCount; i++)
+        {
+            m_Visited.Add(VisitState.unvisited);
+            m_Route.Add(-1);
+        }
+        m_bFound = Search();
+    }
+    //this method performs the DFS search
+    bool Search()
+    {
+        //create a std queue of edges
+        Queue<EDGE> queue = new Queue<EDGE>();
+        //create a dummy edge and put on the queue
+        EDGE Dummy = new EDGE();
+        Dummy.From = m_iSource;
+        Dummy.To = m_iSource;
+        Dummy.Cost = 0;
+        queue.Enqueue(Dummy);
+
+        //mark the source node as visited
+        m_Visited[m_iSource] = VisitState.visited;
+
+        //while there are edges in the queue keep searching
+        while (queue.Count > 0)
+        {
+            //grab the next edge
+            EDGE Next = queue.Dequeue();
+            //mark the parent of this node
+            m_Route[Next.To] = Next.From;
+            //put it on the tree. (making sure the dummy edge is not placed on the tree)
+            if (Next != Dummy)
+            {
+                m_SpanningTree.Add(Next);
+            }
+            //exit if the target has been found
+            if (Next.To == m_iTarget)
+            {
+                return true;
+            }
+            //push the edges leading from the node at the end of this edge 
+            //onto the queue
+            foreach (EDGE edge in m_Graph.Enumerator_Edge(Next.To))
+            {
+                if (m_Visited[edge.To] == VisitState.unvisited)
+                {
+                    queue.Enqueue(edge);
+                    //and mark it visited
+                    m_Visited[edge.To] = VisitState.visited;
+                }
+            }
+        }
+        //no path to target
+        return false;
+    }
+
+    public bool IsFound()
+    {
+        return m_bFound;
+    }
+
+    public List<int> GetPathToTarget()
+    {
+        List<int> path = new List<int>();
+        //just return an empty path if no path to target found or if
+        //no target has been specified
+        if (!m_bFound || m_iTarget < 0) return path;
+
+        int nd = m_iTarget;
+
+        path.Add(nd);
+
+        while (nd != m_iSource)
+        {
+            nd = m_Route[nd];
+
+            path.Add(nd);
+        }
+
+        return path;
+    }
+
+}
