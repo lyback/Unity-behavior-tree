@@ -45,7 +45,7 @@ namespace Battle.Logic
         public static GameObject AddClock(string name, Action<float> action, float intervalClock = 1, bool once = false)
         {
             Transform Root = MainBattleManager.Instance.m_BattleViewRoot;
-            Transform trans = Root.FindChild(name);
+            Transform trans = Root.Find(name);
             NeatlyBehaviour clock;
             if (trans == null)
             {
@@ -74,7 +74,7 @@ namespace Battle.Logic
         public static GameObject AddFrame(string name, Action<float> action, float intervalClock = 1, bool once = false)
         {
             Transform Root = MainBattleManager.Instance.m_BattleViewRoot;
-            Transform trans = Root.FindChild(name);
+            Transform trans = Root.Find(name);
             NeatlyBehaviour frame;
             if (trans == null)
             {
